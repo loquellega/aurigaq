@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v038
+  aurigaQ v039
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -421,7 +421,7 @@ html[data-contraste="suave"] .tb .b,html[data-contraste="suave"] .win .tb .quita
 #contraste .lbl{margin-right:6px}
 #contraste .b{min-height:20px;padding:0 8px;font-size:10px;margin-right:-1px}
 
-/* punto de vista de los nodos: la salida de fondo, como el viewer de TouchDesigner */
+/* punto de vista de los nodos: la salida de fondo, */
 #nodEd .ndLeft{flex:1;min-width:0;position:relative;display:flex}
 #nodEd .ndLeft .ndScroll{position:relative;z-index:2}
 #nodEd .ndBg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform:scaleY(-1);z-index:0;display:none;background:#000}
@@ -498,7 +498,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v038</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v039</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -512,10 +512,10 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v038</h2>
+    <h2 id="aboutTitle">aurigaQ v039</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
-    <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función heredada de QLab, Isadora y los media servers de teatro, donde el paso de un cue a otro es la esencia de la ejecución.</p>
+    <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
     <h3>Semblanza</h3>
     <p>Héctor Cruz Juárez es diseñador multimedia y de videoproyección para las artes escénicas. Desde la Ciudad de México ha desarrollado, a lo largo de más de 26 años, más de 110 producciones de teatro, danza y música en distintos países.</p>
     <p>Es director de arte multimedia de Landscape Artes Escénicas, compañía que cofundó con la coreógrafa Vivian Cruz; cofundador de Meridiano Studio, colectivo internacional especializado en media servers, y de Resonancias, comunidad de artistas multimedia de Latinoamérica. Es Embajador de Isadora para América Latina y miembro del Sistema Nacional de Creadores de Arte.</p>
@@ -748,7 +748,7 @@ vec4 samp(sampler2D t,vec2 s){
   vec2 q=d/(s*uXf.x*uSc)+.5;
   float mk=uMk3.x>.5?mascara(uMk3.z>.5?uv:q):1.;
   if(uXf.w>.5) q.x=1.-q.x;
-  // fuera del cuadro: vacío, repetir o espejo (como «extend» en TouchDesigner)
+  // fuera del cuadro: vacío, repetir o espejo
   if(uMk3.w>1.5) q=1.-abs(mod(q,2.)-1.);
   else if(uMk3.w>.5) q=fract(q);
   else if(q.x<0.||q.y<0.||q.x>1.||q.y>1.) return vec4(0.);
@@ -1225,7 +1225,7 @@ function stepVoices(){
 function voicePos(v){if(v.paused)return v.pausePos;if(v.esc)return v.esc.pos();const el=AC.currentTime-v.t0;return v.loop?v.a+(el%v.len):v.a+Math.min(el,v.len);}
 
 /* ---------- escena de audio (fase 5) ----------
-   Línea de tiempo estéreo con pistas, como el timeline group de QLab: clips con recorte, volumen y fundidos;
+   Línea de tiempo estéreo con pistas: clips con recorte, volumen y fundidos;
    fundido cruzado automático donde dos clips de la misma pista se enciman; bucle de una región y devamp
    (al terminar la vuelta en curso sigue de largo). Todo se programa con el reloj de audio un poco antes de
    que suene: el sonido no depende de los cuadros ni de que la ventana esté visible. */
@@ -1369,7 +1369,7 @@ function duplicarEscena(e){const c=JSON.parse(JSON.stringify(e));c.id='ea'+(uid+
   S.escenas.push(c);sincEscenas();renderLib();toast('escena nueva E'+c.num+': '+c.nombre);return c;}
 
 /* ---------- escena de video con nodos (fase 6) ----------
-   Un patch al estilo de Isadora: fuentes (Movie Player, Imagen, Cámara, Artefacto, Forma, Texto) pasan por
+   Un patch de nodos: fuentes (Movie Player, Imagen, Cámara, Artefacto, Forma, Texto) pasan por
    actores de transformación y color (Zoomer, Panner, Spinner, HSL, Contraste, Desenfoque) y llegan a un
    Proyector. Cada cadena se resuelve en una sola capa del compositor (una pasada de GPU por Proyector):
    los actores no dibujan, solo suman sus valores. Onda, Ratón y Control dan números a cualquier entrada.
@@ -1450,16 +1450,26 @@ const NODOS={
   teclado:{nom:'Keyboard Watcher · teclado',g:'control',num:['valor','pulso'],ins:[['tecla','tecla','tecla',''],['dur','pulso (s)','num',.1,0,10,.01]]},
   nivelaudio:{nom:'Sound Level Watcher · nivel de audio',g:'control',num:['nivel','graves','medios','agudos','pulso'],ins:[['fuente','escuchar','sel','general',[['general','salida general'],['mic','micrófono o línea']]],
     ['ganancia','ganancia','num',1,0,10,.01],['suave','suavidad','num',.3,0,1,.01],['umbral','umbral del pulso','num',.5,0,1,.01]]},
+  puerta:{nom:'Gate · puerta',g:'lógica',num:['valor'],ins:[['entrada','entrada','num',0,-1000,1000,.01],['abierta','abierta (0 o 1)','num',1,0,1,1],['cerrada','cerrada da','sel','sostiene',[['sostiene','el último valor'],['cero','cero']]]]},
+  comparar:{nom:'Comparator · comparar',g:'lógica',num:['valor','pulso'],numNom:{valor:'sí (1) / no (0)'},ins:[['a','a','num',0,-1000,1000,.01],['op','es','sel','>',[['=','= igual a'],['≠','≠ distinto de'],['<','< menor que'],['≤','≤ menor o igual'],['>','> mayor que'],['≥','≥ mayor o igual']]],['b','b','num',.5,-1000,1000,.01],['tol','tolerancia (para =)','num',.001,0,100,.001],['dur','pulso (s)','num',.1,0,10,.01]]},
+  rango:{nom:'Inside Range · dentro del rango',g:'lógica',num:['dentro','entra','sale'],ins:[['entrada','entrada','num',0,-1000,1000,.01],['min','mínimo','num',.25,-1000,1000,.01],['max','máximo','num',.75,-1000,1000,.01],['dur','pulso (s)','num',.1,0,10,.01]]},
+  muestra:{nom:'Sample and Hold · muestrear',g:'lógica',num:['valor'],ins:[['ctl','','botones',[['tomar','tomar ahora']]],['entrada','entrada','num',0,-1000,1000,.01],['tomar','tomar (al subir)','num',0,-1000,1000,.01],['modo','modo','sel','al subir',[['al subir','toma al subir el disparo'],['mientras','sigue la entrada mientras «tomar» esté arriba']]]]},
+  selector:{nom:'Selector · elegir',g:'lógica',num:['valor'],ins:[['elige','elige (1 a 4)','num',1,1,4,1],['in1','1','num',0,-1000,1000,.01],['in2','2','num',.33,-1000,1000,.01],['in3','3','num',.66,-1000,1000,.01],['in4','4','num',1,-1000,1000,.01],['suave','transición (s)','num',0,0,30,.01]]},
+  logica:{nom:'Logic · lógica',g:'lógica',num:['valor','pulso'],ins:[['a','a (≥ 0.5 = sí)','num',0,-1000,1000,.01],['op','operación','sel','Y',[['Y','Y · las dos'],['O','O · alguna'],['OX','O exclusivo · solo una'],['NO','NO · invierte a'],['NY','NO Y · no las dos'],['NO O','NO O · ninguna']]],['b','b (≥ 0.5 = sí)','num',0,-1000,1000,.01],['dur','pulso (s)','num',.1,0,10,.01]]},
+  crono:{nom:'Timer · cronómetro',g:'lógica',num:['tiempo','avance','fin','encurso'],numNom:{tiempo:'tiempo (s)',avance:'avance (0 a 1)',encurso:'en curso'},
+    ins:[['ctl','','botones',[['iniciar','▶ iniciar'],['parar','❚❚ parar'],['cero','reiniciar']]],['iniciar','iniciar (al subir)','num',0,-1000,1000,.01],['parar','parar (al subir)','num',0,-1000,1000,.01],['reiniciar','reiniciar (al subir)','num',0,-1000,1000,.01],
+      ['dur','duración (s, 0 = sin fin)','num',10,0,86400,.1],['alEntrar','al entrar la escena','sel','corre',[['corre','empieza a correr'],['espera','espera un disparo']]],['alFin','al llegar al final','sel','se detiene',[['se detiene','se detiene'],['vuelve','vuelve a empezar']]],['velocidad','velocidad','num',1,0,100,.01]]},
+  alcue:{nom:'Cue Trigger · al disparar un cue',g:'lógica',num:['pulso','cue'],numNom:{cue:'último cue nº'},ins:[['cue','cue nº (0 = cualquiera)','num',0,0,9999,1],['dur','pulso (s)','num',.1,0,10,.01]]},
   rampa:{nom:'Envelope · rampa',g:'control',num:['valor','fin'],ins:[['de','de','num',0,-1000,1000,.01],['a','a','num',1,-1000,1000,.01],['seg','duración (s)','num',5,0,600,.1],['curva','curva','sel','suave',['lineal','suave','entrada','salida']],['bucle','bucle','bool',false]]}
 };
 const FUSION_NOD={normal:'normal',suma:'add',pantalla:'screen',multiplicar:'multiply',diferencia:'difference',aclarar:'lighten'};
 const AJUSTE_NOD={contener:'contain',cubrir:'cover',estirar:'stretch'};
 const esFuente=t=>NODOS[t]&&(NODOS[t].g==='entradas'||NODOS[t].g==='generadores'||t==='compositor'||t==='cruce');
 const LIENZO=new Set(['forma','texto','color','degradado']),LLENA=new Set(['forma','texto','color','degradado','ruido','timeline']);
-// categorías de los nodos, de la fuente a la salida (como las familias de TouchDesigner y los grupos de Isadora)
+// categorías de los nodos, de la fuente a la salida
 const GRUPOS_NOD=[['entradas','entradas','videos, fotos, cámaras y capturas en vivo','▷'],['generadores','generadores','formas, texto, color, degradado, ruido y artefactos','◇'],
   ['transformar','transformar','escala, posición, giro y máscara','↔'],['efectos','efectos','color, desenfoque, claves y filtros','◆'],['componer','componer','mezclar varias cadenas','▤'],
-  ['control','control','números: ondas, azar, ratón, teclado, audio, disparos, contadores y cálculos','∿'],['salida','salida','el Proyector: una capa de la escena','▣']];
+  ['control','control','números: ondas, azar, ratón, teclado, audio, disparos, contadores y cálculos','∿'],['lógica','lógica','puertas, comparaciones, rangos, selección, cronómetro y cues','⋀'],['salida','salida','el Proyector: una capa de la escena','▣']];
 const hexRGB=h=>{const x=parseInt(String(h||'#000000').slice(1,7),16)||0;return [(x>>16&255)/255,(x>>8&255)/255,(x&255)/255];};
 const ESTILOS={neutro:{},'blanco y negro':{bn:1,con:1.1},saturado:{sat:1.45,con:1.05},oscuro:{lum:-.12,con:1.15},lavado:{sat:.6,lum:.07,con:.8},'cálido':{ti:.55,sat:1.05},'frío':{ti:-.55},'película HP5':{bn:1,gr:.35,con:1.15,vi:.3},'película color':{sat:.85,gr:.28,con:1.08,vi:.2}};
 const EXT_NOD={'vacío':'vacio',repetir:'repetir',espejo:'espejo'};
@@ -1589,6 +1599,40 @@ function salidaNum(ctx,n,port,d){
     while(q.length&&q[0]+dur<ctx.now-1000)q.shift();v=q.some(x=>ctx.now>=x&&ctx.now-x<=dur)?1:0;}
   else if(n.t==='pulsos'){const R0=escvOut.get(ctx.e.id),t0=R0&&R0.t0||ctx.now,per=Math.max(.02,n.v.modo==='segundos'?evNum(ctx,n,'cada',d):60/Math.max(1,evNum(ctx,n,'bpm',d))),el=(ctx.now-t0)/1000;
     const on=evNum(ctx,n,'activo',d)>=.5;v=port==='cuenta'?Math.floor(el/per)+1:on&&(el%per)*1000<=Math.max(evNum(ctx,n,'dur',d)*1000,34)?1:0;}
+  else if(n.t==='puerta'){const x=evNum(ctx,n,'entrada',d);if(evNum(ctx,n,'abierta',d)>=.5){n._v=x;v=x;}else v=n.v.cerrada==='cero'?0:(n._v??x);}
+  else if(n.t==='comparar'||n.t==='logica'||n.t==='rango'){
+    if(n._fr!==ctx.now){n._fr=ctx.now;const P=n._tp||(n._tp={});let si;
+      if(n.t==='comparar'){const a=evNum(ctx,n,'a',d),b=evNum(ctx,n,'b',d),tol=Math.abs(evNum(ctx,n,'tol',d));
+        si=({'=':Math.abs(a-b)<=tol,'≠':Math.abs(a-b)>tol,'<':a<b,'≤':a<=b+tol,'>':a>b,'≥':a>=b-tol})[n.v.op||'>'];}
+      else if(n.t==='logica'){const a=evNum(ctx,n,'a',d)>=.5,b=evNum(ctx,n,'b',d)>=.5;
+        si=({'Y':a&&b,'O':a||b,'OX':a!==b,'NO':!a,'NY':!(a&&b),'NO O':!(a||b)})[n.v.op||'Y'];}
+      else{const x=evNum(ctx,n,'entrada',d),a=evNum(ctx,n,'min',d),b=evNum(ctx,n,'max',d);si=x>=Math.min(a,b)&&x<=Math.max(a,b);}
+      si=!!si;if(n._si!=null&&si!==n._si)P[si?'sube':'baja']=ctx.now;if(n._si==null&&si)P.sube=ctx.now;n._si=si;}
+    const dur=Math.max(evNum(ctx,n,'dur',d)*1000,34),P=n._tp,en=k=>P[k]!=null&&ctx.now-P[k]<=dur?1:0;
+    v=port==='pulso'||port==='entra'?en('sube'):port==='sale'?en('baja'):n._si?1:0;}
+  else if(n.t==='muestra'){if(n._fr!==ctx.now){n._fr=ctx.now;const x=evNum(ctx,n,'entrada',d);
+      if(n.v.modo==='mientras'){const F=n._f||(n._f={}),b=(n._btn&&n._btn.tomar)||0,bt='btomar' in F&&F.btomar!==b;F.btomar=b;if(bt||evNum(ctx,n,'tomar',d)>=.5||n._v==null)n._v=x;}
+      else if(flanco(ctx,n,'tomar','tomar',d)||n._v==null)n._v=x;}
+    v=n._v;}
+  else if(n.t==='selector'){const i=Math.round(clamp(evNum(ctx,n,'elige',d),1,4)),obj=evNum(ctx,n,'in'+i,d),tau=Math.max(0,evNum(ctx,n,'suave',d));
+    // con transición: al cambiar de entrada, el valor viaja en línea recta hacia la nueva en «transición» segundos
+    if(n._i!==i){n._de=n._i==null?obj:(n._v??obj);n._ts=ctx.now;n._i=i;}
+    const u=tau<.001?1:clamp((ctx.now-n._ts)/1000/tau);n._v=n._de+(obj-n._de)*u;v=n._v;}
+  else if(n.t==='crono'){const T0=n._c||(n._c={}),R0=escvOut.get(ctx.e.id),t0=R0?R0.t0:ctx.now;
+    if(n._fr!==ctx.now){const dt=Math.max(0,(ctx.now-(n._fr??ctx.now))/1000);n._fr=ctx.now;
+      if(T0.t0!==t0){T0.t0=t0;T0.t=0;T0.on=n.v.alEntrar!=='espera';T0.tf=null;}
+      else if(T0.on)T0.t+=dt*Math.max(0,evNum(ctx,n,'velocidad',d));
+      if(flanco(ctx,n,'reiniciar','cero',d)){T0.t=0;T0.tf=null;}
+      if(flanco(ctx,n,'parar','parar',d))T0.on=false;
+      if(flanco(ctx,n,'iniciar','iniciar',d)){if(T0.fin)T0.t=0;T0.on=true;T0.fin=false;}
+      const D=evNum(ctx,n,'dur',d);
+      if(D>0&&T0.t>=D){if(n.v.alFin==='vuelve'){T0.t=T0.t%D;T0.tf=ctx.now;}else if(!T0.fin){T0.t=D;T0.on=false;T0.fin=true;T0.tf=ctx.now;}}
+      else T0.fin=false;}
+    const D=evNum(ctx,n,'dur',d);
+    v=port==='avance'?(D>0?clamp(T0.t/D):0):port==='fin'?(T0.tf!=null&&ctx.now-T0.tf<=120?1:0):port==='encurso'?(T0.on?1:0):+T0.t.toFixed(3);}
+  else if(n.t==='alcue'){const num=Math.round(evNum(ctx,n,'cue',d)),c=num?(CUEEV.por.get(String(num))||0):CUEEV.n;
+    if(n._k==null)n._k=c;if(n._k!==c){n._k=c;n._t=ctx.now;}
+    v=port==='cue'?(+CUEEV.num||0):pulso(n,ctx,evNum(ctx,n,'dur',d));}
   else if(n.t==='ircue'){const F=n._f||(n._f={}),b=(n._btn&&n._btn.disparar)||0,boton='bdisparar' in F&&F.bdisparar!==b;
     if(flanco(ctx,n,'entrada','disparar',d)){const aire=escenaAlAire(ctx.e.id);
       if((boton||aire)&&ctx.now-(n._go||-1e9)>evNum(ctx,n,'proteccion',d)*1000){n._go=ctx.now;const acc=n.v.accion||'GO',num=Math.round(evNum(ctx,n,'cue',d));setTimeout(()=>irCue(acc,num),0);}}}
@@ -1814,7 +1858,7 @@ function ruidoNodo(ctx,n){
 function aplicarFx(ctx,A,mods){
   for(const m of mods){if(m.t==='gauss'){const px=evNum(ctx,m,'px');if(px>.3)A=gaussiano(A,'G'+m.id,px);continue;}
     const fx=NODOS[m.t]&&NODOS[m.t].fx;if(fx==null)continue;let M=null;
-    // Displace: su mapa es otra cadena (fuente y efectos), como en TouchDesigner
+    // Displace: su mapa es otra cadena (fuente y efectos)
     if(NODOS[m.t].vmapa){const mc=cadena(ctx,m,'mapa');if(!mc)continue;ctx.prof=(ctx.prof||0)+1;if(ctx.prof<6){const T0=texFuente(ctx,mc.src);M=T0&&aplicarFx(ctx,T0,mc.mods);}ctx.prof--;if(!M)continue;}
     const [pp,cc]=fxParams(ctx,m);A=fxPass(A,'X'+m.id,fx,pp,cc,M);}
   return A;
@@ -1860,7 +1904,7 @@ function escvLista(e,now,ctx0){
   for(const n of e.nodos){if(n.t!=='proyector')continue;const ch=cadena(ctx,n,'in');if(!ch)continue;const sl=capa(ctx,ch,n,now);if(sl)L.push(sl);}
   return L.sort((a,b)=>a.z-b.z);
 }
-// punto de vista (como el viewer de TouchDesigner): la salida de un nodo para el fondo del editor.
+// punto de vista: la salida de un nodo para el fondo del editor.
 // En un Proyector es la escena completa; en otro nodo, la cadena hasta ese punto (una pasada de GPU más)
 let VF=null;
 function fboPar(prev){
@@ -2304,8 +2348,11 @@ function go(){
   S.sel=chainEnd(i)+1;S.itemSel=null;
   renderCues();renderInspector();
 }
+// disparos de la cue list para el nodo Cue Trigger: cuántos GO van, en total y por número de cue
+const CUEEV={n:0,num:null,por:new Map()};
+function cueEv(c){CUEEV.n++;CUEEV.num=c.num;const k=String(c.num);CUEEV.por.set(k,(CUEEV.por.get(k)||0)+1);}
 function fire(i){
-  const c=S.cues[i];if(!c)return;
+  const c=S.cues[i];if(!c)return;cueEv(c);
   log('GO · cue '+(c.num||'·')+' '+(c.name||cueLabel(c)));
   S.running=S.running.filter(r=>r.cue!==c);
   S.running.push({cue:c,t0:performance.now(),pre:Math.max(0,c.preWait)*1000,dur:0,started:false});
@@ -2407,7 +2454,7 @@ function startAction(c){
   renderStage();
   return wait;
 }
-/* cues de fundido y detener, como en QLab: actúan sobre lo que ya está sonando o en escena; no arrancan nada */
+/* cues de fundido y detener: actúan sobre lo que ya está sonando o en escena; no arrancan nada */
 /* pausar y reanudar: audio y video. Sin elementos actúa sobre todo lo que suena y todos los videos en escena */
 function pauseAction(c){
   if(c.mode==='devamp')return devampAction(c);
@@ -2499,7 +2546,7 @@ function idleIfUnused(key){
   if(it.kind==='art')stopArt(it);
   if(it.kind==='video'&&!it.el.paused)it.el.pause();
 }
-/* preparar y liberar (como el «arm» de QLab): el cue en espera y el siguiente dejan sus videos cargados y
+/* preparar y liberar: el cue en espera y el siguiente dejan sus videos cargados y
    en su punto de entrada; lo que no se usa en un minuto suelta su decodificador */
 const LIBERAR_MS=60000;
 function cueNear(key){for(const c of [S.cues[S.sel],S.cues[S.sel+1]])if(c&&c.mode!=='nota'&&c.items.some(i=>i.src===key))return true;return false;}
@@ -2686,7 +2733,7 @@ function editPick(td,val,opts,set){
   cellEditor(td,sel,()=>set(sel.value));sel.addEventListener('change',()=>sel.blur());
 }
 let menuEl=null;
-// ensayo: dispara el cue con su audio y video adelantados, como «cargar a un tiempo» de QLab
+// ensayo: dispara el cue con su audio y video adelantados
 function fromTime(i){
   const inp=el('input',{type:'number',min:0,step:.5,value:S.lastOffset||10,'aria-label':'segundos',style:'width:60px'});
   const go2=()=>{const t=Math.max(0,parseFloat(inp.value)||0);S.lastOffset=t;closeMenu();if(S.t0==null)S.t0=performance.now();fireAt(i,t);toast('cue '+(S.cues[i].num||'')+' desde '+fmtT(t)+' (ensayo)');};
@@ -2838,7 +2885,7 @@ function updateStageUI(){
 /* ---------- fuentes y escenas ----------
    Tres niveles: la Secuencia (cue list) dice cuándo y cómo; las Escenas son lo que se compone (video con
    nodos, audio con línea de tiempo); las Fuentes son el material en bruto. Las Fuentes van en carpetas
-   propias, con filtro por tipo, búsqueda y vista en lista o cuadrícula, como el panel de recursos de Pixera. */
+   propias, con filtro por tipo, búsqueda y vista en lista o cuadrícula. */
 let libBody,libRows,libAddBox,escBody;
 const TIPOS_F=[['todo','todo'],['video','video'],['image','imagen'],['audio','audio'],['cam','en vivo'],['art','artefacto']];
 const TIPO_TAG={video:'vid',image:'img',audio:'aud',cam:'vivo',art:'art'};
@@ -3053,7 +3100,7 @@ function convertirCues(look){
 function renderEscenasWin(){
   if(!escBody)return;escBody.replaceChildren();
   const L=S.escenas.filter(e=>e.tipo==='video'||e.tipo==='audio');
-  if(!L.length){escBody.append(el('p',{class:'note'},'Una escena compone fuentes: de video con nodos (como Isadora) o de audio con línea de tiempo (como QLab). Suelta una fuente en la cue list o usa «+ ▾».'));return;}
+  if(!L.length){escBody.append(el('p',{class:'note'},'Una escena compone fuentes: de video con nodos o de audio con línea de tiempo. Suelta una fuente en la cue list o usa «+ ▾».'));return;}
   for(const e of L){const it=S.lib.get(escKey(e));if(!it)continue;
     const usos=S.cues.filter(c=>c.items.some(i=>i.src===it.key));
     escBody.append(filaFuente(it,'E'+e.num,(e.tipo==='video'?'nodos':'línea')+(usos.length?' · '+usos.length+' cue'+(usos.length>1?'s':''):''),()=>abrirEscenaDe(e)));
@@ -3127,7 +3174,7 @@ function camAddPanel(){
       box.append(field('cámara',sel),field('resolución',res),el('div',{class:'seg g2'},btn('agregar',()=>add(false),'b'),btn('agregar y sumar al cue',()=>add(true),'b')));
     }
     box.append(el('div',{class:'sep'}),btn('captura de pantalla o ventana',async()=>{const it=await addScreen();S.libAdd=null;renderLib();},'b'),
-      el('p',{class:'note'},'Captura otra ventana (TouchDesigner, Isadora, un navegador) o una pantalla como entrada en vivo. NDI: con NDI Tools («NDI Webcam») la fuente NDI aparece aquí como cámara.'));
+      el('p',{class:'note'},'Captura otra ventana (otra aplicación de video, un navegador) o una pantalla como entrada en vivo. NDI: con NDI Tools («NDI Webcam») la fuente NDI aparece aquí como cámara.'));
   })();
   return [box];
 }
@@ -3304,7 +3351,7 @@ function renderSalud(){
     el('span',{class:bajo?'st-mal':'st-ok'},(bajo?'▲ ':'')+r.fps+' fps · ciclo '+frameMs.toFixed(1)+' ms'),
     ' · '+Math.round(pasadasMed)+' pasadas · video '+mb(r.tex+escvPares()*2*S.out.w*S.out.h*4/1048576)+' · '+(partes.length?partes.join(' · '):'nada trabajando')+(r.js?' · '+mb(r.js+r.audio):'')+' · motor '+r.motor+(logErr?' · '+logErr+' errores':''));
   e.style.color=logErr?'#fff':'';
-  e.title='como la barra de estado de Isadora: cuadros por segundo y tiempo de cada ciclo del motor, pasadas de GPU por cuadro (cada capa es una), memoria de video aproximada, lo que está trabajando (videos, cámaras, artefactos, audios, escenas de video), memoria y dónde corre el motor. Clic: registro.';
+  e.title='cuadros por segundo y tiempo de cada ciclo del motor, pasadas de GPU por cuadro (cada capa es una), memoria de video aproximada, lo que está trabajando (videos, cámaras, artefactos, audios, escenas de video), memoria y dónde corre el motor. Clic: registro.';
 }
 function renderRevision(){
   if(!revBox||modo!=='salida')return;
@@ -3539,7 +3586,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v038',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v039',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -3646,7 +3693,7 @@ function buildSalida(){
     el('p',{class:'note'},'«Suave» para editar muchas horas; «alto» (blanco sobre negro) para la función. Se recuerdan en este navegador.'));
   const {body:qb}=win('Esta computadora','wEquipo',AJ);
   qb.append(el('p',{class:'note'},'No viajan con el show: son de este navegador.'),
-    tgBtn('seguir en segundo plano',()=>S.fondo,v=>{S.fondo=v;try{localStorage.setItem('aurigaq.fondoPlano',v?'1':'0');}catch(e){}revisarFondo();},{title:'como «pausar en segundo plano» de TouchDesigner, al revés: encendido, el motor sigue aunque aQ quede detrás de otro programa'}),
+    tgBtn('seguir en segundo plano',()=>S.fondo,v=>{S.fondo=v;try{localStorage.setItem('aurigaq.fondoPlano',v?'1':'0');}catch(e){}revisarFondo();},{title:'encendido, el motor sigue aunque aQ quede detrás de otro programa'}),
     tgBtn('copia del monitor en la interfaz',()=>S.copia,v=>{S.copia=v;try{localStorage.setItem('aurigaq.copia',v?'1':'0');}catch(e){}updateProgView();},{title:'con la salida abierta, el Monitor de la interfaz muestra una copia a 15 cuadros por segundo; apágala si la máquina va justa'}),
     el('div',{class:'lbl'},'lanzador'+(LANZADOR?' · aQ está abierto con el lanzador':'')),
     el('div',{class:'seg g2'},btn('para Windows',()=>bajarLanzador('win'),'b'),btn('para Mac',()=>bajarLanzador('mac'),'b')),
@@ -4267,7 +4314,7 @@ function evOpciones(){
   return L;
 }
 const sinAcento=x=>String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-// buscador de nodos: doble clic en el fondo o Tab, como el menú Tab de TouchDesigner
+// buscador de nodos: doble clic en el fondo o Tab
 function evBuscador(x,y){
   evBuscadorCerrar();const sc=EV.area.parentNode,bx=Math.min(x,sc.scrollLeft+sc.clientWidth-275),by=Math.min(y,sc.scrollTop+sc.clientHeight-360);
   const box=el('div',{class:'ndBusca',style:'left:'+Math.max(sc.scrollLeft+4,bx)+'px;top:'+Math.max(sc.scrollTop+4,by)+'px'});
@@ -4314,7 +4361,7 @@ function evPanel(){
   P.append(tabs,chips,busca,rows);
 }
 function evQuitar(n){const e=EV.e;{const st=TLR.get(n.id);if(st){for(const o of st.els.values())tlSuelta(o);TLR.delete(n.id);}}for(const k of ['C'+n.id,'G'+n.id,'X'+n.id,'N'+n.id,'T'+n.id]){const c=escvCache.get(k);if(c&&c.P)parBorrar(c.P);escvCache.delete(k);}e.nodos.splice(e.nodos.indexOf(n),1);e.cables=e.cables.filter(w=>w.de[0]!==n.id&&w.a[0]!==n.id);escvCache.delete(n.id);if(EV.sel===n)EV.sel=null;evPintar();evAyuda();sincEscenas();}
-// un número que se jala, como en Isadora: arrastrar arriba/abajo (o a los lados), la rueda con el puntero encima,
+// un número que se jala: arrastrar arriba/abajo (o a los lados), la rueda con el puntero encima,
 // ↑ ↓ con el campo activo; Mayús = fino, Alt = ×10; un clic sin mover deja escribir
 function numJala(v,p,lab,set){
   const st=p[6]||.01,mn=p[4]??-1e9,mx=p[5]??1e9,dec=st>=1?0:Math.min(4,Math.ceil(-Math.log10(st)-1e-9)),fmt=x=>String(+(+x).toFixed(dec));
@@ -4414,7 +4461,7 @@ function evAyuda(){
     proyector:'Pone la cadena en la escena como una capa: intensidad, fusión, capa (orden) y ajuste. La máscara toma la luz de lo que le llegue (una Forma o un Texto) tal cual en el cuadro.',
     onda:'Da un número que sube y baja con el tiempo, entre mínimo y máximo.',raton:'La posición del ratón sobre la salida o sobre el monitor, entre mínimo y máximo.',
     control:'Un valor fijo para varias entradas a la vez.',
-    color:'Un color sólido a todo el cuadro, con su opacidad (Constant de TouchDesigner). Úsalo de fondo o para teñir con una fusión.',
+    color:'Un color sólido a todo el cuadro, con su opacidad. Úsalo de fondo o para teñir con una fusión.',
     degradado:'Degradado lineal o radial entre dos colores (Ramp). Con «multiplicar» en el Proyector oscurece una orilla; como máscara, funde una imagen.',
     ruido:'Ruido animado hecho en la GPU (Noise). «detalle» suma capas finas; de fondo, como textura o, en la máscara de un Proyector, para que la imagen aparezca a manchas.',
     niveles:'Levels: el negro y el blanco de entrada estiran el rango; gamma aclara u oscurece los medios tonos.',
@@ -4444,13 +4491,21 @@ function evAyuda(){
     secuencia:'Sequential Trigger: cada disparo sale por la siguiente salida (1, 2, 3, 4) y vuelve al principio o se detiene. «paso» dice en cuál va.',
     retardo:'Trigger Delay: repite cada disparo después del retardo. Varios disparos seguidos se repiten todos.',
     pulsos:'Pulse Generator: disparos a un tempo (BPM) o cada tantos segundos, contados desde que entra la escena. «activo» en 0 lo calla; «cuenta» numera los pulsos.',
+    puerta:'Deja pasar el número de «entrada» mientras «abierta» está en 1. Cerrada, conserva el último valor o da cero.',
+    comparar:'Compara a con b. «sí / no» da 1 mientras se cumple; «pulso» dispara en el momento en que empieza a cumplirse. Para «igual a», la tolerancia evita que un número con decimales nunca coincida.',
+    rango:'Vigila si la entrada está entre el mínimo y el máximo. «dentro» da 1 mientras está adentro; «entra» y «sale» disparan al cruzar los bordes. Útil con el ratón, el nivel de audio o el tiempo de un Timeline.',
+    muestra:'Toma el valor de la entrada en el momento del disparo y lo sostiene. En modo «mientras», sigue la entrada todo el tiempo que «tomar» esté arriba y se congela al bajar.',
+    selector:'Elige una de cuatro entradas con «elige» (1 a 4). Con «transición», el valor viaja hacia la nueva entrada en ese tiempo en lugar de saltar. Junto con un Sequential o un Counter arma estados de una escena.',
+    logica:'Combina dos condiciones (un valor de 0.5 o más cuenta como sí): Y, O, O exclusivo, NO y sus negaciones. Da 1 o 0, y un pulso cuando el resultado pasa a sí.',
+    crono:'Cuenta segundos desde que entra la escena o desde un disparo. Se para, sigue y reinicia con botones o cables. Con duración da el avance de 0 a 1 y dispara «fin»; puede volver a empezar.',
+    alcue:'Dispara cuando la cue list da GO a un cue. Con «cue nº» en 0 responde a cualquier cue; «último cue nº» dice cuál fue. Sirve para que una escena que ya está al aire cambie con los cues siguientes.',
     ircue:'GO / Ir a cue: con un disparo hace GO, dispara un cue por su número o lo pone en espera. Los disparos por cable solo actúan con la escena al aire; el botón actúa siempre. «protección» evita dos disparos seguidos.',
     rampa:'Envelope: va de un valor a otro en el tiempo que digas, desde que la escena entra al aire (o se abre en el editor). Con bucle, vuelve a empezar.',
     gauss:'Desenfoque gaussiano de verdad, en dos pasadas (horizontal y vertical). Más suave que el Blur rápido; cuesta dos pasadas de GPU.',
     aspecto:'El color de la capa con un estilo: blanco y negro, saturado, oscuro, lavado, cálido, frío o película (con grano y viñeta). «cantidad» lo mezcla con el original.',
     transform:'Escala, ancho, alto, posición, giro, espejo y qué pasa fuera del cuadro, en un solo nodo.',
     mascara:'Recorta la capa con un rectángulo o una elipse, con suavidad, redondeo e inversión. «fija al cuadro» la deja quieta aunque la imagen se mueva.',
-    compositor:'Mezcla hasta cuatro cadenas, cada una con su fusión, opacidad y ajuste. Su salida se puede seguir transformando, como el Effect Mixer de Isadora o el Composite de TouchDesigner.'};
+    compositor:'Mezcla hasta cuatro cadenas, cada una con su fusión, opacidad y ajuste. Su salida se puede seguir transformando.'};
   EV.help.replaceChildren(n?el('p',{class:'note'},el('strong',{style:'color:#fff'},NODOS[n.t].nom),el('br'),T[n.t]||''):el('p',{class:'note'},'Selecciona un nodo para ver qué hace.'));
 }
 function evPuerto(nid,pid,dir){const q=EV.area.querySelector('.pt.'+dir+'[data-n="'+nid+'"][data-p="'+CSS.escape(pid)+'"]');if(!q)return null;
@@ -4719,7 +4774,7 @@ function buildMaskWindow(B,item,src,hb,row){
     el('p',{class:'note'},'Recorta y difumina los bordes de este elemento. Con «fija al cuadro» la máscara se queda en la salida aunque muevas o escales el elemento; sin ella, lo sigue. Invertir hace un hueco en vez de una ventana. Todo se interpola con la transición del cue: un iris o una franja se abren solos.'));
   [...body.querySelectorAll('.seg.g2 .b')].forEach(b=>b.className='b');
 }
-/* colocar: manipulación directa del elemento seleccionado sobre el programa (como Zoomer/Projector de Isadora o Transform de TouchDesigner) */
+/* colocar: manipulación directa del elemento seleccionado sobre el programa */
 let lz,lzKey='',lzDrag=null;
 function lzTarget(){
   if(modo!=='edicion')return null;
@@ -5420,7 +5475,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v038'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v039'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)

@@ -1,4 +1,4 @@
-aurigaQ v038
+aurigaQ v039
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -29,8 +29,8 @@ CÓMO SUBIRLO A TU HOST
 
 INTERFAZ
   Arriba: GO en el extremo izquierdo, el cue en espera con sus notas,
-  y a la derecha el recordatorio «Esc · stop». STOP no tiene botón, como
-  en QLab, para evitar clics accidentales: Esc hace fundido a negro y
+  y a la derecha el recordatorio «Esc · stop». STOP no tiene botón,
+  para evitar clics accidentales: Esc hace fundido a negro y
   silencio en 1.2 s (también se puede asignar a MIDI).
   Abajo: la marca «i · aurigaq», el reloj, la barra de estado y los
   modos. Contraste, fondo y tono de las cabeceras (blanco, perla,
@@ -67,12 +67,12 @@ CÓMO SE ORGANIZA: SECUENCIA, ESCENAS Y FUENTES
   Tres niveles, de lo general a lo particular:
   secuencia  la cue list. Cada cue es UNA escena o UNA acción, y dice
              CUÁNDO y CÓMO: transición, espera, duración, «después».
-  escenas    lo que el cue presenta: escena de video (nodos, como
-             Isadora) o escena de audio (línea de tiempo, como QLab).
+  escenas    lo que el cue presenta: escena de video (nodos) o
+             escena de audio (línea de tiempo).
              Están en el panel Escenas, bajo Fuentes, con su número
              (E1, E2…). Son referencias: si una escena está en varios
              cues, editarla cambia todos; «derivar» hace una copia
-             nueva e independiente (como un User Actor de Isadora).
+             nueva e independiente.
   fuentes    el material en bruto: videos, imágenes, audio, cámaras y
              capturas, artefactos.
   Las escenas se editan en su editor (doble clic en la escena, en la
@@ -85,7 +85,7 @@ EN EDICIÓN
                «+ audio» crean una; doble clic la abre en su editor;
                arrastrarla a la cue list la usa. Su ficha dice en qué
                cues está y ofrece «cue nuevo con ella».
-  Fuentes      como el panel de recursos de Pixera: carpetas propias
+  Fuentes      carpetas propias
                («+ fuente › carpeta nueva»; arrastra una fuente a una
                carpeta para ordenarla), búsqueda, filtro por tipo y
                vista en lista o cuadrícula (▦ / ≡). Cada fila lleva su
@@ -94,7 +94,7 @@ EN EDICIÓN
                arrastrar archivos a la ventana. Clic en una fuente
                muestra su ficha; doble clic la suma al cue.
   En vivo      «+»: cámaras (con su resolución) y captura de pantalla o
-               de ventana (por ejemplo TouchDesigner o Isadora). NDI:
+               de ventana (otra aplicación de video). NDI:
                con NDI Tools («NDI Webcam») la fuente aparece como cámara.
                La captura de pantalla no se reabre sola: al abrir un
                show, vuelve a compartirla desde las fuentes.
@@ -108,8 +108,7 @@ EN EDICIÓN
 
 EDITAR EN LA LISTA (modo edición)
   Clic derecho › «disparar desde … s»: ensayo a mitad de un cue; su
-  audio y su video arrancan adelantados esos segundos (como «cargar a un
-  tiempo» de QLab), con una transición corta y sin seguir al siguiente.
+  audio y su video arrancan adelantados esos segundos, con una transición corta y sin seguir al siguiente.
   Doble clic en una celda de la cue list para editarla ahí mismo:
   número, nombre, «al disparar» (solo esto, se suma, nota), espera,
   transición en segundos y «sig.» (espera GO, continúa, sigue al final).
@@ -187,7 +186,7 @@ CUES: UNA ESCENA O UNA ACCIÓN
                     de su nivel (por ejemplo, la música al 35 %)
     detener un cue  saca todo lo que puso ese cue
 
-  Cues de fundido y detener (como en QLab)
+  Cues de fundido y detener
     fundido     actúa sobre lo que ya suena o está al aire, sin
                 arrancarlo: sube o baja el volumen (o la opacidad) en el
                 tiempo del cue. Con «detener al terminar» es un fade out.
@@ -301,8 +300,7 @@ RECURSOS
     qué trabaja y qué reposa, y videos más grandes que la salida.
 
 PROYECTO, ESCENARIO Y SHOW
-  Un archivo .aurigaq tiene tres capas, como las preferencias, el
-  Projector y las escenas de Isadora:
+  Un archivo .aurigaq tiene tres capas:
   proyecto   resolución de salida (720p o 1080p) y resolución de los
              artefactos. Valen para cualquier escenario.
   escenario  lo del lugar: corner pin, recorte y bordes difuminados.
@@ -324,8 +322,7 @@ PROYECTO, ESCENARIO Y SHOW
   del programa, monitoreo, agente) no van en el show.
 
 ESCENA DE AUDIO
-  Una línea de tiempo estéreo con pistas, como el timeline group de
-  QLab o una sesión sencilla de Audition. En Escenas › «+ audio» (o «+ escena ▾ ›
+  Una línea de tiempo estéreo con pistas. En Escenas › «+ audio» (o «+ escena ▾ ›
   escena de audio nueva» en la cue list). Va a los cues como
   cualquier audio: volumen y paneo del cue, fundido, detener, pausar y
   reanudar la tratan igual, y «lo que dure el medio» espera a que
@@ -349,7 +346,7 @@ ESCENA DE AUDIO
   bucle      arrastra sobre la regla para marcar la región (o usa el
              botón «bucle»). La escena suena desde el principio,
              repite la región y, con devamp, termina la vuelta en
-             curso y sigue hasta el final, como en QLab.
+             curso y sigue hasta el final.
   devamp     botón en el editor, en el inspector del cue y en la
              ventana Audio; o un cue «devamp» (+ acción › devamp, o
              el menú de la fila), que actúa sobre las escenas de su
@@ -365,11 +362,11 @@ ESCENA DE AUDIO
   silencio.
 
 ESCENA DE VIDEO
-  Un patch de nodos, como una escena de Isadora. En Escenas › «+ ▾»
+  Un patch de nodos. En Escenas › «+ ▾»
   (o «+ escena ▾» en la cue list; empieza con un ejemplo: una forma
   que una onda mueve de lado a lado). Todo su aspecto vive en nodos:
   transformación, máscara, color, desenfoque, fusión y capas.
-  Nodos por categoría (con el nombre de Isadora o TouchDesigner al lado).
+  Nodos por categoría (con su nombre en inglés al lado).
   El panel de la derecha y el menú «+ agregar nodo» los ordenan de la
   fuente a la salida; los botones de categoría y «buscar» los filtran.
   entradas      Movie Player · reproductor (video de las fuentes, con
@@ -405,7 +402,7 @@ ESCENA DE VIDEO
                 pasada de GPU (el Gaussian, dos).
   componer      Compositor (hasta cuatro entradas, cada una con su
                 fusión, opacidad y ajuste; su salida se puede seguir
-                transformando, como el Effect Mixer de Isadora) y
+                transformando) y
                 Video Mixer · cruce (dos entradas y «mezcla»).
   salida        Projector · proyector: intensidad, fusión, capa (orden
                 de abajo hacia arriba), ajuste y una entrada de máscara
@@ -437,7 +434,26 @@ ESCENA DE VIDEO
       espera. Por cable solo actúa con la escena al aire; el botón
       siempre. «protección» evita dos disparos seguidos.
 
-  Disparos (como en Isadora): Trigger, Toggle y Counter tienen botones
+  Lógica (categoría nueva): números que deciden.
+    Gate · puerta: deja pasar la entrada mientras «abierta» es 1;
+      cerrada sostiene el último valor o da cero.
+    Comparator · comparar: a contra b (=, ≠, <, ≤, >, ≥); «sí / no»
+      mientras se cumple y «pulso» al empezar a cumplirse.
+    Inside Range · dentro del rango: «dentro» mientras la entrada está
+      entre mínimo y máximo; «entra» y «sale» disparan en los bordes.
+    Sample and Hold · muestrear: toma la entrada con un disparo y la
+      sostiene; en modo «mientras» la sigue y se congela al bajar.
+    Selector · elegir: una de cuatro entradas; con «transición» viaja
+      hacia la nueva en ese tiempo.
+    Logic · lógica: Y, O, O exclusivo, NO, NO Y y NO O (0.5 o más
+      es sí); da 1 o 0 y un pulso al pasar a sí.
+    Timer · cronómetro: segundos desde que entra la escena o desde un
+      disparo; iniciar, parar y reiniciar; con duración da «avance»
+      (0 a 1) y «fin», y puede volver a empezar.
+    Cue Trigger · al disparar un cue: dispara cuando la cue list da GO
+      a ese cue (0 = a cualquiera); «último cue nº» dice cuál fue.
+
+  Disparos: Trigger, Toggle y Counter tienen botones
   en el nodo y entradas que disparan cuando su valor sube a 0.5 o más.
   Trigger da un pulso (1 por un instante); cablealo a Counter, Toggle o
   a cualquier número.
@@ -454,7 +470,7 @@ ESCENA DE VIDEO
   lento, como un medidor. El sonido propio de los videos no pasa por
   aquí: para que la imagen reaccione a él, ponlo en una escena de
   audio.
-  Números: se jalan como en Isadora. Arrastra arriba o abajo sobre el
+  Números: se jalan. Arrastra arriba o abajo sobre el
   número, o usa la rueda con el puntero encima (Mayús: fino; Alt:
   ×10). Un clic sin mover deja escribirlo; ↑ ↓ lo cambian mientras
   está activo; Enter o Esc terminan.
@@ -605,7 +621,7 @@ MÁSCARA
   interpola: de «iris cerrado» a «círculo» en 4 s abre un iris.
 
 ESTABILIDAD
-  Preparar y liberar (como el «arm» de QLab): el cue en espera y el
+  Preparar y liberar: el cue en espera y el
   siguiente dejan sus videos cargados y en su punto de entrada. Un video
   que no se usa durante un minuto suelta su decodificador y se vuelve a
   preparar solo cuando un cue lo necesita.
@@ -644,8 +660,7 @@ SEGUNDO PLANO Y LANZADOR
   encima, la imagen se puede detener. aQ tiene dos defensas:
   - «seguir en segundo plano» (Salida, encendido por omisión): el
     motor sigue latiendo con un reloj propio aunque aQ quede oculto.
-    Es como quitar la palomita «pausar en segundo plano» de
-    TouchDesigner. Aun así, el navegador puede pausar los videos.
+    Aun así, el navegador puede pausar los videos.
   - El lanzador (Salida › lanzador › para Windows o para Mac): un
     archivo que abre aQ en su propia ventana de Chrome con las pausas
     de segundo plano apagadas, sin extensiones y con el audio
@@ -792,6 +807,9 @@ PREPARAR LOS VIDEOS
   ProRes, HAP, DXV y Notch LC no se reproducen en el navegador.
 
 HISTORIAL
+  v039  categoría Lógica: Gate, Comparator, Inside Range, Sample and
+        Hold, Selector, Logic, Timer y Cue Trigger. Textos sin
+        comparaciones con otros programas.
   v038  nodo Timeline · línea de tiempo (videos y fotos por capas con
         recortes, fundidos, cruces, bucle, devamp y marcas; preparar,
         play, pausa, detener e ir a marca por disparos; salidas fin,
@@ -833,7 +851,7 @@ HISTORIAL
         reusan su memoria de video (antes se acumulaba) y la barra
         de estado muestra pasadas de GPU y memoria de video.
   v033  punto de vista en los nodos (●, o V): la salida de un nodo
-        de fondo en el editor, como el viewer de TouchDesigner; en un
+        de fondo en el editor; en un
         Proyector, la escena completa. «Programa» pasa a «Monitor».
         Anterior y siguiente junto al GO, en la pestaña ⇅. Carriles
         ocultos (se asignan solos; «mostrar carriles» en Proyecto).
@@ -847,12 +865,12 @@ HISTORIAL
         horizontal al seleccionarlo.
   v031  interfaz por niveles: secuencia (cues), escenas (nodos y
         línea de tiempo) y fuentes (carpetas, búsqueda, filtro, lista
-        o cuadrícula, como Pixera). Inspector marcado en cue,
+        o cuadrícula). Inspector marcado en cue,
         contenido y elemento; «+ escena ▾» y «+ acción ▾» en la cue
         list; archivo en un menú; «en escena» pasa a «al aire».
         Acento verde de la identidad (#76c411) en GO, modo, lo que
         está al aire y el progreso.
-  v030  fase 6: escena de video con nodos al estilo de Isadora:
+  v030  fase 6: escena de video con nodos:
         fuentes, transformación, color, proyectores con máscara,
         onda, ratón y control; parámetros de los artefactos como
         entradas. Cada proyector es una pasada de GPU.
@@ -906,8 +924,7 @@ HISTORIAL
         la salida deja de latir; resolución fija 720p o 1080p; la
         pantalla no se apaga con la salida abierta.
   v018  «colocar»: el programa grande al centro y el elemento elegido
-        se mueve, escala, deforma, rota y enmascara con el ratón (como
-        Zoomer/Projector de Isadora o Transform de TouchDesigner).
+        se mueve, escala, deforma, rota y enmascara con el ratón.
         Ancho y alto por separado; fuera del cuadro: vacío, repetir o
         espejo.
   v017  clip de video con entrada y salida, bucle del tramo, y al llegar
@@ -921,7 +938,7 @@ HISTORIAL
   v015  cues pausar y reanudar; «disparar desde» para ensayar a mitad de
         un cue; punto de inicio del video.
   v014  película HP5 en la salida, en color o blanco y negro, por cue;
-        cues de fundido (subir, bajar, fade out) y detener, como en QLab.
+        cues de fundido (subir, bajar, fade out) y detener.
   v013  biblioteca como caja de medios por categorías con índice;
         captura de pantalla como entrada en vivo; guardar y abrir archivos
         .aurigaq, con o sin medios; copia de seguridad en el navegador;
