@@ -1,0 +1,965 @@
+aurigaQ v038
+Media server y gestor de cues para presentar en vivo los artefactos de la colección.
+Parte de la colección Alchemy of Meaning (Alquimia del Significado).
+© 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
+Software libre bajo licencia GPL-3.0-or-later (ver LICENSE.txt).
+
+CONTENIDO
+  index.html                la app (la interfaz)
+  salida.html               la ventana de salida para el proyector
+  sdk/artefacto-sdk.js      SDK 0.1 del protocolo artefacto/v0
+  artefactos/orbitas.html   artefacto de prueba
+  artefactos/senal.html     artefacto de prueba
+  artefactos/plantilla.html plantilla comentada para crear artefactos nuevos
+  PROTOCOLO.md              mensajes, manifiesto y cómo adaptar una app
+  LEEME.txt                 este archivo
+  LICENSE.txt               texto de la licencia GPL-3.0
+
+CÓMO SUBIRLO A TU HOST
+  1. Sube la carpeta aurigaq completa junto a las carpetas de tus apps:
+       /app/aurigaq/
+       /app/belkagraph/
+       /app/fonoestratonika/
+  2. Ábrela en Chrome o Edge: https://tu-dominio/app/aurigaq/
+  3. En «Cargar artefacto» escribe ../belkagraph/ y presiona cargar.
+  Los artefactos deben estar en el mismo dominio para que aurigaQ lea su
+  imagen. Micrófono y línea solo funcionan con HTTPS.
+  Para probar en la computadora: en la carpeta aurigaq, corre
+  python3 -m http.server 8080 y abre http://localhost:8080
+
+INTERFAZ
+  Arriba: GO en el extremo izquierdo, el cue en espera con sus notas,
+  y a la derecha el recordatorio «Esc · stop». STOP no tiene botón, como
+  en QLab, para evitar clics accidentales: Esc hace fundido a negro y
+  silencio en 1.2 s (también se puede asignar a MIDI).
+  Abajo: la marca «i · aurigaq», el reloj, la barra de estado y los
+  modos. Contraste, fondo y tono de las cabeceras (blanco, perla,
+  ceniza, plomo) están en Ajustes › Interfaz.
+  Fondo: negro, carbón, grafito, gris o pizarra. Baja el contraste de
+  la interfaz para ensayos largos; no cambia la salida. Se recuerda en
+  esta computadora.
+
+MODOS
+  Cuatro pestañas abajo (teclas F, E, S y A):
+  show      cue list grande, GO, cue en espera con sus notas, vista
+            previa, cues activos, audio y lo que está al aire. Para
+            operar la función.
+            Para salir de show a edición o salida hay que mantener
+            presionado el botón (o la tecla E, S o A) 2 segundos: un clic
+            suelto no saca al operador del show.
+  edición   escenas, fuentes, cue list con sus herramientas, programa,
+            al aire e inspector. Para armar el show.
+  salida    la imagen grande y dos ventanas: Proyecto (resolución,
+            artefactos, carriles) y Escenario (pantalla del proyector,
+            abrir salida, patrón y los ajustes del lugar: corner pin,
+            recorte, bordes). «+ …» suma solo lo que haga falta;
+            «quitar» lo regresa a neutro y lo saca de la lista. El
+            color y la película ya no son de la salida: cada escena
+            los lleva con su nodo Aspecto (v035).
+  ajustes   lo que no es del show sino de esta computadora o de cómo
+            se ve aQ: Interfaz (contraste, fondo, cabeceras), Esta
+            computadora (segundo plano, copia del monitor,
+            lanzadores), Revisión de recursos, Modo museo y Monitoreo
+            remoto (con el agente local).
+  El modo se recuerda en ese navegador.
+
+CÓMO SE ORGANIZA: SECUENCIA, ESCENAS Y FUENTES
+  Tres niveles, de lo general a lo particular:
+  secuencia  la cue list. Cada cue es UNA escena o UNA acción, y dice
+             CUÁNDO y CÓMO: transición, espera, duración, «después».
+  escenas    lo que el cue presenta: escena de video (nodos, como
+             Isadora) o escena de audio (línea de tiempo, como QLab).
+             Están en el panel Escenas, bajo Fuentes, con su número
+             (E1, E2…). Son referencias: si una escena está en varios
+             cues, editarla cambia todos; «derivar» hace una copia
+             nueva e independiente (como un User Actor de Isadora).
+  fuentes    el material en bruto: videos, imágenes, audio, cámaras y
+             capturas, artefactos.
+  Las escenas se editan en su editor (doble clic en la escena, en la
+  columna «contenido» del cue o «editar nodos» / «editar línea de
+  tiempo» en el inspector); el cue se edita en el inspector.
+  «Al aire» es lo que se ve y se oye ahora (antes «en escena»).
+
+EN EDICIÓN
+  Escenas      las escenas de video y de audio del show. «+ video» y
+               «+ audio» crean una; doble clic la abre en su editor;
+               arrastrarla a la cue list la usa. Su ficha dice en qué
+               cues está y ofrece «cue nuevo con ella».
+  Fuentes      como el panel de recursos de Pixera: carpetas propias
+               («+ fuente › carpeta nueva»; arrastra una fuente a una
+               carpeta para ordenarla), búsqueda, filtro por tipo y
+               vista en lista o cuadrícula (▦ / ≡). Cada fila lleva su
+               tipo (vid, img, aud, vivo, art). «+ fuente» agrega
+               archivos, cámaras o capturas y artefactos; también puedes
+               arrastrar archivos a la ventana. Clic en una fuente
+               muestra su ficha; doble clic la suma al cue.
+  En vivo      «+»: cámaras (con su resolución) y captura de pantalla o
+               de ventana (por ejemplo TouchDesigner o Isadora). NDI:
+               con NDI Tools («NDI Webcam») la fuente aparece como cámara.
+               La captura de pantalla no se reabre sola: al abrir un
+               show, vuelve a compartirla desde las fuentes.
+  Cue list     la fila blanca con ▶ es el cue en espera.
+  Monitor      lo que sale, cues activos, audio y lo que está al aire.
+  Inspector    franja inferior en tres niveles, marcados a la izquierda:
+               cue (transición y comportamiento), contenido (la escena
+               con su botón de editar, o los elementos de la escena
+               rápida) y elemento (sus propiedades en este cue).
+  archivo ▾    abrir, guardar, guardar con medios y carpeta, en un menú.
+
+EDITAR EN LA LISTA (modo edición)
+  Clic derecho › «disparar desde … s»: ensayo a mitad de un cue; su
+  audio y su video arrancan adelantados esos segundos (como «cargar a un
+  tiempo» de QLab), con una transición corta y sin seguir al siguiente.
+  Doble clic en una celda de la cue list para editarla ahí mismo:
+  número, nombre, «al disparar» (solo esto, se suma, nota), espera,
+  transición en segundos y «sig.» (espera GO, continúa, sigue al final).
+  Enter guarda, Esc cancela. Clic derecho en una fila: disparar,
+  editar nombre o transición, nuevo cue debajo, nuevo desde la escena,
+  duplicar y borrar.
+  Arriba, debajo de GO, se editan número, nombre y notas del cue
+  seleccionado. En función esos campos solo se leen.
+  El punto ● junto a la transición indica que el cue cambia también la
+  salida (color, recorte, bordes o desenfoque).
+
+SELECCIONAR Y DISPARAR
+  Elegir un cue (clic o flechas) solo lo deja en espera (▶): no cambia
+  lo que se ve. GO o la barra espaciadora lo dispara. Así, durante la
+  función, puedes mandar un cue y luego prevenir otro antes de su GO.
+  El punto verde ● marca el cue que está al aire (el último disparado).
+
+EDITAR EN VIVO
+  En edición, con «editar en vivo» encendido (arriba), los cambios al
+  cue que está al aire (●) se ven al momento: opacidad, fusión,
+  aspecto, encuadre, elementos, transición. Para editarlo, haz clic en
+  su fila; los demás cues no cambian lo que se ve hasta su GO.
+  Si la salida está abierta, el cambio también se ve en el proyector.
+
+CUES: UNA ESCENA O UNA ACCIÓN
+  Soltar una fuente en la cue list (o doble clic en Fuentes) crea una
+  escena con ella y su cue, debajo de la fila donde la sueltas:
+    video, imagen, cámara o artefacto → escena de video «fuente →
+      Transformación → Proyector»;
+    audio → escena de audio con ese clip.
+  Soltar una escena (del panel Escenas) crea un cue con ella.
+  «+ escena ▾» crea una escena de video o de audio nueva con su cue
+  (y abre su editor), o un cue con una escena existente, o un cue por
+  cada escena al aire. «+ acción ▾» reúne fundido, detener, pausar,
+  reanudar, devamp, disparar, ir a, esperar y nota.
+  En el inspector: Transición, Comportamiento y Escena (E#, editar,
+  usar otra escena, el nivel en este cue —opacidad o volumen— y
+  «derivar (copia nueva)»).
+  Audio y video al mismo tiempo: dos cues, el primero con «después:
+  con el siguiente». El sonido propio de un video va con su Movie
+  Player (sigue su bucle o su final, se funde con su capa y tiene
+  volumen); para más control, ponlo en una escena de audio.
+  La cue list marca en verde el cue al aire; si una escena está en
+  varios cues, solo se marca el último que la trajo.
+  En edición, arrastra las filas de la cue list para cambiar el orden
+  de los cues; la línea blanca marca dónde caen.
+
+  Al disparar un cue:
+  - lo que entra aparece con la transición del cue (fundido,
+    cortinilla o luma) y su duración;
+  - lo que ya estaba y sigue en el cue NO se reinicia: interpola su
+    opacidad, su volumen y el estado del artefacto;
+  - lo que no está en el cue y es de su mismo carril sale (modo
+    «solo esto»); lo de otros carriles sigue;
+  - un cue sin elementos deja su carril en negro y silencio.
+
+  Carriles
+  Cada cue pertenece a un carril (columna «carril»; doble clic para
+  cambiarlo). «Solo esto» reemplaza solo lo que está en su carril. Por
+  omisión hay dos: «imagen» y «sonido». Un cue que solo trae audio va
+  a «sonido»; los demás, a «imagen». Así la música lanzada en «sonido»
+  sigue sonando mientras los cues de «imagen» se reemplazan encima.
+  Con «+ carril nuevo…» agregas otros (ambiente, texto, efectos).
+  La salida (color, desenfoque, película) la llevan los cues de
+  «imagen». Detener, fundido, pausar y reanudar tienen además el
+  carril «todos»: sin elementos actúan sobre su carril o sobre todo.
+
+  Cues de acción («+ acción»; actúan sobre otro cue, adelante o atrás)
+    disparar        arranca ese cue sin mover la lista: por ejemplo,
+                    vuelve a lanzar la música del principio
+    ir a            mueve el «en espera» a ese cue: saltos y bucles
+    esperar         solo cuenta su tiempo; con «al terminar sigue»
+                    encadena cues en automático
+    fundido de un cue   lleva cada elemento de ese cue a un porcentaje
+                    de su nivel (por ejemplo, la música al 35 %)
+    detener un cue  saca todo lo que puso ese cue
+
+  Cues de fundido y detener (como en QLab)
+    fundido     actúa sobre lo que ya suena o está al aire, sin
+                arrancarlo: sube o baja el volumen (o la opacidad) en el
+                tiempo del cue. Con «detener al terminar» es un fade out.
+                «+ fundido» lo crea con todo lo que suena, a silencio y
+                fuera; cambia el volumen final (atajos silencio, −12 dB,
+                −6 dB, 0 dB) para bajar o subir sin detener.
+    detener     saca con fundido lo que indiques; sin elementos detiene
+                todo lo que está al aire y todo lo que suena.
+    pausar      pausa el audio (con un fundido corto, el tiempo del cue)
+                y congela los videos. Sin elementos: todo.
+    reanudar    sigue desde donde se pausó. Un cue que incluya ese audio
+                o video también lo reanuda.
+    Fade in: un cue con el audio y la duración de la transición como
+    tiempo de entrada; o empezarlo bajo y subirlo con un fundido.
+  Modos del cue
+    solo esto   la escena queda con estos elementos; lo demás sale
+    se suma     agrega o cambia sus elementos y deja lo demás
+    fundido     cambia volumen u opacidad de lo que ya está (ver arriba)
+    detener     saca con fundido lo indicado, o todo
+    pausar      pausa audio y video, o todo
+    reanudar    sigue lo que está en pausa
+    solo nota   no cambia nada; para notas y marcas
+
+  Tiempo de cada cue (ventana «Tiempo» del inspector)
+    espera previa   segundos antes de que el cue actúe
+    transición      cuánto tarda en entrar (columna «trans.»)
+    duración        cuánto dura el cue (columna «dura»); o «lo que dure
+                    el medio»: el audio o video sin bucle más largo
+    después         espera GO · con el siguiente (lo dispara al mismo
+                    tiempo) · al terminar sigue · al terminar ir a… (salta
+                    a un cue y lo dispara: así se arman los bucles) · al
+                    terminar repite
+  La cabecera de la cue list suma el largo de todos los cues.
+  Un show sin operador: cada cue con su duración y «al terminar sigue»,
+  y el último con «al terminar ir a» el primero.
+  «disparar» en el inspector prueba un cue sin mover la selección.
+
+CÁMARAS (CIRCUITO CERRADO)
+  En las fuentes, «+ fuente › cámara o captura de pantalla»: «buscar cámaras» pide
+  permiso una vez; luego eliges la cámara, su resolución y «agregar» o
+  «agregar y sumar al cue».
+  Cada cámara entra una vez y se usa en los cues que quieras, cada uno
+  con su aspecto y su encuadre. Si la cámara sigue de un cue a otro no
+  se corta: pasa de un aspecto y un tamaño al otro con la transición.
+  En las fuentes, «apagar» libera la cámara y «encender» la reabre;
+  si un cue usa una cámara apagada, se enciende sola (tarda un momento).
+  Necesita tu host con HTTPS y Chrome o Edge. En la vista previa de
+  claude.ai la cámara no está permitida.
+  El show guarda qué cámara era; al importarlo en otra máquina, si no
+  la encuentra, usa la primera disponible.
+
+ELEMENTOS
+  (Desde v035 un cue es una escena: estas propiedades viven en los
+  nodos Transformación, Máscara, Aspecto y Proyector. Lo de abajo
+  aplica a los cues de acción y a los shows que aún no se convierten.)
+  imagen y video   opacidad, fusión y ajuste; el video, «empieza en»,
+                   bucle y reiniciar al entrar
+  transformación   escala, horizontal, vertical, rotación (con atajos
+                   de −90° a 180°) y espejo; atajos completa, grande,
+                   chica al centro y chica en cada esquina
+  aspecto          presets color, blanco y negro, saturado, oscuro y
+                   lavado; saturación, luminancia, contraste y tono
+  mis presets      guarda combinaciones propias; viajan con el show
+  Transformación y aspecto sirven para todo elemento visual (cámara, video,
+  imagen o artefacto). Si el elemento está al aire, lo que editas se
+  ve en vivo; al disparar el cue se interpola.
+  artefacto        lo mismo, más sus controles en vivo; «capturar»
+                   guarda su estado en el elemento y el cue lo
+                   interpola al entrar o al seguir
+  audio            volumen, paneo, «en bucle» o «una vez», inicio y fin
+                   del recorte, fade final y reiniciar si ya suena.
+                   Una vez: suena del inicio al fin y se detiene. En
+                   bucle: repite el tramo. Si el mismo audio sigue de un
+                   cue a otro con el mismo tramo, no se corta; si el cue
+                   tiene otro tramo o cambia de bucle a una vez, el
+                   anterior sale con fundido y entra el nuevo. En bucle,
+                   mover inicio y fin se escucha al momento.
+  Fundido cruzado: mientras dura la transición se componen dos escenas
+  completas (la que sale y la que entra) y se mezclan; por eso no hay
+  bajón de brillo a la mitad y lo que sigue no parpadea. Si se dispara
+  otro cue a mitad de una transición, cada elemento termina la suya
+  desde donde iba. El audio que entra y sale cruza con potencia
+  constante: el volumen total no baja a la mitad.
+  Un mismo artefacto no puede estar en dos estados a la vez: entre dos
+  cues que lo usan se transforma, no hace fundido consigo mismo.
+
+EN ESCENA
+  Ventana «Al aire», en la columna derecha, con lo que está al aire: entrando,
+  saliendo, opacidad y volumen. «sacar» lo retira en 1 s.
+
+AUDIO
+  Arrastra WAV, MP3, OGG o M4A a las fuentes. La ventana Audio tiene
+  el volumen general, un medidor, lo que suena y «silencio». GO activa
+  el audio del navegador la primera vez.
+  Crossfade    el audio que sigue de un cue a otro cambia de volumen; el
+               que no sigue sale con la transición del cue.
+  Fade out     un cue «solo esto» sin ese audio, o «detener todo».
+  El audio de los videos va en silencio por ahora.
+
+RECURSOS
+  - Las miniaturas de las fuentes son fijas: se toman una vez y no se
+    reproducen.
+  - Solo trabajan los artefactos y videos que están al aire o en el
+    cue en espera; los demás reposan (al artefacto se le manda «stop»,
+    el video se pausa). El cue en espera se precarga para que entre sin
+    tropiezo.
+  - El video solo sube a la tarjeta gráfica los cuadros nuevos.
+  - Salida › artefactos: los artefactos pueden trabajar al 75 % o a la
+    mitad de la resolución de salida si la máquina no alcanza.
+  - Salida › Revisión de recursos: resolución, cuadros por segundo,
+    qué trabaja y qué reposa, y videos más grandes que la salida.
+
+PROYECTO, ESCENARIO Y SHOW
+  Un archivo .aurigaq tiene tres capas, como las preferencias, el
+  Projector y las escenas de Isadora:
+  proyecto   resolución de salida (720p o 1080p) y resolución de los
+             artefactos. Valen para cualquier escenario.
+  escenario  lo del lugar: corner pin, recorte y bordes difuminados.
+             Un show guarda varios, uno por sala («Teatro de la
+             Ciudad», «CENART sala 2», «ensayo»), y uno está activo.
+             En Salida › Escenario: nuevo (limpio), duplicar,
+             renombrar, borrar y cambiar con la lista. Al cambiar, el
+             anterior se guarda tal como lo dejaste.
+             «exportar» guarda solo el escenario (.aqescenario);
+             «importar» lo trae a otro show, o trae los escenarios de
+             otro .aurigaq. Así una sala montada sirve para todos los
+             shows que se presenten ahí.
+  show       cues, carriles, look base (color, desenfoque, película),
+             modo museo y MIDI.
+  Los shows anteriores (v018 a v027) abren igual: su corner pin, recorte
+  y bordes pasan a un escenario «principal». Al guardar quedan en el
+  formato nuevo (v4), que las versiones anteriores de aQ ya no abren.
+  Las preferencias de esta computadora (seguir en segundo plano, copia
+  del programa, monitoreo, agente) no van en el show.
+
+ESCENA DE AUDIO
+  Una línea de tiempo estéreo con pistas, como el timeline group de
+  QLab o una sesión sencilla de Audition. En Escenas › «+ audio» (o «+ escena ▾ ›
+  escena de audio nueva» en la cue list). Va a los cues como
+  cualquier audio: volumen y paneo del cue, fundido, detener, pausar y
+  reanudar la tratan igual, y «lo que dure el medio» espera a que
+  termine.
+  El editor ocupa la pantalla:
+  pistas     hasta 8, con nombre, volumen, paneo, M (silencio) y
+             S (solo). Se mezclan en vivo, aunque esté sonando.
+  clips      la columna de la izquierda tiene los audios (▶ escucha).
+             Arrástralo a una pista: cae donde lo sueltas. Debajo de
+             la última pista, en «+ pista nueva», crea otra pista.
+             También se pueden soltar archivos de audio del
+             escritorio: entran a las fuentes y a la pista, uno tras
+             otro. Doble clic en un audio lo pone en el cursor.
+             Arrastrar el clip lo mueve, también a otra pista; las
+             orillas lo recortan; los cuadritos de arriba son sus
+             fundidos de entrada y salida. Abajo están sus datos
+             exactos: inicio, entrada, salida, volumen, fundidos y
+             curva (potencia constante o lineal).
+  cruces     encima dos clips en la misma pista: el encime se vuelve
+             un fundido cruzado de potencia constante, sin hueco.
+  bucle      arrastra sobre la regla para marcar la región (o usa el
+             botón «bucle»). La escena suena desde el principio,
+             repite la región y, con devamp, termina la vuelta en
+             curso y sigue hasta el final, como en QLab.
+  devamp     botón en el editor, en el inspector del cue y en la
+             ventana Audio; o un cue «devamp» (+ acción › devamp, o
+             el menú de la fila), que actúa sobre las escenas de su
+             cue elegido, las que agregues o todas.
+  ajustar    pega los clips a las orillas de los otros, al cursor y
+             al bucle.
+  Teclas en el editor: barra espaciadora escucha o detiene desde el
+  cursor (no dispara GO), D es devamp, Supr borra el clip, Esc cierra.
+  Ctrl + rueda: zoom; «toda» encuadra la escena.
+  Se programa con el reloj de audio un poco antes de que suene: no
+  depende de los cuadros ni de que la ventana esté visible. Los audios
+  que usa siguen en las fuentes: si quitas uno, sus clips quedan en
+  silencio.
+
+ESCENA DE VIDEO
+  Un patch de nodos, como una escena de Isadora. En Escenas › «+ ▾»
+  (o «+ escena ▾» en la cue list; empieza con un ejemplo: una forma
+  que una onda mueve de lado a lado). Todo su aspecto vive en nodos:
+  transformación, máscara, color, desenfoque, fusión y capas.
+  Nodos por categoría (con el nombre de Isadora o TouchDesigner al lado).
+  El panel de la derecha y el menú «+ agregar nodo» los ordenan de la
+  fuente a la salida; los botones de categoría y «buscar» los filtran.
+  entradas      Movie Player · reproductor (video de las fuentes, con
+                velocidad, bucle y volumen de su sonido; salidas «fin» y
+                «vuelta»), Picture Player · imagen, Video In · cámara o
+                captura en vivo, y Timeline · línea de tiempo (abajo).
+  generadores   Artefacto (todos
+                sus controles: números con cable, listas, sí/no,
+                color y botones «disparar», como un GLSL), Shapes ·
+                forma (rectángulo, elipse, polígono, estrella) y Text
+                Draw · texto (títulos, créditos, subtítulos), Color ·
+                sólido, Ramp · degradado (lineal o radial) y Noise ·
+                ruido (animado, en la GPU).
+  transformar   Transformación (escala, ancho, alto, x, y, giro,
+                espejo y fuera del cuadro: vacío, repetir o espejo),
+                Máscara (rectángulo o elipse, por lado, suavidad,
+                redondeo, invertir, fija al cuadro), Crop · recorte
+                (por lado; «llenar el cuadro» agranda lo que queda),
+                Tile · mosaico (columnas, filas, espejo, escalonar),
+                Zoomer · escala, Panner · posición, Spinner · rotación.
+  efectos       Aspecto (estilos: neutro, blanco y negro, saturado,
+                oscuro, lavado, cálido, frío, película HP5, película
+                color; cantidad, grano y viñeta), Gaussian Blur (dos
+                pasadas), HSL Adjust, Contrast Adjust, Blur rápido,
+                Levels · niveles, Invert · invertir, Threshold ·
+                umbral, Posterize · posterizar, Pixelate · pixelar,
+                Edge · bordes, Luma Key · clave de luz, Chroma Key ·
+                clave de color y Displace · desplazar (mueve los
+                pixeles según otra cadena en su entrada «mapa»: un
+                Noise, una Rampa, un video). Los efectos de imagen (Gaussian, Levels
+                y los que siguen) trabajan sobre la fuente en el orden
+                de la cadena, antes de colocarla; cada uno es una
+                pasada de GPU (el Gaussian, dos).
+  componer      Compositor (hasta cuatro entradas, cada una con su
+                fusión, opacidad y ajuste; su salida se puede seguir
+                transformando, como el Effect Mixer de Isadora) y
+                Video Mixer · cruce (dos entradas y «mezcla»).
+  salida        Projector · proyector: intensidad, fusión, capa (orden
+                de abajo hacia arriba), ajuste y una entrada de máscara
+                que toma la luz de lo que le llegue (una Forma o un
+                Texto), tal cual en el cuadro.
+  control       Wave Generator · onda (seno, triángulo, sierra,
+                cuadrada, azar), Mouse Watcher · ratón (sobre la salida
+                o sobre el programa), Control · valor, Random · azar,
+                Smoother · suavizar, Limit-Scale Value · escalar,
+                Calculator · calculadora, Envelope · rampa (con salida
+                «fin»; de un
+                valor a otro desde que la escena entra al aire),
+                Trigger · disparo, Toggle · alternar, Counter ·
+                contador, Keyboard Watcher · teclado y Sound Level
+                Watcher · nivel de audio.
+  Disparos de escena y de tiempo:
+    Enter Scene Trigger · al entrar: dispara cuando la escena entra al
+      aire (también si un cue la vuelve a disparar) o se abre en el
+      editor.
+    Leave Scene Trigger · al salir: dispara cuando la escena empieza a
+      salir, mientras dura su fundido (un corte sin fundido no le da
+      tiempo).
+    Sequential Trigger · en secuencia: cada disparo sale por la
+      siguiente salida (1 a 4); vuelve o se detiene al final.
+    Trigger Delay · retardo: repite cada disparo después de un tiempo.
+    Pulse Generator · pulsos: disparos a un tempo (BPM) o cada tantos
+      segundos desde que entra la escena; «cuenta» los numera.
+    GO / Ir a cue: hace GO, dispara un cue por su número o lo pone en
+      espera. Por cable solo actúa con la escena al aire; el botón
+      siempre. «protección» evita dos disparos seguidos.
+
+  Disparos (como en Isadora): Trigger, Toggle y Counter tienen botones
+  en el nodo y entradas que disparan cuando su valor sube a 0.5 o más.
+  Trigger da un pulso (1 por un instante); cablealo a Counter, Toggle o
+  a cualquier número.
+  Keyboard Watcher: «valor» es 1 mientras la tecla está abajo y «pulso»
+  dispara con cada presión. Clic en «tecla» y presiona la que quieras
+  (Supr: cualquiera). Funciona también en el modo museo, para un botón
+  USB que escribe una letra. Evita las teclas de aQ: espacio, Esc,
+  flechas, F, E, S y A.
+  Sound Level Watcher (audio reactividad): escucha la salida general,
+  una escena de audio al aire o el micrófono o línea (pide permiso;
+  necesita HTTPS o localhost; no suena por la salida). Da «nivel» (de
+  −60 dB a 0 dB como 0–1), «graves», «medios», «agudos» y «pulso»
+  cuando el nivel cruza el umbral. «suavidad» sube rápido y baja
+  lento, como un medidor. El sonido propio de los videos no pasa por
+  aquí: para que la imagen reaccione a él, ponlo en una escena de
+  audio.
+  Números: se jalan como en Isadora. Arrastra arriba o abajo sobre el
+  número, o usa la rueda con el puntero encima (Mayús: fino; Alt:
+  ×10). Un clic sin mover deja escribirlo; ↑ ↓ lo cambian mientras
+  está activo; Enter o Esc terminan.
+  Se arrastra de una salida (cuadrito a la derecha) a una entrada (a la
+  izquierda); un clic en un cable lo quita. Las entradas con cable
+  muestran su valor en vivo. Cuadrito blanco: video; cable punteado:
+  número. Supr borra el nodo seleccionado; Esc cierra el editor.
+  Si dos escenas usan el mismo artefacto, manda la que entró al
+  último (con una transición corta de sus valores).
+  Eficiencia: los actores no dibujan, solo suman sus valores; cada
+  Proyector es una sola pasada de GPU, el Gaussian Blur son dos y el
+  Compositor una por entrada. Forma y Texto se redibujan solo
+  cuando cambian. La escena trabaja solo mientras está al aire o en
+  el editor; la vista previa del editor se lee 10 veces por segundo.
+
+TIMELINE · LÍNEA DE TIEMPO (nodo de entradas)
+  Una línea de tiempo de videos y fotos dentro de una escena de video.
+  Su salida es una imagen: puede seguir a Aspecto, Máscara o Displace y
+  llegar a un Proyector. «editar la línea de tiempo» abre su editor
+  (el mismo de las escenas de audio, con capas en lugar de pistas):
+    capas         la de arriba se ve encima; cada una con opacidad,
+                  fusión, M (ocultar) y S (solo).
+    clips         videos y fotos desde la columna o el escritorio. Las
+                  orillas recortan la entrada y la salida; los
+                  cuadritos de arriba son los fundidos; dos clips
+                  encimados en la misma capa hacen un fundido cruzado.
+                  Cada clip tiene opacidad y, si es video, volumen de
+                  su sonido. Una foto dura 5 s al soltarla; estírala.
+    bucle         arrastrando sobre la regla; devamp (D) sale de él.
+    marcas        «+ marca» o M ponen una marca en el cursor.
+  El nodo se maneja con disparos (botones o entradas que suben):
+    play, pausa, detener (al inicio, en negro), preparar (al inicio,
+    en pausa, con el primer cuadro listo) e ir a marca (nº).
+  «al entrar la escena»: play, preparado (espera play) o en negro
+  (espera preparar). «al terminar»: detener, sostener el último cuadro
+  o volver a empezar. Con cable en «tiempo», esa entrada manda la
+  posición (para recorrerla con una Rampa).
+  Salidas: fin, marca (y nº marca), tiempo y en curso.
+  Los cues de acción pausar, reanudar y devamp también le llegan.
+  Sincronía: la línea tiene su reloj y los videos lo siguen; se
+  corrigen con la velocidad (±3 %) y saltan solo si se desfasan más de
+  0.25 s. Cada clip se prepara 3 s antes de entrar y suelta su
+  decodificador al alejarse. Precisión esperada: ±1 cuadro (no es un
+  editor de cuadro exacto). Varios videos a la vez solo se juntan en
+  los cruces y en las capas encimadas.
+
+AJUSTES DE SALIDA
+  Actúan sobre toda la salida, después de mezclar los elementos y dentro del
+  corner pin.
+  color          tono, saturación, luminancia y contraste
+  desenfoque     desenfoque general
+  recorte        por lado; «enmascarar» deja negro lo recortado,
+                 «estirar al recorte» lleva la zona a toda la superficie
+  bordes         difuminado de cada orilla, con su curva, para suavizar
+                 el borde o empalmar dos proyectores
+  película HP5   grano en los medios tonos (a 24 cuadros por segundo),
+                 curva de contraste, negros levantados, altas comprimidas
+                 y viñeta; de color a blanco y negro con un deslizador, y
+                 su propia saturación para la versión en color. Atajos:
+                 HP5 blanco y negro, color con grano, color desaturado.
+  Corner pin, recorte y bordes son DEL ESCENARIO: se ajustan una vez por
+  sala y los cues no los cambian. Desde v035 el color, el desenfoque y
+  la película no son de la salida: van en los nodos Aspecto, Gaussian
+  Blur y HSL de cada escena.
+
+SHOWS ANTERIORES A v035
+  Al abrirlos se convierten solos (y lo dice el registro):
+  - un cue con fuentes sueltas pasa a una escena de video (cada fuente
+    con su Transformación, Máscara, color y Proyector con intensidad,
+    fusión, ajuste y capa) y, si tenía audio, a una escena de audio
+    en un cue aparte, encadenado con «con el siguiente»;
+  - los valores de los artefactos pasan a su nodo; la velocidad, el
+    bucle y el sonido del video, a su Movie Player;
+  - las acciones (fundido, detener, pausar, devamp) apuntan a las
+    escenas que trajeron esas fuentes;
+  - el look del show y la salida de cada cue pasan a nodos de color
+    (HSL, Contraste, Gaussian Blur, Aspecto) dentro de sus escenas.
+  Se recomienda revisar el show y guardarlo de nuevo.
+
+TECLAS
+  La barra espaciadora es GO aunque tengas un deslizador o un botón
+  seleccionado; solo los campos de texto la usan para escribir.
+  espacio   GO
+  Esc       STOP (fundido a negro y silencio en 1.2 s)
+  F         show
+  E · S     edición · salida (desde show, mantener 2 s)
+  ↑ ↓       mover la selección
+  supr      borrar el cue seleccionado
+
+COLOCAR
+  El mapeo general (corner pin, recorte y bordes) vive en el escenario,
+  en Salida. Encima, cada cue coloca sus elementos:
+  1. En edición, dispara el cue (GO) y elige el elemento en el
+     inspector.
+  2. «colocar» en la barra del Programa: la imagen pasa grande al
+     centro, en lugar de la cue list.
+  3. Arrastra dentro del recuadro para moverlo; las esquinas escalan
+     (Mayús: ancho y alto libres); los lados cambian solo el ancho o
+     el alto; el punto de arriba rota (Mayús: de 15 en 15°); los
+     rombos mueven los bordes de la máscara (línea punteada).
+  Lo que mueves queda guardado en ese cue y se interpola al pasar de
+  un cue a otro. Los valores exactos están en Transformación y Máscara.
+  «fuera del cuadro»: vacío, repetir (mosaico) o espejo, para texturas
+  que llenan la salida aunque el elemento sea chico.
+
+CLIP DE VIDEO
+  Al elegir un video en un cue aparece la ventana «Clip» con un cuadro
+  de vista previa y la barra del tramo.
+  entrada · salida   el tramo que se reproduce. Clic en la barra para
+                     mirar un cuadro.
+  al llegar a la salida
+    bucle            repite solo el tramo.
+    se congela       se queda en el último cuadro hasta otro cue.
+    sale a negro     se funde (con su tiempo) y deja la escena.
+  el bucle regresa
+    corte            como siempre.
+    por negro        baja a negro antes de la salida y sube desde la
+                     entrada; usa un solo decodificador.
+    cruzado          el final se funde con el principio: una segunda
+                     copia del video entra antes de que acabe la primera
+                     (dos decodificadores solo durante el fundido).
+    fundido del bucle   cuánto dura ese cruce (hasta la mitad del tramo).
+  velocidad          de 0.1× a 2× (sin reversa); se interpola entre cues.
+  audio del video    «con la imagen»: el sonido del video sale con su
+                     volumen y sigue a la capa (entra, sale, se funde y
+                     cruza en el bucle). «silenciado»: solo imagen. Para
+                     editarlo aparte, en las fuentes «separar audio» lo
+                     vuelve un audio propio (en clips largos puede
+                     desfasarse unos cuadros de la imagen). Si el
+                     navegador no deja sonar el audio, abre aQ con el
+                     lanzador o haz clic una vez en la ventana de salida.
+                     El audio del video no pasa por el medidor de Audio.
+  Fotos: una imagen dura lo que dure su cue. Un carrusel se arma con
+  cues de una foto cada uno, con su duración, «al terminar sigue» y
+  transición de fundido; el último con «al terminar ir a» el primero.
+  ver entrada · probar tramo · ver final   miran el clip sin tocar la
+  salida. Si el video está al aire no se mueve: usa «editar en vivo».
+  Para un corte de bucle limpio, exporta con un cuadro clave por
+  segundo (H.264 o WebM).
+
+MÁSCARA
+  Cada elemento visual (video, foto, cámara, artefacto) tiene su
+  ventana «Máscara»: rectángulo o elipse, recorte izquierda, derecha,
+  arriba y abajo, difuminado del borde, esquinas redondeadas, invertir
+  (hueco en vez de ventana) y «fija al cuadro» (no sigue al elemento al
+  moverlo). Atajos: bordes suaves, viñeta, franja, columna, círculo e
+  iris cerrado. Como la transformación, se guarda por cue y se
+  interpola: de «iris cerrado» a «círculo» en 4 s abre un iris.
+
+ESTABILIDAD
+  Preparar y liberar (como el «arm» de QLab): el cue en espera y el
+  siguiente dejan sus videos cargados y en su punto de entrada. Un video
+  que no se usa durante un minuto suelta su decodificador y se vuelve a
+  preparar solo cuando un cue lo necesita.
+  Revisión de medios: al importar, aQ avisa (con «!» en las fuentes)
+  de lo que puede fallar en función: video más grande que la salida,
+  bitrate alto, pocos cuadros clave (saltos lentos), formatos que el
+  navegador no decodifica (H.265, ProRes) y audios de más de 10 minutos.
+  Las fotos más grandes que 2 veces la salida se reducen para la
+  proyección; el original se guarda en el show.
+  Vigilancia: si un video al aire deja de avanzar, se reanuda y, si
+  sigue detenido, se recarga en el mismo punto. Cada artefacto en uso
+  contesta cada 10 s; si no contesta en 6 s, se recarga y recupera sus
+  valores. Todo queda en el registro.
+  Si un video se ralentiza o se detiene: reproduce el problema, abre
+  el registro y descárgalo. Mientras corre video, cada minuto anota
+  cuadros por segundo, el costo del cuadro del motor, cuadros de video
+  decodificados y perdidos, y memoria. La línea «tarjeta gráfica» al
+  inicio dice si Chrome usa la GPU: si dice SwiftShader o «Basic
+  Render», la aceleración por hardware está apagada (chrome://settings
+  › Sistema › «Usar aceleración de gráficos cuando esté disponible»).
+  Salida › «copia del programa en la interfaz» se puede apagar para
+  aligerar la máquina: el Programa de la interfaz deja de mostrar la
+  imagen mientras la salida está abierta.
+  Registro: clic en el indicador del pie (cuadros por segundo · memoria
+  · dónde corre el motor) o Salida › Revisión de recursos › registro.
+  Anota GO, STOP, errores, recuperaciones, cuadros bajos y un estado
+  cada 5 minutos. Se descarga como .txt.
+  Prueba larga (Salida › Revisión de recursos): el show corre solo en
+  bucle 10 min, 1, 4 u 8 horas, y al final muestra cuadros por segundo
+  mínimos y promedio, memoria al inicio, al final y pico, y
+  recuperaciones. Hazla en la máquina de función, con la salida abierta.
+
+SEGUNDO PLANO Y LANZADOR
+  Chrome pausa, para ahorrar energía, las ventanas que quedan detrás
+  de otro programa o minimizadas: al abrir el explorador de archivos
+  encima, la imagen se puede detener. aQ tiene dos defensas:
+  - «seguir en segundo plano» (Salida, encendido por omisión): el
+    motor sigue latiendo con un reloj propio aunque aQ quede oculto.
+    Es como quitar la palomita «pausar en segundo plano» de
+    TouchDesigner. Aun así, el navegador puede pausar los videos.
+  - El lanzador (Salida › lanzador › para Windows o para Mac): un
+    archivo que abre aQ en su propia ventana de Chrome con las pausas
+    de segundo plano apagadas, sin extensiones y con el audio
+    permitido. Es la forma recomendada para la función y para editar
+    en vivo. Usa un perfil de Chrome aparte: la primera vez vuelve a
+    aceptar los permisos (ventanas, cámara) y abre el show.
+    En Windows: guarda abrir-aurigaq.bat en el escritorio y ábrelo con
+    doble clic. En Mac: la primera vez, en Terminal,
+    chmod +x ~/Downloads/abrir-aurigaq.command; después, doble clic.
+    Cierra antes otras ventanas de Chrome que usen ese mismo perfil.
+  El registro anota cuándo aQ pasa a segundo plano y si se abrió con
+  el lanzador.
+
+MODO MUSEO
+  Para piezas que corren solas (Salida › Modo museo):
+  1. Instalar: «instalar este show en el navegador» copia el show y
+     sus medios adentro de Chrome. Así abre sin pedir permisos, sin
+     internet y después de reiniciar. Hazlo con aQ abierto desde el
+     lanzador (cada perfil de Chrome guarda lo suyo) y vuelve a
+     instalarlo si cambias el show.
+  2. Horario (opcional): días, hora de apertura y de cierre, cue que
+     se dispara al abrir (si no, el primero) y al cerrar (si no, STOP:
+     negro y silencio). Sin horario, el show arranca en cuanto abre.
+  3. Seguridad: sin cursor, sin menú y el teclado bloqueado. «GO con
+     tecla o botón USB» deja que espacio, Enter, flecha derecha o
+     avance de página disparen GO (un botón USB que actúa como tecla).
+     Para salir: Ctrl + Mayús + Alt + Q (y la clave, si pusiste una).
+     El reinicio diario recarga aQ limpio a la hora indicada.
+  4. Arranque: «lanzador museo» (Windows o Mac) abre aQ a pantalla
+     completa en la pantalla elegida para la salida, sin barras ni
+     avisos, y arranca el show instalado. Para que abra al encender:
+     Windows, Win + R › shell:startup y copia ahí el .bat; Mac,
+     Configuración del Sistema › General › Ítems de inicio.
+  «probar el modo museo aquí» lo muestra sin reiniciar nada.
+  El show se arma con la cue list de siempre: cada cue con su duración
+  y «al terminar sigue»; el último con «ir a» el primero, o «al
+  terminar uno al azar» entre los cues marcados «entra al azar».
+  Todo queda en el registro: apertura, cierre, saltos, reinicios.
+
+MONITOREO REMOTO
+  Con aQ monitor (una carpeta PHP aparte para tu hosting, con su propio
+  LEEME) ves desde cualquier lugar tus piezas instaladas: si están
+  vivas, qué cue corre, cómo rinden, su registro y una miniatura de la
+  salida. Desde ahí les mandas GO, STOP, un cue, recargar, abrir o
+  cerrar, y el volumen general. Te avisa por Telegram y correo si una
+  deja de reportarse.
+  En la computadora de la pieza: Salida › Monitoreo remoto, pega la
+  dirección, la pieza y la clave que te da el panel, y enciende
+  «reportar al panel». Reporta cada 30 s (cada 5 s si tienes el panel
+  abierto) y manda una miniatura cada 5 minutos. Estos datos son de
+  esa computadora, no del show. Sin internet la pieza sigue igual, y
+  el registro pendiente se manda cuando vuelve la conexión.
+
+AGENTE LOCAL
+  aQ agente es un programa aparte (Windows, Mac y Linux, con su propio
+  LEEME) para lo que una página web no puede hacer: abrir aQ al
+  arrancar la computadora, reabrirlo si se cierra o se cuelga,
+  reiniciar o apagar la computadora y encender o apagar proyectores
+  por PJLink, por orden del panel o con el horario del modo museo.
+  En Salida › Monitoreo remoto: «descargar agente.json con estos datos»
+  prepara su configuración (con un token que comparten aQ y el agente)
+  y «latido al agente» le avisa cada 10 s que aQ sigue vivo. Apágalo
+  antes de cerrar aQ a propósito: si no, el agente lo reabre.
+  Con el agente instalado, quita el lanzador del museo del inicio de
+  la computadora: ahora lo abre el agente.
+
+CARPETA DEL SHOW
+  «carpeta» (arriba, Chrome o Edge): guarda el show (.aurigaq) y una
+  subcarpeta «medios» con copias de fotos, videos y audios. Copiar esa
+  carpeta a otra máquina y «abrir una carpeta…» trae todo. Con un show
+  abierto desde carpeta, «guardar» (Ctrl/Cmd+S) guarda ahí; solo copia
+  los medios nuevos o cambiados. Es la forma recomendada de llevar el
+  show a la función; «guardar con medios» queda para shows pequeños.
+
+SIN INTERNET
+  Abierto desde tu host con HTTPS, aQ se guarda en el navegador y abre
+  aunque la sala no tenga internet. «instalar aQ» (abajo, cuando
+  aparece) lo instala como aplicación con su propia ventana.
+  Se guardan aQ y los artefactos que están dentro de su carpeta
+  (aurigaq/artefactos/…). Para que un artefacto funcione sin internet,
+  ponlo dentro de esa carpeta, por ejemplo aurigaq/artefactos/dithhh/,
+  y ábrelo una vez con conexión.
+
+SALIDA EN OTRA PANTALLA
+  La interfaz se queda en tu monitor y la imagen sale en una ventana
+  aparte (salida.html) en la pantalla del proyector, con el escritorio
+  extendido. La interfaz nunca se pone a pantalla completa.
+  1. En modo Salida, «detectar pantallas» y acepta el permiso
+     «administrar ventanas» (Chrome o Edge, una sola vez).
+  2. Elige la pantalla del proyector. Si su resolución es distinta,
+     «usar … como resolución de salida» la iguala.
+  3. «abrir salida» (o el botón «salida» de arriba): la ventana se
+     coloca en esa pantalla y se pone a pantalla completa allá.
+  Si el navegador no puede colocarla, la ventana se abre suelta:
+  arrástrala al proyector y presiona F o haz doble clic en ella. La
+  pantalla completa ocurre en la pantalla donde está esa ventana.
+  En la ventana de salida: F pantalla completa, espacio GO, Esc (fuera
+  de pantalla completa) STOP. El estado de la salida se ve en el
+  panel: en qué pantalla está y si está a pantalla completa.
+  Si recargas la interfaz, la salida se reconecta sola.
+  El motor vive en la ventana de salida: ahí corren el lienzo, los
+  videos, las cámaras y los artefactos. Al abrirla, el motor se muda a
+  ella (los artefactos se recargan allá una vez y recuperan sus
+  valores); al cerrarla, regresa a la interfaz. Por eso la interfaz
+  puede quedar al fondo o minimizada sin que la imagen se congele. El
+  programa de la interfaz muestra una copia ligera de la salida.
+  Si la ventana de salida queda tapada o minimizada, la interfaz releva
+  al motor para que nada se detenga, pero la salida debe estar visible.
+  La pantalla no se apaga mientras la salida esté abierta.
+  «revisar la imagen a pantalla completa aquí» es solo para mirar la
+  imagen en tu monitor; Esc vuelve a la interfaz.
+  Permite las ventanas emergentes para tu sitio si el navegador las
+  bloquea.
+  Resoluciones: 1280 × 720 (ligera) o 1920 × 1080. Son solo dos a
+  propósito: la memoria de video se reserva una vez y todo se prueba
+  con esos dos casos. Un proyector de 1920 × 1200 se ajusta con el
+  mapeo general.
+
+SHOW: GUARDAR Y ABRIR
+  «guardar» (Ctrl/Cmd+S) escribe un archivo .aurigaq con los cues, las
+  fuentes (rutas de artefactos y nombres de archivos), la salida, el
+  mapeo, los presets y el MIDI. En Chrome y Edge eliges dónde guardarlo
+  y los siguientes «guardar» lo actualizan; en otros navegadores se
+  descarga.
+  «guardar con medios» mete además las fotos, videos y audios dentro
+  del mismo archivo, para llevar el show a otra máquina o compartirlo
+  en un taller (hasta unos 400 MB).
+  «abrir» (Ctrl/Cmd+O) carga un .aurigaq. Si el archivo no trae los
+  medios, las fuentes los marcan como faltantes: al volver a cargarlos
+  con el mismo nombre se reconectan solos.
+  Copia de seguridad: aurigaQ guarda solo, cada 5 s, el último estado
+  en este navegador (sin medios). Al abrirlo de nuevo aparece arriba
+  «recuperar el show de las hh:mm» durante tres minutos.
+
+PREPARAR LOS VIDEOS
+  aQ reproduce lo que reproduce Chrome. Lo más estable es MP4 en H.264
+  (lo decodifica la tarjeta gráfica), al tamaño de la salida, con un
+  cuadro clave por segundo y hasta 15 Mbps. Con ffmpeg, para 1080p a
+  30 cuadros por segundo:
+  ffmpeg -i entrada.mov -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30" -c:v libx264 -profile:v high -pix_fmt yuv420p -preset slow -crf 18 -maxrate 15M -bufsize 30M -g 30 -keyint_min 30 -sc_threshold 0 -movflags +faststart -c:a aac -b:a 192k salida.mp4
+  Para 720p cambia 1920:1080 por 1280:720. En HandBrake: H.264, perfil
+  High, RF 18, tasa de cuadros constante y, en opciones avanzadas,
+  keyint=30. Para transparencia: WebM VP9 con canal alfa.
+  ProRes, HAP, DXV y Notch LC no se reproducen en el navegador.
+
+HISTORIAL
+  v038  nodo Timeline · línea de tiempo (videos y fotos por capas con
+        recortes, fundidos, cruces, bucle, devamp y marcas; preparar,
+        play, pausa, detener e ir a marca por disparos; salidas fin,
+        marca, tiempo y en curso). Disparos nuevos: Enter Scene, Leave
+        Scene, Sequential, Trigger Delay, Pulse Generator y GO / Ir a
+        cue. Movie Player con «fin» y «vuelta»; Envelope con «fin».
+        Un cue que vuelve a disparar una escena de video la reinicia.
+        Pausar, reanudar y devamp actúan sobre escenas de video.
+  v037  nodos Crop, Tile, Displace (con entrada «mapa»), Trigger,
+        Toggle, Counter (botones y disparo por flanco), Keyboard
+        Watcher (también en el modo museo) y Sound Level Watcher
+        (audio reactivo: salida general, escena de audio o
+        micrófono/línea; nivel, graves, medios, agudos y pulso).
+  v036  modo Ajustes (teclas A): interfaz, esta computadora,
+        revisión, modo museo y monitoreo salen de Salida y del pie.
+        Línea de tiempo: soltar un audio debajo de las pistas crea
+        una pista nueva; se aceptan archivos del escritorio. Nodos:
+        números que se jalan (arrastre, rueda, ↑ ↓); categorías
+        entradas, generadores, transformar, efectos, componer,
+        control y salida con filtro y búsqueda; nodos nuevos Color,
+        Ramp, Noise, Levels, Invert, Threshold, Posterize, Pixelate,
+        Edge, Luma Key, Chroma Key, Video Mixer, Random, Smoother,
+        Limit-Scale Value, Calculator y Envelope.
+  v035  cada cue es una escena o una acción. Soltar una fuente crea
+        su escena y su cue; panel Escenas (E1, E2…) bajo Fuentes;
+        escenas por referencia y «derivar»; inspector con Transición,
+        Comportamiento y Escena. Nodos nuevos: Transformación,
+        Máscara, Aspecto (estilos y película), Gaussian Blur y
+        Compositor; Artefacto con todos sus controles; Movie Player
+        con volumen (su sonido sigue a su capa). Sin Look del show
+        ni salida en el cue. Show de ejemplo nuevo. Conversión
+        automática de shows anteriores.
+  v034  etapas 0 y 1 de la ruta de escenas y acciones: la cue list
+        marca en verde lo que sigue al aire (con «↻ en bucle»,
+        «❚❚ pausa» y «saliendo»); buscador de nodos con doble clic
+        en el fondo o Tab; panel de fuentes y nodos para arrastrar
+        al patch; columna de audios en la línea de tiempo (▶ para
+        escuchar, arrastrar a una pista). Las escenas de video
+        reusan su memoria de video (antes se acumulaba) y la barra
+        de estado muestra pasadas de GPU y memoria de video.
+  v033  punto de vista en los nodos (●, o V): la salida de un nodo
+        de fondo en el editor, como el viewer de TouchDesigner; en un
+        Proyector, la escena completa. «Programa» pasa a «Monitor».
+        Anterior y siguiente junto al GO, en la pestaña ⇅. Carriles
+        ocultos (se asignan solos; «mostrar carriles» en Proyecto).
+        Sin ventana Escenas: viven en la cue list. Barra de estado
+        con ciclo, videos, cámaras, artefactos, audios y escenas. En
+        «al aire», ▸ muestra lo que usa una escena por dentro.
+  v032  contraste «suave» (por omisión): barras de título oscuras,
+        líneas grises y la selección en verde muy oscuro; «alto»
+        regresa al blanco sobre negro. Abajo, junto a fondo y
+        cabeceras. Arreglo: un nodo ya no se vuelve una barra
+        horizontal al seleccionarlo.
+  v031  interfaz por niveles: secuencia (cues), escenas (nodos y
+        línea de tiempo) y fuentes (carpetas, búsqueda, filtro, lista
+        o cuadrícula, como Pixera). Inspector marcado en cue,
+        contenido y elemento; «+ escena ▾» y «+ acción ▾» en la cue
+        list; archivo en un menú; «en escena» pasa a «al aire».
+        Acento verde de la identidad (#76c411) en GO, modo, lo que
+        está al aire y el progreso.
+  v030  fase 6: escena de video con nodos al estilo de Isadora:
+        fuentes, transformación, color, proyectores con máscara,
+        onda, ratón y control; parámetros de los artefactos como
+        entradas. Cada proyector es una pasada de GPU.
+  v029  fase 5: escena de audio. Línea de tiempo con hasta 8 pistas,
+        clips con recorte, volumen y fundidos, fundido cruzado
+        automático, bucle de una región y devamp (botón y cue). Va a
+        los cues como un audio.
+  v028  fase 4 (estructura): archivo .aurigaq v4 con proyecto,
+        escenarios y show; varios escenarios por show, exportar e
+        importar un escenario (.aqescenario); Salida en tres ventanas;
+        abre los shows v3. El panel muestra el escenario activo.
+  v027  fase 3c (agente local): latido a aQ agente, agente.json con
+        los datos del panel, lanzadores con permiso de red local.
+        aQ agente 0.1: reabre aQ, reinicia o apaga la computadora,
+        proyectores por PJLink; el panel muestra al agente y le manda
+        órdenes.
+  v026  fase 3b (monitoreo remoto): aQ reporta a aQ monitor (PHP en tu
+        hosting) estado, registro y miniatura, y obedece sus órdenes;
+        alertas por Telegram y correo; arranques no limpios marcados.
+  v025  fase 3a (modo museo, autonomía local): show instalado en el
+        navegador, vista sin interfaz, teclado bloqueado con salida por
+        combinación y clave, horario por días, reinicio diario,
+        lanzador del museo y «al terminar uno al azar».
+  v024  fase 2 (reproductor de video): velocidad; el bucle regresa por
+        corte, por negro o cruzado; audio del video con la imagen o
+        silenciado, y «separar audio» a las fuentes.
+  v023  fase 1 (lógica del show): carriles; cues de acción (disparar,
+        ir a, esperar, fundido y detener de un cue entero); duración
+        de cada cue y «después» (con el siguiente, al terminar sigue,
+        ir a o repite); tiempo total. El ejemplo «Se cierra» muestra
+        su viñeta (película por cue) y la imagen de ejemplo es en color.
+  v022  segundo plano: si aQ queda detrás de otro programa o minimizado,
+        el motor sigue con un reloj propio («seguir en segundo plano»,
+        en Salida). Lanzador para Windows y Mac que abre Chrome sin las
+        pausas de segundo plano.
+  v021  rendimiento del video: la textura de cada video se reserva una
+        vez y solo se reescribe; los videos viven dentro del documento
+        del motor; la copia del programa en la interfaz va a 15 cuadros
+        por segundo y se puede apagar; un video de un motor anterior se
+        apaga de verdad al reconectar. Diagnóstico en el registro cada
+        minuto mientras corre video. El aviso de la ventana de salida
+        es una línea discreta que se va sola.
+  v020  fase 0 (cimientos), segunda parte: preparar y liberar medios;
+        revisión de medios al importar; fotos reducidas; show en una
+        carpeta con sus medios; app instalable que funciona sin
+        internet; registro; vigilancia de videos y artefactos; medidor
+        de recursos; prueba larga.
+  v019  fase 0 (cimientos), primera parte: el motor vive en la ventana
+        de salida y no depende de la interfaz; la interfaz se dibuja
+        unas 15 veces por segundo y nada cuando está oculta; relevo si
+        la salida deja de latir; resolución fija 720p o 1080p; la
+        pantalla no se apaga con la salida abierta.
+  v018  «colocar»: el programa grande al centro y el elemento elegido
+        se mueve, escala, deforma, rota y enmascara con el ratón (como
+        Zoomer/Projector de Isadora o Transform de TouchDesigner).
+        Ancho y alto por separado; fuera del cuadro: vacío, repetir o
+        espejo.
+  v017  clip de video con entrada y salida, bucle del tramo, y al llegar
+        a la salida: se congela o sale a negro con fundido. Máscara por
+        elemento: rectángulo o elipse, recorte de cada lado, bordes
+        difuminados, esquinas redondeadas, invertir y fija al cuadro;
+        se interpola entre cues.
+  v016  tono de fondo y de cabeceras en grises; GO a la izquierda;
+        STOP solo con Esc, sin botón; modos abajo; «función» se llama
+        show; salir de show pide mantener 2 s.
+  v015  cues pausar y reanudar; «disparar desde» para ensayar a mitad de
+        un cue; punto de inicio del video.
+  v014  película HP5 en la salida, en color o blanco y negro, por cue;
+        cues de fundido (subir, bajar, fade out) y detener, como en QLab.
+  v013  biblioteca como caja de medios por categorías con índice;
+        captura de pantalla como entrada en vivo; guardar y abrir archivos
+        .aurigaq, con o sin medios; copia de seguridad en el navegador;
+        plantilla de artefacto.
+  v012  rotación en la transformación de cada elemento (ventanas
+        Transformación y Aspecto separadas); audio: «en bucle» o «una vez»
+        y el recorte se respeta aunque el audio venga sonando de otro cue;
+        la barra espaciadora es GO aunque haya un control enfocado.
+  v011  seleccionar un cue solo lo deja en espera; GO lo dispara. ● marca
+        el cue en escena y «editar en vivo» solo actúa sobre él. La salida
+        por cue es solo color y desenfoque; recorte y bordes son del lugar.
+        Títulos largos recortados en una línea; nombres de cámara cortos.
+  v010  edición en la fila de la cue list (doble clic y clic derecho);
+        número, nombre y notas debajo de GO; ver al editar; la salida del
+        cue pasa a la ventana Transición y al modo Salida; cámara: agregar
+        y sumar al cue.
+  v009  salida en otra pantalla: ventana propia que se coloca y se pone
+        a pantalla completa en el proyector; la interfaz se queda en el
+        monitor.
+  v008  cámaras web como fuentes; aspecto y encuadre por elemento con
+        presets propios, interpolados entre cues.
+  v007  miniaturas fijas; arrastrar cues para ordenarlos; fundido cruzado
+        entre dos escenas completas; audio con potencia constante;
+        artefactos y videos en reposo fuera de escena; precarga del cue en
+        espera; resolución de artefactos; revisión de recursos.
+  v006  cada cue es una composición de elementos; los elementos que
+        siguen entre cues se transforman en vez de reiniciarse; nuevo
+        cue, nuevo desde la escena, ventana En escena. Los shows de la
+        v005 no se pueden importar.
+  v005  modos función, edición y salida; ajustes de salida que se
+        agregan según se necesitan.
+  v004  audio: cues de audio con fade in, volumen, paneo, recorte, fade
+        final, bucle y cruce; fundidos y parar sobre audio; ventana Audio.
+  v003  composición de la salida: color, desenfoque, recorte y bordes
+        difuminados, interpolables desde los cues. MIDI solo para el
+        transporte de cues: GO, detener todo, anterior y siguiente.
+  v002  rediseño: estilo de la colección, cue list al centro, cues por
+        tipo (medio, fundido, parar, memo), continuar y seguir,
+        biblioteca, inspector, cues activos, SDK 0.1 (start, stop, hud,
+        status).
+  v001  prototipo: capas, transiciones, presets, corner pin, MIDI.

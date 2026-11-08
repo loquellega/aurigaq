@@ -1,0 +1,89 @@
+<!doctype html>
+<!--
+  Plantilla de artefacto para aurigaQ (protocolo artefacto/v0, SDK 0.1).
+  Copia esta carpeta, cambia el dibujo y los parámetros, y cárgala en la biblioteca.
+  Parte de la colección Alchemy of Meaning (Alquimia del Significado).
+  © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
+  Software libre bajo licencia GPL-3.0-or-later.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plantilla · artefacto</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#fff;font:11px Arial,Helvetica,sans-serif}
+  canvas{display:block;width:100%;height:100%}
+  /* interfaz propia: aparece cuando la app se abre sola o cuando aurigaQ pide verla («interfaz propia») */
+  #ui{position:fixed;left:8px;top:8px;border:1px solid #fff;background:rgba(0,0,0,.85);padding:8px;display:grid;gap:6px;width:220px}
+  body.sinui #ui{display:none}
+  label{display:flex;justify-content:space-between;gap:8px;color:#8a8a8a}
+  input[type=range]{width:120px}
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<div id="ui">
+  <b>Plantilla</b>
+  <label>tamaño <input id="uTam" type="range" min="0.05" max="1" step="0.01"></label>
+  <label>velocidad <input id="uVel" type="range" min="0" max="3" step="0.01"></label>
+</div>
+<!-- SDK: en una app de un solo archivo, pega aquí el contenido de sdk/artefacto-sdk.js -->
+<script src="../sdk/artefacto-sdk.js"></script>
+<script>
+(()=>{
+  'use strict';
+  const c=document.getElementById('c'),x=c.getContext('2d');
+  // 1. estado de la pieza: un valor por parámetro
+  const v={tam:.35,vel:1,forma:'círculo',color:'#ffffff',invertir:false};
+  let corriendo=true,destello=0,t=0;
+
+  // 2. registro: el host lee estos parámetros y arma los controles solo
+  const art=Artefacto.register({
+    id:'plantilla',name:'Plantilla',version:'0.1',author:'Héctor Cruz Juárez',
+    canvas:c,
+    params:[
+      {id:'tam',label:'Tamaño',type:'float',min:.05,max:1,default:v.tam},
+      {id:'vel',label:'Velocidad',type:'float',min:0,max:3,default:v.vel},
+      {id:'forma',label:'Forma',type:'enum',options:['círculo','cuadro','línea'],default:v.forma},
+      {id:'color',label:'Color',type:'color',default:v.color},
+      {id:'invertir',label:'Invertir',type:'bool',default:v.invertir},
+      {id:'destello',label:'Destello',type:'trigger'}
+    ],
+    onParam(id,valor){v[id]=valor;sincronizarUI();},     // el host cambió un valor (cue, preset, control)
+    onTrigger(id){if(id==='destello')destello=1;},       // el host disparó un evento
+    onStart(){corriendo=true;},                         // entra a escena: arrancar audio, cámaras, procesos
+    onStop(){corriendo=false;},                         // sale de escena: liberar recursos
+    onHud(visible){document.body.classList.toggle('sinui',!visible);}
+  });
+  // dentro de aurigaQ la interfaz propia empieza oculta
+  if(art.inHost)document.body.classList.add('sinui');
+
+  // 3. la interfaz propia avisa al host de sus cambios con art.set
+  const uTam=document.getElementById('uTam'),uVel=document.getElementById('uVel');
+  function sincronizarUI(){uTam.value=v.tam;uVel.value=v.vel;}
+  uTam.oninput=()=>{v.tam=+uTam.value;art.set('tam',v.tam);};
+  uVel.oninput=()=>{v.vel=+uVel.value;art.set('vel',v.vel);};
+  sincronizarUI();
+
+  // 4. dibujo: siempre en el canvas registrado (es lo único que ve el host)
+  let ant=performance.now();
+  function cuadro(ahora){
+    requestAnimationFrame(cuadro);
+    const dt=Math.min(.05,(ahora-ant)/1000);ant=ahora;
+    if(!corriendo)return;
+    t+=dt*v.vel;destello*=Math.pow(.05,dt);
+    const W=c.width,H=c.height,r=Math.min(W,H)*v.tam*.5*(1+destello*.3);
+    x.fillStyle=v.invertir?'#fff':'#000';x.fillRect(0,0,W,H);
+    x.save();x.translate(W/2+Math.cos(t)*W*.25,H/2+Math.sin(t*1.3)*H*.2);x.rotate(t*.5);
+    x.fillStyle=x.strokeStyle=v.invertir?'#000':v.color;x.lineWidth=Math.max(2,r*.08);
+    if(v.forma==='círculo'){x.beginPath();x.arc(0,0,r,0,Math.PI*2);x.fill();}
+    else if(v.forma==='cuadro')x.fillRect(-r,-r,r*2,r*2);
+    else{x.beginPath();x.moveTo(-r*1.5,0);x.lineTo(r*1.5,0);x.stroke();}
+    x.restore();
+  }
+  requestAnimationFrame(cuadro);
+})();
+</script>
+</body>
+</html>

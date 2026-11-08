@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Señal perdida · artefacto de prueba</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script src="../sdk/artefacto-sdk.js"></script>
+<script>
+  // Artefacto de prueba: televisión en blanco y negro sin sintonía, con signos que aparecen y se pierden.
+  const c = document.getElementById('c');
+  const x = c.getContext('2d');
+  const low = document.createElement('canvas');
+  low.width = 320; low.height = 180;
+  const lx = low.getContext('2d');
+  const img = lx.createImageData(320, 180);
+  const v = { ruido: 0.6, barrido: 0.35, contraste: 1.1, deriva: 0.25, invertir: false };
+  let glifo = 0, forma = 0, fase = 0;
+
+  Artefacto.register({
+    id: 'senal', name: 'Señal perdida', version: '0.1', author: 'demo',
+    canvas: c,
+    params: [
+      { id: 'ruido', label: 'Ruido', type: 'float', min: 0, max: 1, default: 0.6 },
+      { id: 'barrido', label: 'Barrido', type: 'float', min: 0, max: 1, default: 0.35 },
+      { id: 'contraste', label: 'Contraste', type: 'float', min: 0.2, max: 2, default: 1.1 },
+      { id: 'deriva', label: 'Deriva', type: 'float', min: 0, max: 1, default: 0.25 },
+      { id: 'invertir', label: 'Invertir', type: 'bool', default: false },
+      { id: 'glifo', label: 'Glifo', type: 'trigger' }
+    ],
+    onParam(id, value) { v[id] = value; },
+    onTrigger(id) { if (id === 'glifo') { glifo = 1; forma = (Math.random() * 4) | 0; } }
+  });
+
+  function signo(ctx, k, a) {
+    ctx.save();
+    ctx.translate(160, 90);
+    ctx.strokeStyle = 'rgba(255,255,255,' + a + ')';
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    if (k === 0) { ctx.arc(0, 0, 48, 0, 6.283); ctx.moveTo(0, -70); ctx.lineTo(0, 70); }
+    else if (k === 1) { ctx.moveTo(-50, 50); ctx.lineTo(0, -55); ctx.lineTo(50, 50); ctx.moveTo(-30, 10); ctx.lineTo(30, 10); }
+    else if (k === 2) { for (let i = 0; i < 8; i++) { const t = i * Math.PI / 4; ctx.moveTo(0, 0); ctx.lineTo(Math.cos(t) * 60, Math.sin(t) * 60); } }
+    else { ctx.moveTo(-45, -45); ctx.lineTo(45, 45); ctx.moveTo(45, -45); ctx.lineTo(-45, 45); ctx.rect(-28, -28, 56, 56); }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  let last = performance.now();
+  function draw(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    fase += dt * (0.2 + v.barrido * 2.5);
+    const d = img.data;
+    const barra = (fase % 1) * 180;
+    for (let y = 0; y < 180; y++) {
+      const enBarra = Math.abs(y - barra) < 14 ? 0.35 : 0;
+      const linea = 0.08 * Math.sin(y * 0.9 + fase * 40);
+      for (let px = 0; px < 320; px++) {
+        let g = 0.5 + (Math.random() - 0.5) * v.ruido * 1.6 + linea + enBarra;
+        g = (g - 0.5) * v.contraste + 0.5;
+        if (v.invertir) g = 1 - g;
+        const b = Math.max(0, Math.min(255, g * 255)) | 0;
+        const i = (y * 320 + px) * 4;
+        d[i] = d[i + 1] = d[i + 2] = b; d[i + 3] = 255;
+      }
+    }
+    lx.putImageData(img, 0, 0);
+    if (glifo > 0.01) { signo(lx, forma, glifo.toFixed(2)); glifo *= Math.pow(0.15, dt); }
+    x.imageSmoothingEnabled = false;
+    const W = c.width, H = c.height;
+    const bandas = 12;
+    for (let b = 0; b < bandas; b++) {
+      const sy = (b / bandas) * 180, sh = 180 / bandas;
+      const off = (Math.random() < v.deriva * 0.25 ? (Math.random() - 0.5) * v.deriva * 80 : 0);
+      x.drawImage(low, 0, sy, 320, sh, off * (W / 320), (b / bandas) * H, W, H / bandas + 1);
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+</script>
+</body>
+</html>

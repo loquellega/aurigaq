@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Órbitas · artefacto de prueba</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #07080a; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script src="../sdk/artefacto-sdk.js"></script>
+<script>
+  // Artefacto de prueba: partículas en órbita. Demuestra float, int, enum, bool y trigger.
+  const c = document.getElementById('c');
+  const x = c.getContext('2d');
+  const PALETAS = {
+    'ámbar':  ['#f2b04a', '#e9783a', '#fbe3b0', '#b8502b'],
+    'marea':  ['#5fc6c0', '#2f7fa8', '#d6f1ec', '#1e4f74'],
+    'ceniza': ['#e8e4dc', '#9a968f', '#ffffff', '#5c5a56']
+  };
+  const v = { velocidad: 1, cantidad: 260, dispersion: 0.5, paleta: 'ámbar', estela: 0.86, espejo: false };
+  let parts = [];
+  let pulso = 0;
+
+  function seed(n) {
+    parts = [];
+    for (let i = 0; i < n; i++) {
+      parts.push({
+        r: Math.pow(Math.random(), 0.7),
+        a: Math.random() * Math.PI * 2,
+        w: (0.2 + Math.random()) * (Math.random() < 0.5 ? -1 : 1),
+        s: 0.6 + Math.random() * 2.2,
+        k: (Math.random() * 4) | 0
+      });
+    }
+  }
+  seed(v.cantidad);
+
+  Artefacto.register({
+    id: 'orbitas', name: 'Órbitas', version: '0.1', author: 'demo',
+    canvas: c,
+    params: [
+      { id: 'velocidad', label: 'Velocidad', type: 'float', min: 0, max: 3, default: 1 },
+      { id: 'cantidad', label: 'Cantidad', type: 'int', min: 20, max: 900, default: 260 },
+      { id: 'dispersion', label: 'Dispersión', type: 'float', min: 0, max: 1, default: 0.5 },
+      { id: 'estela', label: 'Estela', type: 'float', min: 0, max: 0.98, default: 0.86 },
+      { id: 'paleta', label: 'Paleta', type: 'enum', options: Object.keys(PALETAS), default: 'ámbar' },
+      { id: 'espejo', label: 'Espejo', type: 'bool', default: false },
+      { id: 'pulso', label: 'Pulso', type: 'trigger' }
+    ],
+    onParam(id, value) {
+      v[id] = value;
+      if (id === 'cantidad') seed(Math.round(value));
+    },
+    onTrigger(id) { if (id === 'pulso') pulso = 1; }
+  });
+
+  let last = performance.now();
+  function draw(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const W = c.width, H = c.height, cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.46;
+    x.globalCompositeOperation = 'source-over';
+    x.fillStyle = 'rgba(7,8,10,' + (1 - v.estela).toFixed(3) + ')';
+    x.fillRect(0, 0, W, H);
+    x.globalCompositeOperation = 'lighter';
+    const pal = PALETAS[v.paleta] || PALETAS['ámbar'];
+    pulso *= Math.pow(0.04, dt);
+    for (const p of parts) {
+      p.a += p.w * v.velocidad * dt * (0.4 + (1 - p.r));
+      const rr = R * (0.15 + p.r * (0.25 + v.dispersion * 0.75)) * (1 + pulso * 0.35 * (1 - p.r));
+      const px = cx + Math.cos(p.a) * rr;
+      const py = cy + Math.sin(p.a * (1 + v.dispersion * 0.08)) * rr * 0.62;
+      x.fillStyle = pal[p.k];
+      x.globalAlpha = 0.55 + pulso * 0.45;
+      x.beginPath(); x.arc(px, py, p.s * (1 + pulso), 0, 6.283); x.fill();
+      if (v.espejo) { x.beginPath(); x.arc(W - px, py, p.s * (1 + pulso), 0, 6.283); x.fill(); }
+    }
+    x.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+</script>
+</body>
+</html>

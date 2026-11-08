@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  aurigaQ · ventana de salida
+  Aquí vive el motor mientras la salida está abierta: el lienzo, los videos, las cámaras y los artefactos.
+  La interfaz solo le manda órdenes, así la imagen no depende de que la ventana de control esté a la vista.
+  Parte de la colección Alchemy of Meaning (Alquimia del Significado).
+  © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
+  Software libre bajo licencia GPL-3.0-or-later.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aurigaQ · salida</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#fff;font:400 13px/1.45 Arial,Helvetica,sans-serif}
+  #escena{position:fixed;inset:0;background:#000}
+  #escena canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+  body.lleno{cursor:none}
+  /* artefactos: viven aquí, diminutos y casi transparentes en una esquina, para que el navegador no los congele */
+  #bahia{position:fixed;left:0;bottom:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:1}
+  #bahia iframe{position:absolute;left:0;bottom:0;border:0;transform-origin:0 100%;opacity:.02;background:#000}
+  #bahia iframe.abierto{opacity:1;pointer-events:auto;position:fixed;z-index:62;border:1px solid #fff}
+  #velo{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:61;display:flex;justify-content:flex-end;align-items:flex-start;padding:10px;font:400 11px Arial,Helvetica,sans-serif}
+  #velo .b{background:#000;color:#fff;border:1px solid #fff;padding:4px 9px;cursor:pointer;font:inherit}
+  /* aviso discreto: una línea abajo que se va sola; la ventana puede quedarse como monitor sin pantalla completa */
+  #aviso{position:fixed;left:10px;bottom:8px;z-index:5;display:flex;gap:8px;align-items:center;font:400 11px Arial,Helvetica,sans-serif;color:#fff;
+    background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.5);padding:3px 4px 3px 8px;transition:opacity .6s;opacity:0;pointer-events:none}
+  #aviso.ver{opacity:1;pointer-events:auto}
+  #aviso button{background:none;color:#fff;border:1px solid rgba(255,255,255,.6);font:inherit;padding:1px 6px;cursor:pointer}
+  #aviso button:hover{background:#fff;color:#000}
+  body.lleno #aviso{display:none}
+  #sin{position:fixed;left:12px;bottom:10px;font-size:11px;color:#8a8a8a;display:none;z-index:6}
+  body.sin #sin{display:block}
+</style>
+</head>
+<body>
+<div id="escena"></div>
+<div id="bahia" aria-hidden="true"></div>
+<div id="aviso" role="status"><span>salida de aurigaQ · F o doble clic: pantalla completa</span><button type="button" id="full">pantalla completa</button><button type="button" id="calla" title="no volver a mostrar este aviso en esta ventana">×</button></div>
+<div id="sin">sin conexión con la interfaz: vuelve a abrir la salida desde aurigaQ</div>
+<script>
+(()=>{
+  'use strict';
+  // los artefactos solo aceptan mensajes de su ventana padre: la interfaz les escribe a través de esta función
+  window.__aqSend=(target,msg)=>target.postMessage(msg,'*');
+  const host=()=>{try{return window.opener&&!window.opener.closed&&window.opener.__aurigaq;}catch(e){return null;}};
+  let fallo=false;
+  function conectar(){
+    const h=host();let ok=false;
+    // lo que haya dejado un motor anterior se limpia antes de recibir el nuevo
+    document.getElementById('escena').replaceChildren();document.getElementById('bahia').replaceChildren();
+    // videos de un motor anterior: se apagan de verdad para que no sigan decodificando
+    const m=document.getElementById('medios');if(m){m.querySelectorAll('video').forEach(v=>{try{v.pause();v.srcObject=null;v.removeAttribute('src');v.load();}catch(e){}});m.remove();}
+    try{ok=!!(h&&h.attach(window));}catch(e){ok=false;}
+    if(h&&!ok)fallo=true;
+    document.body.classList.toggle('sin',!ok);
+  }
+  conectar();
+  // si la interfaz se recarga, la salida vuelve a recibir el motor sola
+  setInterval(()=>{if(fallo)return;const h=host();let tiene=false;try{tiene=!!(h&&h.isAttached&&h.isAttached(window));}catch(e){}
+    if(h&&!tiene)conectar();else document.body.classList.toggle('sin',!h);},1000);
+  // al cerrar o recargar esta ventana, el motor regresa a la interfaz
+  addEventListener('pagehide',()=>{const h=host();try{h&&h.detach(window);}catch(e){}});
+  function lleno(){document.body.classList.toggle('lleno',!!document.fullscreenElement);}
+  document.addEventListener('fullscreenchange',lleno);
+  function alternar(){
+    if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+    else document.documentElement.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+  }
+  document.getElementById('full').onclick=alternar;
+  document.addEventListener('dblclick',e=>{if(!e.target.closest('#velo,#bahia'))alternar();});
+  addEventListener('keydown',e=>{
+    if(e.target.closest&&e.target.closest('#bahia'))return;
+    if(e.key==='f'||e.key==='F')alternar();
+    // la barra espaciadora y Esc se pasan a la interfaz para no perder el GO ni el STOP
+    else if(e.code==='Space'||(e.key==='Escape'&&!document.fullscreenElement)){const h=host();try{h&&h.key(e.code==='Space'?' ':'Escape');}catch(err){}if(e.code==='Space')e.preventDefault();}
+  });
+  // el aviso aparece al abrir y al mover el ratón, y se va solo a los 4 s
+  const av=document.getElementById('aviso');let avT=0,callado=false;
+  try{callado=sessionStorage.getItem('aq.aviso')==='0';}catch(e){}
+  function aviso(){if(callado||document.fullscreenElement)return;av.classList.add('ver');clearTimeout(avT);avT=setTimeout(()=>av.classList.remove('ver'),4000);}
+  document.getElementById('calla').onclick=()=>{callado=true;av.classList.remove('ver');try{sessionStorage.setItem('aq.aviso','0');}catch(e){}};
+  addEventListener('mousemove',aviso);
+  aviso();
+  lleno();
+})();
+</script>
+</body>
+</html>
