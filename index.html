@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v040
+  aurigaQ v041
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -328,6 +328,11 @@ input[type=file]{display:none}
 #escEd .eeHeads{width:210px;flex:none;border-right:1px solid var(--ln);padding:0 8px}
 #escEd .eeHead{display:flex;flex-direction:column;justify-content:center;gap:0;border-bottom:1px solid var(--ln)}
 #escEd .eeHead .dr .lb{width:26px}
+#escEd .eeHead.v{gap:2px}
+#escEd .eeHead.v .dr .lb{width:50px}
+#escEd .eeHead.v input[type=text],#escEd .eeHead.v select{height:20px;padding:0 4px}
+#escEd .eeHead.v input[type=range]{height:14px}
+#escEd .eeHead.v .b.s{min-height:20px}
 #escEd .eeRight{flex:1;min-width:0;display:flex;flex-direction:column}
 #escEd .eeCvw{min-width:0;flex:1}
 #escEd canvas{display:block;touch-action:none}
@@ -418,18 +423,58 @@ input[type=file]{display:none}
 .mtile.cur{border-color:var(--ac)}
 .lyr .mx i{background:var(--ac)}
 
-/* contraste suave: para sesiones largas de edición. Barras de título oscuras, líneas grises, texto gris claro
-   y la fila seleccionada en un verde muy oscuro con su borde verde. GO, modo y lo que está al aire siguen en verde. */
-html[data-contraste="suave"]{--fg:#d2d2d2;--ln2:#4d4d4d;--tb:#232323;--tbfg:#b8b8b8;--sel:#1b2512;--selfg:#f2f2f2;--g1:#7d7d7d;--ln:rgba(255,255,255,.1);--hv:rgba(255,255,255,.05);--hv2:rgba(255,255,255,.09)}
-html[data-contraste="suave"][data-barra="1"]{--tb:#2c2c2c}html[data-contraste="suave"][data-barra="2"]{--tb:#363636}html[data-contraste="suave"][data-barra="3"]{--tb:#1a1a1a}
-html[data-contraste="suave"] .win{border-color:#333}
-html[data-contraste="suave"] .ql tbody tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--ac)}
-html[data-contraste="suave"] .mrow.cur{box-shadow:inset 2px 0 0 var(--ac)}
-html[data-contraste="suave"] .li.cur{box-shadow:inset 2px 0 0 var(--ac)}
-html[data-contraste="suave"] .b[aria-pressed="true"]{border-color:#7a7a7a}
-html[data-contraste="suave"] .ql tbody tr.cur td .dim,html[data-contraste="suave"] .mrow.cur .ix,html[data-contraste="suave"] .mrow.cur .inf,html[data-contraste="suave"] .li.cur small{color:#9a9a9a}
-html[data-contraste="suave"] #go:not(:hover){background:#0d1408}
-html[data-contraste="suave"] .tb .b,html[data-contraste="suave"] .win .tb .quitar{border-color:#5a5a5a}
+/* contraste suave = estilo Alchemy of Meaning UI v1 (colección): ventanas en panel gris casi negro, barras
+   de título grises, líneas finas, radios de 3 px. El verde es solo para lo vivo o principal (GO, activo,
+   al aire, progreso); los segmentados activos van en tinta clara. «alto» conserva el blanco sobre negro. */
+html[data-contraste="suave"]{
+  --a-bg:#0a0a0a;--a-panel:#101010;--a-bar:#1c1c1c;--a-line:#2e2e2e;--a-line-ctl:#3a3a3a;--a-hover:#1f1f1f;
+  --a-ink:#d2d2d2;--a-ink-strong:#fff;--a-ink-dim:#8f8f8f;
+  --a-accent:#76c411;--a-accent-ink:#a5e04a;--a-accent-bg:#1b2512;
+  --a-radius:3px;--a-radius-sm:2px;--a-gap:8px;--a-pad:10px;--a-bar-h:24px;--a-t:120ms;
+  --a-font:Inter,Arial,Helvetica,sans-serif;
+  --bg:var(--a-bg);--fg:var(--a-ink);--ln2:var(--a-line-ctl);--tb:var(--a-bar);--tbfg:var(--a-ink);--sel:var(--a-accent-bg);--selfg:var(--a-accent-ink);
+  --g1:var(--a-ink-dim);--ln:var(--a-line);--hv:rgba(255,255,255,.035);--hv2:var(--a-hover);--ink:var(--a-ink-strong)}
+html[data-contraste="suave"][data-barra="1"]{--tb:#262626}html[data-contraste="suave"][data-barra="2"]{--tb:#303030}html[data-contraste="suave"][data-barra="3"]{--tb:#141414}
+html[data-contraste="suave"] body{font-family:var(--a-font);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+html[data-contraste="suave"] :focus-visible{outline:2px solid var(--a-accent);outline-offset:2px}
+/* ventanas: dentro de cada una, el fondo de controles y encabezados es el del panel */
+html[data-contraste="suave"] .win{--bg:var(--a-panel);background:var(--a-panel);border-color:var(--a-line);border-radius:var(--a-radius);overflow:hidden}
+html[data-contraste="suave"] .tb{height:var(--a-bar-h);padding:0 var(--a-pad);border-bottom:1px solid var(--a-line);font-size:11px;font-weight:500;letter-spacing:.02em}
+html[data-contraste="suave"] .tb button{color:var(--a-ink-dim);transition:color var(--a-t)}
+html[data-contraste="suave"] .tb button:hover{color:var(--a-ink-strong)}
+html[data-contraste="suave"] .tb small{color:var(--a-ink-dim);opacity:1}
+html[data-contraste="suave"] .tb .b,html[data-contraste="suave"] .win .tb .quitar{border-color:var(--a-line-ctl);color:var(--a-ink)}
+html[data-contraste="suave"] .wb{padding:var(--a-pad)}
+/* botones: activo = fondo y borde de acento; segmentados: activo en tinta clara */
+html[data-contraste="suave"] .b{border-color:var(--a-line-ctl);border-radius:var(--a-radius);transition:background var(--a-t),border-color var(--a-t),color var(--a-t)}
+html[data-contraste="suave"] .b:hover{background:var(--a-hover);border-color:#555}
+html[data-contraste="suave"] .b[aria-pressed="true"]{background:var(--a-accent-bg);border-color:var(--a-accent);color:var(--a-accent-ink)}
+html[data-contraste="suave"] .seg .b{border-radius:0}
+html[data-contraste="suave"] .seg .b[aria-pressed="true"],html[data-contraste="suave"] .ndCats .b[aria-pressed="true"],html[data-contraste="suave"] #contraste .b[aria-pressed="true"],html[data-contraste="suave"] .guiaTabs .b[aria-pressed="true"]{background:var(--a-ink);border-color:var(--a-ink);color:#0a0a0a;font-weight:500}
+/* campos */
+html[data-contraste="suave"] select,html[data-contraste="suave"] input[type=text],html[data-contraste="suave"] input[type=number],html[data-contraste="suave"] textarea{border-color:var(--a-line-ctl);border-radius:var(--a-radius-sm)}
+html[data-contraste="suave"] input:focus,html[data-contraste="suave"] select:focus,html[data-contraste="suave"] textarea:focus{border-color:#666}
+/* deslizador: línea de 2 px con relleno de acento (--fill lo pone rangosFill) y tirador de 6 × 14 */
+html[data-contraste="suave"] input[type=range]::-webkit-slider-runnable-track{height:2px;border-radius:1px;background:linear-gradient(to right,var(--a-accent) var(--fill,0%),var(--a-line-ctl) var(--fill,0%))}
+html[data-contraste="suave"] input[type=range]::-webkit-slider-thumb{width:6px;height:14px;margin-top:-6px;border-radius:1px;background:var(--a-ink-strong)}
+html[data-contraste="suave"] input[type=range]::-moz-range-track{height:2px;background:var(--a-line-ctl)}
+html[data-contraste="suave"] input[type=range]::-moz-range-progress{height:2px;background:var(--a-accent)}
+html[data-contraste="suave"] input[type=range]::-moz-range-thumb{width:6px;height:14px;border-radius:1px;background:var(--a-ink-strong)}
+/* barras de scroll discretas */
+html[data-contraste="suave"] .wb,html[data-contraste="suave"] .col,html[data-contraste="suave"] #B{scrollbar-color:var(--a-line-ctl) transparent}
+html[data-contraste="suave"] *{scrollbar-width:thin;scrollbar-color:var(--a-line-ctl) transparent}
+/* filas seleccionadas: verde muy oscuro con su marca de acento */
+html[data-contraste="suave"] .ql tbody tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--a-accent)}
+html[data-contraste="suave"] .mrow.cur{box-shadow:inset 2px 0 0 var(--a-accent)}
+html[data-contraste="suave"] .li.cur{box-shadow:inset 2px 0 0 var(--a-accent)}
+html[data-contraste="suave"] .ql tbody tr.cur td .dim,html[data-contraste="suave"] .mrow.cur .ix,html[data-contraste="suave"] .mrow.cur .inf,html[data-contraste="suave"] .li.cur small{color:#a0a0a0}
+html[data-contraste="suave"] .cmenu{background:var(--a-panel);border-color:var(--a-line-ctl);border-radius:var(--a-radius)}
+/* GO: lo principal */
+html[data-contraste="suave"] #go{border-radius:var(--a-radius)}
+html[data-contraste="suave"] .guiaCmd{color:var(--a-ink-strong)}
+/* editores de tiempo y de nodos: medidas fijas por fila, se quedan en 11 px */
+html[data-contraste="suave"] #escEd,html[data-contraste="suave"] #nodEd .nd{font-size:11px}
+html[data-contraste="suave"] #go:not(:hover){background:var(--a-accent-bg);color:var(--a-accent-ink)}
 #contraste{display:flex;gap:0;align-items:center}
 #contraste .lbl{margin-right:6px}
 #contraste .b{min-height:20px;padding:0 8px;font-size:10px;margin-right:-1px}
@@ -511,7 +556,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v040</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v041</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -525,7 +570,7 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v040</h2>
+    <h2 id="aboutTitle">aurigaQ v041</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
     <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
@@ -1065,7 +1110,7 @@ const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function artRes(){return {width:Math.round(S.out.w*S.artScale/2)*2,height:Math.round(S.out.h*S.artScale/2)*2};}
 function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest){sendArt(a,{type:'resize',...artRes()});sendArt(a,{type:'welcome',...hostInfo()});}}
 // SDK 0.2: lo que el artefacto sabe del host al conectarse (y cuando cambia la resolución)
-function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v040',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
+function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v041',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
 function sendArt(a,msg){try{const m=Object.assign({ns:NS},msg),w=a.iframe.contentWindow;if(EW!==window&&EW.__aqSend)EW.__aqSend(w,m);else w.postMessage(m,'*');}catch(e){}}
 function startArt(a){if(a&&a.kind==='art'&&!a.running){sendArt(a,{type:'start'});a.running=true;}}
 function stopArt(a){if(a&&a.kind==='art'&&a.running){sendArt(a,{type:'stop'});a.running=false;}}
@@ -3612,7 +3657,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v040',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v041',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -3743,6 +3788,12 @@ async function probarCodecs(){
     el('p',{class:'note'},'«Tarjeta gráfica: sí» quiere decir que el navegador decodifica ese formato de forma eficiente, casi siempre por hardware. Es una respuesta del navegador, no una medición: confírmalo con la prueba larga.'));
   return caja;
 }
+// estilo de la colección: el deslizador pinta su recorrido con --fill (0 a 100 %)
+function rangoFill(r){const mn=+r.min||0,mx=r.max===''?100:+r.max,v=+r.value;r.style.setProperty('--fill',(mx>mn?(v-mn)/(mx-mn)*100:0)+'%');}
+function rangosFill(raiz){(raiz||document).querySelectorAll('input[type=range]').forEach(rangoFill);}
+document.addEventListener('input',e=>{if(e.target&&e.target.type==='range')rangoFill(e.target);},true);
+setInterval(()=>{if(!document.hidden&&document.documentElement.dataset.contraste==='suave')rangosFill();},400);  // valores que cambian por código (niveles, cables)
+try{new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches&&n.matches('input[type=range]'))rangoFill(n);else if(n.querySelector&&n.querySelector('input[type=range]'))rangosFill(n);}}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
 function buildSalida(){
   const L=$('#L');
   const {w,body}=win('Proyecto','wSal',L);w.dataset.modes='salida';
@@ -3761,7 +3812,7 @@ function buildSalida(){
   ib.append(el('div',{class:'fila'},el('span',{class:'lbl'},'contraste'),$('#contraste')),
     el('div',{class:'fila'},el('span',{class:'lbl'},'fondo'),$('#fondo')),
     el('div',{class:'fila'},el('span',{class:'lbl'},'cabeceras'),$('#barra')),
-    el('p',{class:'note'},'«Suave» para editar muchas horas; «alto» (blanco sobre negro) para la función. Se recuerdan en este navegador.'));
+    el('p',{class:'note'},'«Suave» (el estilo de la colección Alchemy of Meaning) para editar muchas horas; «alto» (blanco sobre negro) para la función. Se recuerdan en este navegador.'));
   const {body:qb}=win('Esta computadora','wEquipo',AJ);
   qb.append(el('p',{class:'note'},'No viajan con el show: son de este navegador.'),
     tgBtn('seguir en segundo plano',()=>S.fondo,v=>{S.fondo=v;try{localStorage.setItem('aurigaq.fondoPlano',v?'1':'0');}catch(e){}revisarFondo();},{title:'encendido, el motor sigue aunque aQ quede detrás de otro programa'}),
@@ -4097,7 +4148,7 @@ function eeHeads(){
   const e=EE.e,H=EE.heads;H.replaceChildren(el('div',{style:'height:'+EE_R+'px;display:flex;align-items:center;color:var(--g1)'},EE.vid?'capas (la de arriba, encima)':'pistas'));
   if(EE.vid){e.pistas.forEach((p,i)=>{
     const mk=(l,k,t)=>tgBtn(l,()=>!!p[k],v=>{p[k]=v;eeDraw();},{title:t,style:'min-height:18px;padding:0 6px'});
-    H.append(el('div',{class:'eeHead',style:'height:'+EE_TH+'px'},
+    H.append(el('div',{class:'eeHead v',style:'height:'+EE_TH+'px'},
       el('div',{class:'dr'},el('input',{type:'text',value:p.nombre,'aria-label':'nombre de la capa '+(i+1),style:'flex:1;width:0',onchange:ev=>{p.nombre=ev.target.value;}}),
         mk('M','mute','ocultar esta capa'),mk('S','solo','solo esta capa'),
         e.pistas.length>1?btn('×',()=>{const n=e.clips.filter(k=>k.pista===p.id).length;if(n&&!confirm('¿Quitar «'+p.nombre+'» y sus '+n+' clips?'))return;e.clips=e.clips.filter(k=>k.pista!==p.id);e.pistas.splice(i,1);EE.sel=null;eeCambio();eeHeads();eeSize();},'b s',{'aria-label':'quitar capa',style:'min-height:18px;padding:0 6px'}):null),
@@ -5549,7 +5600,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v040'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v041'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)

@@ -1,4 +1,4 @@
-aurigaQ v040
+aurigaQ v041
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -829,6 +829,11 @@ ARTEFACTOS Y SDK
   repositorio (sdk/README.md).
 
 HISTORIAL
+  v041  Interfaz con el estilo de la colección Alchemy of Meaning (UI v1)
+        en el contraste «suave»: paneles casi negros, barras de título
+        grises, líneas finas, radios de 3 px, deslizadores con recorrido
+        verde y el verde solo para lo vivo. «Alto» sigue en blanco sobre
+        negro. Cabeceras de capa del Timeline sin encimarse.
   v040  Guía de medios (Ajustes y botón «guía» en Fuentes) con prueba de
         códecs de esta computadora. SDK 0.2: salidas de datos y eventos
         del artefacto en el nodo, onHost. Revisión de recursos también

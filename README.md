@@ -1,6 +1,6 @@
 # aurigaQ (aQ)
 
-**Versión 0.40 (v040)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
+**Versión 0.41 (v041)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
 
 ![La cue list en función: el cue en espera arriba, el Monitor y lo que está al aire a la derecha](docs/capturas/01-funcion.png)
 
@@ -17,6 +17,7 @@ La herramienta responde a esas preguntas con decisiones de diseño:
 - **El paso de un cue a otro es la esencia de la función.** Todo se organiza en una lista que avanza con GO, con su transición y su comportamiento.
 - **Estabilidad antes que efectos.** Límites puestos a propósito: 720p o 1080p, audio estéreo, recursos que solo trabajan cuando están al aire o en espera. Está pensada para la laptop de un taller.
 - **Abierta y portátil.** Un solo archivo HTML, sin instalación ni internet, con licencia libre.
+- **Una sola gramática visual.** La interfaz sigue el estilo de la colección Alchemy of Meaning: fondo negro, ventanas pequeñas con líneas finas y el verde reservado para lo que está vivo (GO, lo que está al aire, el progreso). El modo de contraste «alto» devuelve el blanco sobre negro para la función.
 
 ### Qué hace
 
@@ -62,7 +63,7 @@ La herramienta responde a esas preguntas con decisiones de diseño:
 
 Antes de publicar una versión, `python3 herramientas/armar-docs.py` regenera la guía de medios, la guía de artefactos y la copia del SDK en `sdk/versiones/`.
 
-Las capturas se tomaron en un navegador sin GPU, así que los cuadros por segundo que muestran no reflejan el rendimiento real.
+Las capturas (v041, contraste «suave») se tomaron en un navegador sin GPU, así que los cuadros por segundo que muestran no reflejan el rendimiento real.
 
 ## English
 
