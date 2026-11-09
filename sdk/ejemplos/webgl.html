@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Ejemplo del SDK 0.2 para aurigaQ: un artefacto en WebGL2.
+  Muestra tres cosas que importan al adaptar piezas con shaders o Three.js:
+    1. el contexto se crea con preserveDrawingBuffer: true, para que el host pueda leer el cuadro;
+    2. onResize ajusta el viewport a la resolución que pide el host;
+    3. onHost(info) baja la calidad (menos iteraciones) cuando el equipo es «ligero».
+  Parte de la colección Alchemy of Meaning (Alquimia del Significado).
+  © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx · GPL-3.0-or-later
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marea · ejemplo WebGL</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script src="../artefacto-sdk.js"></script>
+<script>
+(()=>{
+  'use strict';
+  const c=document.getElementById('c');
+  const gl=c.getContext('webgl2',{preserveDrawingBuffer:true,antialias:false});
+  const v={escala:3,velocidad:.3,contraste:1.2,tinta:'#ffffff'};
+  let pasos=6,corriendo=true,t=0;
+
+  const vs='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0,1);}';
+  const fs=`#version 300 es
+precision highp float;in vec2 uv;out vec4 o;
+uniform float uT,uEsc,uCon;uniform vec2 uR;uniform vec3 uTinta;uniform int uPasos;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
+void main(){vec2 p=(uv-.5)*vec2(uR.x/uR.y,1.)*uEsc;float a=0.,w=.5;
+  for(int i=0;i<12;i++){if(i>=uPasos)break;a+=w*n(p+vec2(uT*.7,uT*.3));p*=2.03;w*=.5;}
+  a=clamp((a-.5)*uCon+.5,0.,1.);o=vec4(uTinta*a,1);}`;
+  function sh(tipo,src){const s=gl.createShader(tipo);gl.shaderSource(s,src);gl.compileShader(s);return s;}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const lp=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(lp);gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0);
+  const U=k=>gl.getUniformLocation(pr,k),uT=U('uT'),uEsc=U('uEsc'),uCon=U('uCon'),uR=U('uR'),uTinta=U('uTinta'),uPasos=U('uPasos');
+  const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255);
+
+  const art=Artefacto.register({
+    id:'marea',name:'Marea',version:'0.1',author:'Héctor Cruz Juárez',canvas:c,
+    params:[
+      {id:'escala',label:'Escala',type:'float',min:.5,max:10,default:v.escala},
+      {id:'velocidad',label:'Velocidad',type:'float',min:0,max:2,default:v.velocidad},
+      {id:'contraste',label:'Contraste',type:'float',min:.2,max:4,default:v.contraste},
+      {id:'tinta',label:'Tinta',type:'color',default:v.tinta}
+    ],
+    data:[{id:'brillo',label:'brillo medio',type:'float',min:0,max:1}],
+    onParam(id,valor){v[id]=valor;},
+    onResize(w,h){gl.viewport(0,0,w,h);},
+    onHost(info){pasos=info.calidad==='ligera'?4:8;},  // equipo justo: menos octavas de ruido
+    onStart(){corriendo=true;},
+    onStop(){corriendo=false;}
+  });
+
+  const px=new Uint8Array(4);let cuenta=0,ant=performance.now();
+  function cuadro(ahora){
+    requestAnimationFrame(cuadro);
+    const dt=Math.min(.05,(ahora-ant)/1000);ant=ahora;
+    if(!corriendo)return;
+    t+=dt*v.velocidad;
+    gl.uniform1f(uT,t);gl.uniform1f(uEsc,v.escala);gl.uniform1f(uCon,v.contraste);gl.uniform2f(uR,c.width,c.height);
+    gl.uniform3fv(uTinta,rgb(v.tinta));gl.uniform1i(uPasos,pasos);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    // un dato barato: el brillo del centro, leído cada 10 cuadros (leer píxeles cuesta)
+    if(++cuenta%10===0){gl.readPixels(c.width>>1,c.height>>1,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);art.emit('brillo',(px[0]+px[1]+px[2])/765);}
+  }
+  requestAnimationFrame(cuadro);
+})();
+</script>
+</body>
+</html>

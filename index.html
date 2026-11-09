@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v039
+  aurigaQ v040
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -253,6 +253,19 @@ body.m-ajustes #app{grid-template-rows:auto minmax(0,1fr) 0 auto}
 #ajustes #contraste .b{min-height:26px;padding:0 14px;font-size:11px}
 #ajustes .fila{display:flex;align-items:center;gap:8px;min-height:30px}
 #ajustes .fila>.lbl{width:84px;flex:none}
+#wGuia{grid-column:1/-1}
+#wGuia .guiaTabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+#wGuia .guiaTabs .b{min-height:24px;padding:0 10px}
+.guiaCuerpo{max-width:900px;display:grid;gap:6px;line-height:1.5}
+.guiaCuerpo p{margin:0}
+.guiaCuerpo ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.guiaH{color:#fff;font-weight:700;margin-top:6px}
+.guiaCmdB{display:grid;gap:3px;border:1px solid var(--g2,#444);padding:6px}
+.guiaCmd{margin:0;white-space:pre-wrap;word-break:break-all;font:10.5px/1.45 Menlo,Consolas,monospace;color:var(--ac);user-select:all}
+.guiaTabla{border-collapse:collapse;width:100%;max-width:760px}
+.guiaTabla th,.guiaTabla td{text-align:left;padding:3px 8px 3px 0;border-bottom:1px solid #333;font-size:11px}
+.guiaTabla th{color:var(--g1);font-weight:400}
+.guiaTabla tr.ok td:last-child{color:var(--ac)}
 body.m-funcion #L,body.m-funcion #B,body.m-salida #R,body.m-salida #B{display:none}
 body.m-funcion #C{grid-column:1/3}
 body.m-salida #C{grid-column:2/4}
@@ -498,7 +511,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v039</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v040</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -512,7 +525,7 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v039</h2>
+    <h2 id="aboutTitle">aurigaQ v040</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
     <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
@@ -1050,7 +1063,9 @@ function stepTweens(now){
 /* ---------- artefactos ---------- */
 const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'x';
 function artRes(){return {width:Math.round(S.out.w*S.artScale/2)*2,height:Math.round(S.out.h*S.artScale/2)*2};}
-function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest)sendArt(a,{type:'resize',...artRes()});}
+function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest){sendArt(a,{type:'resize',...artRes()});sendArt(a,{type:'welcome',...hostInfo()});}}
+// SDK 0.2: lo que el artefacto sabe del host al conectarse (y cuando cambia la resolución)
+function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v040',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
 function sendArt(a,msg){try{const m=Object.assign({ns:NS},msg),w=a.iframe.contentWindow;if(EW!==window&&EW.__aqSend)EW.__aqSend(w,m);else w.postMessage(m,'*');}catch(e){}}
 function startArt(a){if(a&&a.kind==='art'&&!a.running){sendArt(a,{type:'start'});a.running=true;}}
 function stopArt(a){if(a&&a.kind==='art'&&a.running){sendArt(a,{type:'stop'});a.running=false;}}
@@ -1100,11 +1115,16 @@ function onArtMsg(e){
     sendArt(a,{type:'transport',mode:a.mode});
     sendArt(a,{type:'applyState',values:a.values});
     sendArt(a,{type:'hud',visible:false});
+    sendArt(a,{type:'welcome',...hostInfo()});
+    a.data=a.data||{};a.ev=a.ev||{};
     a.running=false;if(inUse(a.key))startArt(a);
     setTimeout(()=>drawThumb(a),1800);
-    renderLib();renderCues();renderInspector();
+    renderLib();renderCues();renderInspector();try{if(EV&&EV.e)evPintar();}catch(err){}
   }else if(m.type==='param'){a.values[m.id]=m.value;syncCtrl(a,m.id);}
   else if(m.type==='status'){a.status=m.text;renderLib();}
+  // SDK 0.2: números y eventos que el artefacto publica; el nodo Artefacto los da como salidas
+  else if(m.type==='data'){const v=+m.value;if(isFinite(v))(a.data||(a.data={}))[m.id]=v;}
+  else if(m.type==='event'){const E=a.ev||(a.ev={});E[m.id]=(E[m.id]||0)+1;}
   else if(m.type==='frame'&&m.bitmap){if(a.bitmap&&a.bitmap.close)a.bitmap.close();a.bitmap=m.bitmap;a.fresh=true;}
 }
 window.addEventListener('message',onArtMsg);
@@ -1553,6 +1573,11 @@ function evNum(ctx,n,pid,d=0){
 function salidaNum(ctx,n,port,d){
   const k=n.id+'|'+port;if(ctx.memo.has(k))return ctx.memo.get(k);let v=0;
   const t=ctx.now/1000;
+  // SDK 0.2: salidas del nodo Artefacto (d:id) = números o eventos que publica el artefacto
+  if(n.t==='artefacto'&&typeof port==='string'&&port.startsWith('d:')){const a=S.lib.get(n.v.medio),id=port.slice(2),dd=a&&a.manifest&&(a.manifest.data||[]).find(x=>x.id===id);
+    if(dd&&(dd.type==='event'||dd.type==='trigger')){const c=(a.ev&&a.ev[id])||0,E=n._ae||(n._ae={}),T=n._at||(n._at={});if(E[id]==null)E[id]=c;if(E[id]!==c){E[id]=c;T[id]=ctx.now;}v=T[id]!=null&&ctx.now-T[id]<=120?1:0;}
+    else v=a&&a.data&&typeof a.data[id]==='number'?a.data[id]:0;
+    ctx.memo.set(k,v);return v;}
   if(n.t==='onda'){const f=evNum(ctx,n,'frec',d),ph=t*f+evNum(ctx,n,'fase',d),fr=ph-Math.floor(ph),mn=evNum(ctx,n,'min',d),mx=evNum(ctx,n,'max',d);let u;
     switch(n.v.forma){case 'triángulo':u=1-Math.abs(fr*2-1);break;case 'sierra':u=fr;break;case 'cuadrada':u=fr<.5?1:0;break;
       case 'azar':{const c=Math.floor(ph);if(n._c!==c){n._c=c;n._r=Math.random();}u=n._r;break;}
@@ -2896,7 +2921,7 @@ const esFuenteLib=it=>it&&it.kind!=='escv'&&!it.escena;
 const hbtn=(l,f,t)=>{const b=btn(l,f,'b s',{title:t||''});b.style.cssText='min-height:14px;padding:0 5px;font-size:10px;background:var(--tb);color:var(--tbfg);border-color:var(--tbfg)';return b;};
 function buildLib(){
   const L=$('#L');
-  const {w,body}=win('Fuentes','wLib',L,hbtn('+ fuente',e=>fuenteMenu(e.currentTarget),'archivos, cámaras, artefactos o una carpeta'));libBody=body;w.dataset.modes='edicion';
+  const {w,body}=win('Fuentes','wLib',L,el('span',{style:'display:inline-flex;gap:4px'},hbtn('guía',()=>abrirGuia('video'),'buenas prácticas de videos, audios, imágenes y artefactos'),hbtn('+ fuente',e=>fuenteMenu(e.currentTarget),'archivos, cámaras, artefactos o una carpeta')));libBody=body;w.dataset.modes='edicion';
   const busca=el('input',{type:'text',placeholder:'buscar','aria-label':'buscar fuentes',style:'flex:1;width:0',oninput:e=>{S.fBusca=e.target.value;renderLib();}});
   const filtro=el('select',{'aria-label':'tipo de fuente',style:'flex:none;width:auto',onchange:e=>{S.fFiltro=e.target.value;renderLib();}},TIPOS_F.map(([v,l])=>el('option',{value:v},l)));
   const vista=btn(S.fVista==='lista'?'▦':'≡',e=>{S.fVista=S.fVista==='lista'?'cuadricula':'lista';e.currentTarget.textContent=S.fVista==='lista'?'▦':'≡';try{localStorage.setItem('aurigaq.fVista',S.fVista);}catch(x){}renderLib();},'b s',{title:'lista o cuadrícula','aria-label':'cambiar la vista',style:'min-height:22px;padding:0 8px'});
@@ -3354,7 +3379,7 @@ function renderSalud(){
   e.title='cuadros por segundo y tiempo de cada ciclo del motor, pasadas de GPU por cuadro (cada capa es una), memoria de video aproximada, lo que está trabajando (videos, cámaras, artefactos, audios, escenas de video), memoria y dónde corre el motor. Clic: registro.';
 }
 function renderRevision(){
-  if(!revBox||modo!=='salida')return;
+  if(!revBox||(modo!=='salida'&&modo!=='ajustes'))return;
   const L=[],o=S.out;
   L.push(['salida',o.w+'×'+o.h+' · '+fpsNow+' fps · cuadro del motor '+frameMs.toFixed(1)+' ms'+(fpsNow&&fpsNow<50?' · bajo: revisa abajo':'')]);
   if(S.xf)L.push(['transición','mezclando dos escenas']);
@@ -3367,12 +3392,13 @@ function renderRevision(){
       let n=(it.running?'trabajando':'en reposo')+(w?' · '+w+'×'+h:'')+(it.mode==='bitmap'?' · copia por cuadro (más costosa)':'');
       if(w&&it.mode!=='legacy'&&(w!==quiere.width||h!==quiere.height))n+=' · no tomó la resolución pedida';
       if(it.mode==='legacy')n+=' · sin protocolo: trabaja siempre';
+      else if(it.manifest&&it.mode!=='error'&&it.mode!=='cargando')n+=' · SDK '+(it.manifest.sdk||'0.1')+((it.manifest.data||[]).length?' · '+it.manifest.data.length+' salidas de datos':'');
       L.push([itemName(it.key),n]);
     }else if(it.kind==='cam'){
       const v=it.el;L.push([itemName(it.key),(it.live?'en vivo':'apagada')+(v.videoWidth?' · '+v.videoWidth+'×'+v.videoHeight:'')+(it.live&&!S.stage.has(it.key)?' · abierta fuera de escena (lista para entrar)':'')]);
     }else if(it.kind==='video'){
       const v=it.el,w=v.videoWidth,h=v.videoHeight;let n=(v.paused?'en pausa':'reproduciendo')+(w?' · '+w+'×'+h:'');
-      const q=v.getVideoPlaybackQuality?v.getVideoPlaybackQuality():null;if(q&&q.totalVideoFrames)n+=' · '+q.droppedVideoFrames+' de '+q.totalVideoFrames+' cuadros perdidos';
+      const q=v.getVideoPlaybackQuality?v.getVideoPlaybackQuality():null;if(q&&q.totalVideoFrames){n+=' · '+q.droppedVideoFrames+' de '+q.totalVideoFrames+' cuadros perdidos';if(q.totalVideoFrames>120&&q.droppedVideoFrames/q.totalVideoFrames>.02)n+=' · revisa la Guía de medios';}
       if(w*h>o.w*o.h*1.3)n+=' · más grande que la salida: exportarlo a '+o.w+'×'+o.h+' ahorra decodificación';
       L.push([itemName(it.key),n]);
     }
@@ -3586,7 +3612,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v039',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v040',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -3672,6 +3698,51 @@ function renderMonitor(){
     btn('descargar agente.json con estos datos',bajarAgenteJson,'b s'));
   renderMonEst();
 }
+/*GUIA*/const GUIA=[{"id": "video", "t": "video", "items": [["p", "Para la función, lo más seguro es MP4 con H.264. Casi toda computadora lo decodifica con la tarjeta gráfica, Chrome y Edge lo abren en Windows, Mac y Linux, y deja libre el procesador para la escena y los artefactos."], ["h", "Cómo exportarlo"], ["li", ["Códec H.264 (perfil High), 8 bits, color 4:2:0 (yuv420p).", "Tamaño igual a la salida del proyecto: 1280 × 720 o 1920 × 1080. Un video más grande cuesta decodificación y no se ve mejor.", "Cuadros por segundo constantes e iguales a los del material: 25, 30 o 60. No mezcles 25 y 30 en una misma escena.", "Un cuadro clave por segundo (GOP corto). Los bucles, los saltos, los recortes del Timeline y «ir a marca» caen exactos y rápido. El archivo crece un poco.", "Tasa de datos: 8 a 12 Mb/s para 1080p y 4 a 6 Mb/s para 720p. En proyección, más no se nota.", "Índice al inicio del archivo (+faststart): abre de inmediato.", "Sonido dentro del video: AAC estéreo a 48 kHz. Si el video no lleva sonido, quítalo: es un decodificador menos."]], ["cmd", "1080p para la función (30 cuadros; para 25 cambia fps=25 y -g 25)", "ffmpeg -i entrada.mov -vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30\" -c:v libx264 -profile:v high -pix_fmt yuv420p -preset slow -crf 18 -maxrate 12M -bufsize 24M -g 30 -keyint_min 30 -sc_threshold 0 -c:a aac -b:a 192k -ar 48000 -movflags +faststart salida-1080.mp4"], ["cmd", "720p ligera, sin sonido (laptop de taller, Raspberry Pi)", "ffmpeg -i entrada.mov -vf \"scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,fps=30\" -c:v libx264 -profile:v high -pix_fmt yuv420p -preset slow -crf 20 -maxrate 6M -bufsize 12M -g 30 -keyint_min 30 -sc_threshold 0 -an -movflags +faststart salida-720.mp4"], ["h", "Otros códecs"], ["li", ["HEVC (H.265): Chrome solo lo abre si la computadora lo decodifica por hardware. Puede funcionar en tu máquina y no abrir en la del museo. Úsalo solo si lo probaste en la computadora de la función (pestaña «esta computadora»).", "VP9 (WebM): buena calidad, pero en muchas computadoras se decodifica con el procesador. Úsalo sobre todo para video con transparencia.", "AV1: archivos pequeños, pero pesado si no hay decodificación por hardware. No lo uses para la función sin probarlo.", "No abren en el navegador: ProRes, DNxHD/DNxHR, HAP, Animation ni otros códecs de edición. Expórtalos a H.264."]], ["h", "Transparencia, bucles y reversa"], ["li", ["H.264 no tiene canal alfa. Para video con transparencia: WebM VP9 con alfa. Para fijos: PNG.", "Otra vía sin alfa: fondo negro con fusión «pantalla», o un fondo de color con Luma Key o Chroma Key en la escena.", "Bucle sin salto: que el último cuadro empate con el primero y que haya cuadros clave cortos.", "aQ no reproduce video en reversa: exporta una copia al revés (solo con clips cortos, porque ocupa mucha memoria al exportar)."]], ["cmd", "WebM VP9 con transparencia", "ffmpeg -i entrada.mov -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 6M -g 30 -an salida-alfa.webm"], ["cmd", "Copia al revés de un clip corto", "ffmpeg -i clip.mp4 -vf reverse -af areverse -c:v libx264 -pix_fmt yuv420p -crf 18 -g 30 -movflags +faststart clip-reversa.mp4"], ["h", "Cuántos videos a la vez"], ["p", "Cada video que suena o se ve es un decodificador trabajando, y los preparados también ocupan memoria. Como guía: en una laptop de taller, dos o tres videos a 1080p o cuatro a 720p. Mídelo en tu equipo con «Revisión de recursos»: si aparecen cuadros perdidos, baja a 720p o junta capas en un solo video."]]}, {"id": "audio", "t": "audio", "items": [["p", "Las escenas de audio decodifican cada archivo completo en memoria para poder recortar, cruzar y hacer bucles con precisión. Un estéreo de 10 minutos a 48 kHz ocupa unos 230 MB. Para material más largo, pártelo en clips."], ["li", ["Formato: WAV o FLAC (16 o 24 bits) para lo que ya está editado. MP3 a 320 kb/s, AAC a 256 kb/s u Opus también funcionan y cargan más rápido.", "Frecuencia: 48 kHz, la de casi todas las interfaces de audio y salidas HDMI. Evita mezclar 44.1 y 48 kHz en un mismo show.", "Estéreo. aQ mezcla en estéreo: un archivo 5.1 se reduce a dos canales.", "Nivel: picos a −1 dBFS y una sonoridad parecida entre cues. El ajuste fino se hace en la escena, no subiendo el archivo.", "Recorta el silencio del inicio para que el GO responda al instante.", "Bucles: corta en un cruce por cero o usa el fundido cruzado de la región de bucle."]], ["cmd", "Pasar a WAV 48 kHz, 24 bits, estéreo", "ffmpeg -i entrada.aif -ar 48000 -ac 2 -c:a pcm_s24le salida.wav"], ["cmd", "Igualar sonoridad (−18 LUFS, picos a −1 dB)", "ffmpeg -i entrada.wav -af loudnorm=I=-18:TP=-1:LRA=11 -ar 48000 -c:a pcm_s24le salida-normalizada.wav"]]}, {"id": "imagen", "t": "imágenes", "items": [["li", ["JPG para fotografías (calidad 85 a 92), PNG para gráficos o con transparencia; WebP sirve para ambos.", "Tamaño cercano a la salida. Máximo 4096 px por lado: muchas tarjetas gráficas no aceptan texturas más grandes.", "Una foto de 6000 × 4000 ocupa unos 96 MB en la memoria de video aunque se vea pequeña.", "Color en sRGB. Los archivos CMYK o con perfiles de impresión se ven mal o no abren.", "Una secuencia larga de fotos funciona mejor convertida en video."]], ["cmd", "Foto grande a JPG del tamaño de la salida", "ffmpeg -i foto.tif -vf \"scale=1920:1080:force_original_aspect_ratio=decrease\" -q:v 2 foto-1080.jpg"], ["cmd", "Secuencia de fotos a video (foto-0001.png, foto-0002.png…)", "ffmpeg -framerate 30 -i foto-%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 -g 30 -movflags +faststart secuencia.mp4"]]}, {"id": "artefactos", "t": "artefactos", "items": [["li", ["Pon los artefactos en el mismo servidor que aQ, de preferencia en la carpeta artefactos/. Así el host lee su lienzo directamente, sin costo. Desde otro origen, el lienzo viaja como una copia por cuadro, más costosa.", "Usa el SDK (sdk/artefacto-sdk.js): sus parámetros quedan como entradas del nodo Artefacto, y desde el SDK 0.2 sus números y eventos quedan como salidas.", "Dibuja al tamaño que pide el host (onResize). En equipos justos, baja «artefactos» en Salida › Proyecto a 75 % o a la mitad.", "Respeta onStart y onStop: fuera de escena el artefacto descansa y no gasta.", "Sin pantalla de inicio ni botones de «empezar» dentro de aQ. El audio arranca con onStart.", "Que funcione sin internet: copia en su carpeta las fuentes tipográficas, las librerías y los modelos que use.", "Con WebGL o Three.js, crea el contexto con preserveDrawingBuffer: true para que el host pueda leer el cuadro.", "El sonido de un artefacto sale directo del navegador: dale un parámetro de volumen propio."]], ["p", "La guía completa del SDK, con ejemplos para adaptar apps de Canvas 2D, WebGL, Three.js y p5.js, está en la carpeta sdk/ del repositorio."]]}, {"id": "camaras", "t": "cámaras", "items": [["li", ["Cámara web USB: 1280 × 720 a 30 cuadros es lo que la mayoría da sin comprimir. Muchas solo dan 1080p comprimido (MJPEG), que usa más procesador.", "Capturadora HDMI o SDI por USB 3: aparece como una cámara más.", "Capturar otra ventana cuesta más que una cámara: úsalo cuando no haya otra vía.", "Las cámaras piden permiso: abre aQ con su lanzador, por HTTPS o en localhost.", "Una cámara abierta fuera de escena sigue trabajando: ciérrala si no la vas a usar pronto."]]]}, {"id": "equipo", "t": "equipo", "items": [["li", ["Chrome o Edge actualizados, abiertos con el lanzador de aQ (Ajustes › Esta computadora).", "Computadora con tarjeta gráfica (Windows o Mac): 1080p cómodo. Laptop de taller: salida 1280 × 720 · ligera.", "Proyector a su resolución nativa y salida de aQ con la misma proporción.", "Para museo: desactiva la suspensión, el protector de pantalla y las actualizaciones automáticas en horario de sala.", "Raspberry Pi 5: 720p, un video a la vez y artefactos ligeros. No decodifica H.264 por hardware (solo HEVC, que el navegador puede no aprovechar), así que el video depende del procesador. Para meses de sala: SSD o modo de solo lectura, y la pila del reloj si no hay internet para la hora.", "Raspberry Pi 4: decodifica H.264 por hardware, pero su gráfica es más limitada: 720p y escenas sencillas.", "Antes de una función en una máquina nueva, corre la «prueba larga» de Revisión de recursos y revisa la pestaña «esta computadora»."]]]}];/*FIN GUIA*/
+let guiaTab='video',guiaBox=null,codecRes=null;
+function abrirGuia(tab){if(tab)guiaTab=tab;setMode('ajustes');renderGuia();const w=$('#wGuia');if(w){w.classList.remove('min');w.scrollIntoView({block:'start'});}}
+function renderGuia(){
+  if(!guiaBox)return;
+  const tabs=el('div',{class:'seg guiaTabs',role:'tablist'},...[...GUIA.map(g=>[g.id,g.t]),['equipo-prueba','esta computadora']].map(([id,t])=>btn(t,()=>{guiaTab=id;renderGuia();},'b',{'aria-pressed':String(guiaTab===id),role:'tab'})));
+  const cuerpo=el('div',{class:'guiaCuerpo'});
+  if(guiaTab==='equipo-prueba'){
+    cuerpo.append(el('p',{},'Pregunta al navegador qué puede decodificar esta computadora, si lo hace con fluidez y si usa la tarjeta gráfica (eficiente). Haz la prueba en la máquina de la función: el resultado cambia de una computadora a otra.'),
+      btn('probar esta computadora',async()=>{codecRes=await probarCodecs();renderGuia();},'b',{style:'justify-self:start;padding:0 18px'}));
+    if(codecRes)cuerpo.append(codecRes);
+  }else{
+    const g=GUIA.find(x=>x.id===guiaTab)||GUIA[0];
+    for(const it of g.items){
+      if(it[0]==='p')cuerpo.append(el('p',{},it[1]));
+      else if(it[0]==='h')cuerpo.append(el('div',{class:'guiaH'},it[1]));
+      else if(it[0]==='li')cuerpo.append(el('ul',{},...it[1].map(x=>el('li',{},x))));
+      else if(it[0]==='cmd'){const pre=el('pre',{class:'guiaCmd'},it[2]);
+        cuerpo.append(el('div',{class:'guiaCmdB'},el('div',{class:'dr'},el('span',{class:'lbl',style:'flex:1'},it[1]),btn('copiar',async ev=>{try{await navigator.clipboard.writeText(it[2]);ev.target.textContent='copiado';}catch(e){const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);ev.target.textContent='selecciónalo y cópialo';}setTimeout(()=>ev.target.textContent='copiar',1500);},'b s')),pre));}
+    }
+    if(g.items.some(x=>x[0]==='cmd'))cuerpo.append(el('p',{class:'note'},'Las recetas usan ffmpeg, libre y gratuito para Windows, Mac y Linux. Cambia «entrada» y «salida» por tus archivos.'));
+  }
+  guiaBox.replaceChildren(tabs,cuerpo);
+}
+async function probarCodecs(){
+  const caja=el('div',{class:'guiaPrueba'}),mc=navigator.mediaCapabilities;
+  const V=[['H.264 · 1280×720 · 30','video/mp4; codecs="avc1.64001F"',1280,720,30,5e6],['H.264 · 1920×1080 · 30','video/mp4; codecs="avc1.640028"',1920,1080,30,1e7],['H.264 · 1920×1080 · 60','video/mp4; codecs="avc1.64002A"',1920,1080,60,1.5e7],
+    ['HEVC · 1920×1080 · 30','video/mp4; codecs="hvc1.1.6.L120.90"',1920,1080,30,8e6],['VP9 · 1920×1080 · 30','video/webm; codecs="vp09.00.40.08"',1920,1080,30,8e6],['AV1 · 1920×1080 · 30','video/mp4; codecs="av01.0.08M.08"',1920,1080,30,6e6]];
+  const A=[['AAC','audio/mp4; codecs="mp4a.40.2"'],['Opus','audio/webm; codecs="opus"'],['MP3','audio/mpeg'],['FLAC','audio/flac'],['WAV','audio/wav']];
+  const si=b=>b?'sí':'no',filas=[];
+  for(const [nom,ct,w,h,fr,br] of V){let r=null;try{r=mc?await mc.decodingInfo({type:'file',video:{contentType:ct,width:w,height:h,bitrate:br,framerate:fr}}):null;}catch(e){}
+    if(!r){const v=document.createElement('video');const c=v.canPlayType(ct);r={supported:!!c,smooth:null,powerEfficient:null};}
+    const veredicto=!r.supported?'no abre aquí':r.smooth&&r.powerEfficient?'recomendado aquí':r.smooth?'funciona, con el procesador':'puede perder cuadros';
+    filas.push([nom,si(r.supported),r.smooth==null?'—':si(r.smooth),r.powerEfficient==null?'—':si(r.powerEfficient),veredicto,r.supported&&r.smooth&&r.powerEfficient]);}
+  for(const [nom,ct] of A){let r=null;try{r=mc?await mc.decodingInfo({type:'file',audio:{contentType:ct,channels:'2',bitrate:256000,samplerate:48000}}):null;}catch(e){}
+    // algunas consultas (WAV) responden «no» aunque el navegador sí lo abre: se confirma con el reproductor
+    if(!r||!r.supported){const a=document.createElement('audio');if(a.canPlayType(ct))r={supported:true,smooth:true,powerEfficient:null};else if(!r)r={supported:false,smooth:null,powerEfficient:null};}
+    filas.push(['audio '+nom,si(r.supported),r.smooth==null?'—':si(r.smooth),'—',r.supported?'abre aquí':'no abre aquí',r.supported]);}
+  const tabla=el('table',{class:'guiaTabla'},el('thead',{},el('tr',{},...['formato','abre','fluido','tarjeta gráfica',''].map(x=>el('th',{},x)))),
+    el('tbody',{},...filas.map(f=>el('tr',{class:f[5]?'ok':''},...f.slice(0,5).map(x=>el('td',{},x))))));
+  let gpu='',tex='';try{const c=document.createElement('canvas'),gl=c.getContext('webgl2');const di=gl.getExtension('WEBGL_debug_renderer_info');gpu=di?gl.getParameter(di.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);tex=gl.getParameter(gl.MAX_TEXTURE_SIZE);}catch(e){}
+  caja.append(tabla,el('p',{class:'note'},'Tarjeta gráfica: '+(gpu||'sin datos')+(tex?' · textura máxima '+tex+' px':'')+' · '+(navigator.hardwareConcurrency||'?')+' núcleos'+(navigator.deviceMemory?' · '+navigator.deviceMemory+' GB o más de memoria':'')+'.'),
+    el('p',{class:'note'},'«Tarjeta gráfica: sí» quiere decir que el navegador decodifica ese formato de forma eficiente, casi siempre por hardware. Es una respuesta del navegador, no una medición: confírmalo con la prueba larga.'));
+  return caja;
+}
 function buildSalida(){
   const L=$('#L');
   const {w,body}=win('Proyecto','wSal',L);w.dataset.modes='salida';
@@ -3709,6 +3780,7 @@ function buildSalida(){
   modsBox=el('div',{style:'display:flex;flex-direction:column;gap:8px','data-modes':'salida'});L.append(modsBox);
   // el aspecto ya no es de la salida: cada escena lo lleva con su nodo Aspecto (v035)
   addLook=el('div',{});lookBox=el('div',{});
+  const {body:gb}=win('Guía de medios','wGuia',AJ);guiaBox=gb;renderGuia();
   const {body:rb}=win('Revisión de recursos','wRev',AJ);revBox=el('div',{style:'display:grid;gap:6px'});
   rb.append(revBox,el('div',{class:'seg g2'},btn('registro',showLog,'b'),btn('prueba larga',pruebaLarga,'b')));
   [...rb.querySelectorAll('.seg.g2 .b')].forEach(b=>b.className='b');
@@ -4398,7 +4470,9 @@ function evEntradas(n){
     else if(p.type==='trigger')L.push([id,nm,'trigger']);}}
   return L;
 }
-function evSalidas(n){const d=NODOS[n.t],L=[];if(d.sale)L.push(['out','salida','video']);for(const p of d.num||[])L.push([p,(d.numNom&&d.numNom[p])||p,'num']);return L;}
+function evSalidas(n){const d=NODOS[n.t],L=[];if(d.sale)L.push(['out','salida','video']);for(const p of d.num||[])L.push([p,(d.numNom&&d.numNom[p])||p,'num']);
+  if(n.t==='artefacto'){const a=S.lib.get(n.v.medio);for(const x of (a&&a.manifest&&a.manifest.data)||[])L.push(['d:'+x.id,(x.label||x.name||x.id)+(x.type==='event'||x.type==='trigger'?' (pulso)':''),'num']);}
+  return L;}
 function evPintar(){
   const e=EV.e;[...EV.area.querySelectorAll('.nd')].forEach(x=>x.remove());
   for(const n of e.nodos)EV.area.append(evNodoEl(n));
@@ -5475,7 +5549,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v039'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v040'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)

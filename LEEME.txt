@@ -1,4 +1,4 @@
-aurigaQ v039
+aurigaQ v040
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -7,10 +7,15 @@ Software libre bajo licencia GPL-3.0-or-later (ver LICENSE.txt).
 CONTENIDO
   index.html                la app (la interfaz)
   salida.html               la ventana de salida para el proyector
-  sdk/artefacto-sdk.js      SDK 0.1 del protocolo artefacto/v0
+  sdk/artefacto-sdk.js      SDK 0.2 del protocolo artefacto/v0
   artefactos/orbitas.html   artefacto de prueba
   artefactos/senal.html     artefacto de prueba
   artefactos/plantilla.html plantilla comentada para crear artefactos nuevos
+  sdk/ejemplos/             artefactos de ejemplo del SDK 0.2 (datos, WebGL)
+  sdk/versiones/            copia de cada versión del SDK
+  sdk/README.md             guía del SDK, compatibilidad y cómo adaptar apps
+  crear-artefacto-aurigaq.md guía completa para crear un artefacto
+  herramientas/armar-docs.py regenera guías y versiones del SDK
   PROTOCOLO.md              mensajes, manifiesto y cómo adaptar una app
   LEEME.txt                 este archivo
   LICENSE.txt               texto de la licencia GPL-3.0
@@ -795,18 +800,39 @@ SHOW: GUARDAR Y ABRIR
   en este navegador (sin medios). Al abrirlo de nuevo aparece arriba
   «recuperar el show de las hh:mm» durante tres minutos.
 
-PREPARAR LOS VIDEOS
-  aQ reproduce lo que reproduce Chrome. Lo más estable es MP4 en H.264
-  (lo decodifica la tarjeta gráfica), al tamaño de la salida, con un
-  cuadro clave por segundo y hasta 15 Mbps. Con ffmpeg, para 1080p a
-  30 cuadros por segundo:
-  ffmpeg -i entrada.mov -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30" -c:v libx264 -profile:v high -pix_fmt yuv420p -preset slow -crf 18 -maxrate 15M -bufsize 30M -g 30 -keyint_min 30 -sc_threshold 0 -movflags +faststart -c:a aac -b:a 192k salida.mp4
-  Para 720p cambia 1920:1080 por 1280:720. En HandBrake: H.264, perfil
-  High, RF 18, tasa de cuadros constante y, en opciones avanzadas,
-  keyint=30. Para transparencia: WebM VP9 con canal alfa.
-  ProRes, HAP, DXV y Notch LC no se reproducen en el navegador.
+GUÍA DE MEDIOS
+  Ajustes › Guía de medios (o «guía» en la ventana Fuentes) reúne las
+  buenas prácticas para que los archivos corran bien en aQ: video,
+  audio, imágenes, artefactos, cámaras y equipo, con recetas de ffmpeg
+  que se copian con un botón. La pestaña «esta computadora» pregunta al
+  navegador qué formatos abre, si los reproduce con fluidez y si usa la
+  tarjeta gráfica; hazla en la máquina de la función.
+  En corto: MP4 con H.264 (perfil High, 8 bits, 4:2:0) al tamaño de la
+  salida, cuadros por segundo constantes, un cuadro clave por segundo,
+  8 a 12 Mb/s en 1080p y +faststart. HEVC solo si la computadora de la
+  función lo decodifica por hardware. Para transparencia, WebM VP9 con
+  alfa. ProRes, DNxHD, HAP y otros códecs de edición no abren en el
+  navegador. Audio en WAV o FLAC a 48 kHz, estéreo, clips de hasta
+  unos 10 minutos. En HandBrake: H.264, perfil High, RF 18, tasa de
+  cuadros constante y, en opciones avanzadas, keyint=30.
+  La misma guía está en docs/guia-de-medios.md del repositorio.
+
+ARTEFACTOS Y SDK
+  sdk/artefacto-sdk.js es el SDK 0.2 del protocolo artefacto/v0. Lo
+  nuevo: un artefacto declara «data» (números y eventos) y los publica
+  con art.emit(id, valor) y art.fire(id); el nodo Artefacto los da como
+  salidas para conectarlos a cualquier nodo. Al conectarse recibe
+  onHost(info) con la versión de aQ, la resolución y la calidad
+  («ligera» o «completa»). Los artefactos del SDK 0.1 siguen funcionando
+  igual. Revisión de recursos dice qué SDK usa cada artefacto.
+  Documentación, ejemplos y versiones anteriores: carpeta sdk/ del
+  repositorio (sdk/README.md).
 
 HISTORIAL
+  v040  Guía de medios (Ajustes y botón «guía» en Fuentes) con prueba de
+        códecs de esta computadora. SDK 0.2: salidas de datos y eventos
+        del artefacto en el nodo, onHost. Revisión de recursos también
+        en Ajustes, con el SDK de cada artefacto.
   v039  categoría Lógica: Gate, Comparator, Inside Range, Sample and
         Hold, Selector, Logic, Timer y Cue Trigger. Textos sin
         comparaciones con otros programas.

@@ -6,9 +6,10 @@
   El resto sale de lo guardado y se actualiza por detrás.
   © 2026 Héctor Cruz Juárez · GPL-3.0-or-later
 */
-const VERSION = 'aurigaq-v039';
+const VERSION = 'aurigaq-v040';
 const BASE = ['./', 'index.html', 'salida.html', 'sdk/artefacto-sdk.js', 'manifest.webmanifest', 'icono-192.png', 'icono-512.png',
-  'artefactos/orbitas.html', 'artefactos/senal.html', 'artefactos/plantilla.html'];
+  'artefactos/orbitas.html', 'artefactos/senal.html', 'artefactos/plantilla.html',
+  'sdk/ejemplos/datos.html', 'sdk/ejemplos/webgl.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => Promise.all(BASE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));

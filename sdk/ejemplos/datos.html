@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Ejemplo del SDK 0.2 para aurigaQ: un artefacto que publica datos.
+  Unas esferas caen y rebotan. La pieza publica hacia aQ:
+    altura   (0 a 1)  altura promedio de las esferas
+    energia  (0 a 1)  cuánto se mueven
+    choque   (evento) cada vez que una esfera toca el piso
+  En una escena de aQ, esas salidas del nodo Artefacto pueden mover un Aspecto,
+  hacer contar un Counter o disparar un Timeline.
+  Parte de la colección Alchemy of Meaning (Alquimia del Significado).
+  © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx · GPL-3.0-or-later
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caída · ejemplo de datos</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script src="../artefacto-sdk.js"></script>
+<script>
+(()=>{
+  'use strict';
+  const c=document.getElementById('c'),x=c.getContext('2d');
+  const v={cantidad:6,gravedad:1,rebote:.8,tinta:'#ffffff'};
+  let esferas=[],corriendo=true;
+
+  // las esferas se crean desde los parámetros, sin azar nuevo: la misma cantidad da siempre el mismo arranque
+  function sembrar(){
+    esferas=[];for(let i=0;i<v.cantidad;i++){const u=(i+.5)/v.cantidad;esferas.push({x:u,y:.1+.6*((i*7919)%13)/13,vy:0,r:.02+.02*((i*104729)%7)/7});}
+  }
+
+  const art=Artefacto.register({
+    id:'caida',name:'Caída',version:'0.1',author:'Héctor Cruz Juárez',canvas:c,
+    params:[
+      {id:'cantidad',label:'Cantidad',type:'int',min:1,max:24,default:v.cantidad},
+      {id:'gravedad',label:'Gravedad',type:'float',min:0,max:3,default:v.gravedad},
+      {id:'rebote',label:'Rebote',type:'float',min:0,max:.98,default:v.rebote},
+      {id:'tinta',label:'Tinta',type:'color',default:v.tinta},
+      {id:'soltar',label:'Soltar de nuevo',type:'trigger'}
+    ],
+    data:[
+      {id:'altura',label:'altura',type:'float',min:0,max:1},
+      {id:'energia',label:'energía',type:'float',min:0,max:1},
+      {id:'choque',label:'choque',type:'event'}
+    ],
+    onParam(id,valor){v[id]=valor;if(id==='cantidad')sembrar();},
+    onTrigger(id){if(id==='soltar')sembrar();},
+    onStart(){corriendo=true;},
+    onStop(){corriendo=false;}
+  });
+  sembrar();
+
+  let ant=performance.now();
+  function cuadro(ahora){
+    requestAnimationFrame(cuadro);
+    const dt=Math.min(.05,(ahora-ant)/1000);ant=ahora;
+    if(!corriendo)return;
+    const W=c.width,H=c.height;let suma=0,mov=0;
+    x.fillStyle='#000';x.fillRect(0,0,W,H);x.fillStyle=v.tinta;
+    for(const e of esferas){
+      e.vy+=v.gravedad*1.6*dt;e.y+=e.vy*dt;
+      if(e.y>1-e.r){e.y=1-e.r;if(e.vy>.05){art.fire('choque');}e.vy=-e.vy*v.rebote;}
+      suma+=1-e.y;mov+=Math.abs(e.vy);
+      x.beginPath();x.arc(e.x*W,e.y*H,e.r*H,0,Math.PI*2);x.fill();
+    }
+    // números hacia aQ: se pueden mandar en cada cuadro, el SDK los junta
+    art.emit('altura',esferas.length?suma/esferas.length:0);
+    art.emit('energia',Math.min(1,esferas.length?mov/esferas.length/1.5:0));
+  }
+  requestAnimationFrame(cuadro);
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # aurigaQ (aQ)
 
-**Versión 0.39 (v039)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
+**Versión 0.40 (v040)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
 
 ![La cue list en función: el cue en espera arriba, el Monitor y lo que está al aire a la derecha](docs/capturas/01-funcion.png)
 
@@ -46,13 +46,21 @@ La herramienta responde a esas preguntas con decisiones de diseño:
 
 ![Modo ajustes: interfaz, esta computadora, revisión de recursos, modo museo y monitoreo remoto](docs/capturas/08-ajustes.png)
 
-**Artefactos.** Cualquier app web puede volverse artefacto con el protocolo `artefacto/v0` y el SDK incluido. Sus controles quedan como entradas de un nodo y viajan con el show.
+**Guía de medios.** Dentro de la app (Ajustes › Guía de medios, o «guía» en Fuentes), las buenas prácticas para video, audio, imágenes, artefactos, cámaras y equipo, con recetas de ffmpeg listas para copiar. La pestaña «esta computadora» pregunta al navegador qué formatos abre, si los reproduce con fluidez y si usa la tarjeta gráfica. La misma guía está en [docs/guia-de-medios.md](docs/guia-de-medios.md).
+
+![Guía de medios: video para la función, otros códecs y transparencia](docs/capturas/09-guia-medios.png)
+
+**Artefactos y SDK.** Cualquier app web puede volverse artefacto con el protocolo `artefacto/v0` y el SDK incluido. Sus parámetros quedan como entradas del nodo Artefacto y, desde el SDK 0.2, sus números y eventos quedan como salidas que mueven otros nodos o disparan cues. La carpeta [sdk/](sdk/) reúne el SDK actual, una copia de cada versión, ejemplos, la tabla de compatibilidad y recetas para adaptar piezas de Canvas 2D, WebGL, p5.js y Three.js.
+
+![Un artefacto que publica datos: sus choques hacen contar un Counter y su energía mueve un Aspecto](docs/capturas/10-artefacto-datos.png)
 
 ### Cómo usarlo
 
 1. Sube la carpeta completa a un servidor con HTTPS, junto a tus artefactos, o pruébala en local con `python3 -m http.server 8000` dentro de la carpeta. Luego abre `http://localhost:8000/`.
 2. Ábrela en Chrome o Edge y abre la ventana de salida en el proyector.
-3. El manual completo está en `LEEME.txt`. Para hacer artefactos compatibles, consulta `PROTOCOLO.md`, `crear-artefacto-aurigaq.md` y `sdk/artefacto-sdk.js`.
+3. El manual completo está en `LEEME.txt`. Para preparar los archivos, [docs/guia-de-medios.md](docs/guia-de-medios.md). Para hacer artefactos, [sdk/README.md](sdk/README.md) y `crear-artefacto-aurigaq.md`.
+
+Antes de publicar una versión, `python3 herramientas/armar-docs.py` regenera la guía de medios, la guía de artefactos y la copia del SDK en `sdk/versiones/`.
 
 Las capturas se tomaron en un navegador sin GPU, así que los cuadros por segundo que muestran no reflejan el rendimiento real.
 
@@ -74,6 +82,8 @@ It is the outcome of more than fifteen years of research in multimedia and proje
 - **Audio scenes.** Multitrack timelines with loop and devamp.
 - **Output and venues.** A separate output window with corner pin, plus venue setups kept apart from the show.
 - **Touring.** Museum mode with a schedule, remote monitoring and a local agent.
+- **Media guide.** In-app best practices for video, audio, stills, artefacts and hardware, with a codec test for the current machine ([docs/guia-de-medios.md](docs/guia-de-medios.md)).
+- **Artefacto SDK 0.2.** Params in, data and events out, versioned in [sdk/](sdk/).
 
 **Run it:** serve the folder over HTTPS or `localhost` and open it in Chrome or Edge. The full manual (in Spanish) is in `LEEME.txt`.
 
