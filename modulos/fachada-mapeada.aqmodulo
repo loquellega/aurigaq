@@ -1,0 +1,207 @@
+{
+ "aqmodulo": 1,
+ "raiz": "umFachada",
+ "nombre": "fachada mapeada",
+ "modulos": [
+  {
+   "id": "umFachada",
+   "tipo": "modulo",
+   "nombre": "fachada mapeada",
+   "nodos": [
+    {
+     "id": "n68",
+     "t": "modentv",
+     "x": 20,
+     "y": 40,
+     "v": {
+      "nombre": "video"
+     }
+    },
+    {
+     "id": "n69",
+     "t": "modent",
+     "x": 20,
+     "y": 150,
+     "v": {
+      "nombre": "intensidad",
+      "tipo": "número",
+      "def": 1,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n70",
+     "t": "proyector",
+     "x": 300,
+     "y": 40,
+     "v": {
+      "mapa": {
+       "on": true,
+       "prueba": false,
+       "slices": [
+        {
+         "id": "s1",
+         "nombre": "muro izquierdo",
+         "tipo": "rect",
+         "ent": [
+          0,
+          0,
+          0.4,
+          1
+         ],
+         "sal": [
+          [
+           0.04,
+           0.18
+          ],
+          [
+           0.36,
+           0.08
+          ],
+          [
+           0.36,
+           0.92
+          ],
+          [
+           0.04,
+           0.82
+          ]
+         ],
+         "int": 1,
+         "fusion": "normal",
+         "borde": 0.02
+        },
+        {
+         "id": "s2",
+         "nombre": "columna",
+         "tipo": "malla",
+         "cols": 4,
+         "rows": 3,
+         "curva": true,
+         "ent": [
+          0.4,
+          0,
+          0.6,
+          1
+         ],
+         "sal": [
+          [
+           0.42,
+           0.12
+          ],
+          [
+           0.48,
+           0.12
+          ],
+          [
+           0.54,
+           0.12
+          ],
+          [
+           0.6,
+           0.12
+          ],
+          [
+           0.42,
+           0.5
+          ],
+          [
+           0.505,
+           0.5
+          ],
+          [
+           0.5650000000000001,
+           0.5
+          ],
+          [
+           0.6,
+           0.5
+          ],
+          [
+           0.42,
+           0.88
+          ],
+          [
+           0.48,
+           0.88
+          ],
+          [
+           0.54,
+           0.88
+          ],
+          [
+           0.6,
+           0.88
+          ]
+         ],
+         "int": 1,
+         "fusion": "normal",
+         "borde": 0
+        },
+        {
+         "id": "s3",
+         "nombre": "muro derecho",
+         "tipo": "rect",
+         "ent": [
+          0.6,
+          0,
+          1,
+          1
+         ],
+         "sal": [
+          [
+           0.64,
+           0.08
+          ],
+          [
+           0.96,
+           0.18
+          ],
+          [
+           0.96,
+           0.82
+          ],
+          [
+           0.64,
+           0.92
+          ]
+         ],
+         "int": 1,
+         "fusion": "normal",
+         "borde": 0.02
+        }
+       ]
+      },
+      "int": 1,
+      "fusion": "normal",
+      "capa": 1,
+      "ajuste": "cubrir"
+     }
+    }
+   ],
+   "cables": [
+    {
+     "de": [
+      "n68",
+      "out"
+     ],
+     "a": [
+      "n70",
+      "in"
+     ]
+    },
+    {
+     "de": [
+      "n69",
+      "valor"
+     ],
+     "a": [
+      "n70",
+      "int"
+     ]
+    }
+   ]
+  }
+ ]
+}

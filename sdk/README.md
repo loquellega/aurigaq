@@ -1,6 +1,6 @@
 # Artefacto SDK · aurigaQ
 
-**SDK 0.2 · protocolo `artefacto/v0` · aurigaQ v042** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez · GPL-3.0-or-later
+**SDK 0.2 · protocolo `artefacto/v0` · aurigaQ v043** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez · GPL-3.0-or-later
 
 Un **artefacto** es una app web (un instrumento visual o sonoro hecho en HTML, Canvas o WebGL) que aurigaQ presenta en vivo. El SDK es un solo archivo JavaScript, sin dependencias, que conecta la app con aQ:
 
@@ -133,7 +133,7 @@ function setup() {
 | aurigaQ | SDK | Protocolo | Notas |
 |---|---|---|---|
 | hasta v039 | 0.1 | artefacto/v0 | parámetros, `trigger`, `start`, `stop`, `hud`, `status` |
-| v040 a v042 | 0.2 | artefacto/v0 | `data`, `emit`, `fire`, `onHost`; salidas en el nodo Artefacto |
+| v040 a v043 | 0.2 | artefacto/v0 | `data`, `emit`, `fire`, `onHost`; salidas en el nodo Artefacto |
 
 El protocolo sigue siendo `artefacto/v0`: lo nuevo se agrega sin romper lo anterior. Una pieza con SDK 0.1 funciona en aQ v040, y una con SDK 0.2 funciona en un aQ anterior (sin sus salidas de datos).
 

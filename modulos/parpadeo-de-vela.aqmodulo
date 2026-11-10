@@ -1,0 +1,192 @@
+{
+ "aqmodulo": 1,
+ "raiz": "umVela",
+ "nombre": "parpadeo de vela",
+ "modulos": [
+  {
+   "id": "umVela",
+   "tipo": "modulo",
+   "nombre": "parpadeo de vela",
+   "nodos": [
+    {
+     "id": "n55",
+     "t": "modent",
+     "x": 20,
+     "y": 40,
+     "v": {
+      "nombre": "base",
+      "tipo": "número",
+      "def": 0.7,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n56",
+     "t": "modent",
+     "x": 20,
+     "y": 240,
+     "v": {
+      "nombre": "variación",
+      "tipo": "número",
+      "def": 0.3,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n57",
+     "t": "modent",
+     "x": 20,
+     "y": 440,
+     "v": {
+      "nombre": "calma (s)",
+      "tipo": "número",
+      "def": 0.15,
+      "min": 0,
+      "max": 3
+     }
+    },
+    {
+     "id": "n58",
+     "t": "azar",
+     "x": 280,
+     "y": 40,
+     "v": {
+      "min": 0,
+      "max": 1,
+      "cada": 0.08,
+      "suave": 0.6
+     }
+    },
+    {
+     "id": "n59",
+     "t": "suavizar",
+     "x": 280,
+     "y": 240,
+     "v": {
+      "entrada": 0,
+      "tiempo": 0.5
+     }
+    },
+    {
+     "id": "n60",
+     "t": "escalar",
+     "x": 540,
+     "y": 40,
+     "v": {
+      "entrada": 0,
+      "dmin": 0,
+      "dmax": 1,
+      "amin": 0,
+      "amax": 1,
+      "limitar": true
+     }
+    },
+    {
+     "id": "n61",
+     "t": "calculadora",
+     "x": 540,
+     "y": 330,
+     "v": {
+      "a": 0,
+      "op": "−",
+      "b": 1
+     }
+    },
+    {
+     "id": "n62",
+     "t": "modsal",
+     "x": 820,
+     "y": 40,
+     "v": {
+      "nombre": "brillo",
+      "valor": 0
+     }
+    }
+   ],
+   "cables": [
+    {
+     "de": [
+      "n58",
+      "valor"
+     ],
+     "a": [
+      "n59",
+      "entrada"
+     ]
+    },
+    {
+     "de": [
+      "n57",
+      "valor"
+     ],
+     "a": [
+      "n59",
+      "tiempo"
+     ]
+    },
+    {
+     "de": [
+      "n59",
+      "valor"
+     ],
+     "a": [
+      "n60",
+      "entrada"
+     ]
+    },
+    {
+     "de": [
+      "n55",
+      "valor"
+     ],
+     "a": [
+      "n60",
+      "amax"
+     ]
+    },
+    {
+     "de": [
+      "n55",
+      "valor"
+     ],
+     "a": [
+      "n61",
+      "a"
+     ]
+    },
+    {
+     "de": [
+      "n56",
+      "valor"
+     ],
+     "a": [
+      "n61",
+      "b"
+     ]
+    },
+    {
+     "de": [
+      "n61",
+      "valor"
+     ],
+     "a": [
+      "n60",
+      "amin"
+     ]
+    },
+    {
+     "de": [
+      "n60",
+      "valor"
+     ],
+     "a": [
+      "n62",
+      "valor"
+     ]
+    }
+   ]
+  }
+ ]
+}

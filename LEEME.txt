@@ -1,4 +1,4 @@
-aurigaQ v042
+aurigaQ v043
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -12,6 +12,7 @@ CONTENIDO
   artefactos/senal.html     artefacto de prueba
   artefactos/plantilla.html plantilla comentada para crear artefactos nuevos
   sdk/ejemplos/             artefactos de ejemplo del SDK 0.2 (datos, WebGL)
+  modulos/                  módulos de la colección (.aqmodulo) y su indice.json
   sdk/versiones/            copia de cada versión del SDK
   sdk/README.md             guía del SDK, compatibilidad y cómo adaptar apps
   crear-artefacto-aurigaq.md guía completa para crear un artefacto
@@ -491,6 +492,35 @@ ESCENA DE VIDEO
   cuando cambian. La escena trabaja solo mientras está al aire o en
   el editor; la vista previa del editor se lee 10 veces por segundo.
 
+MÓDULOS DE USUARIO
+  Un módulo es un pedazo de patch que se reusa en muchas escenas. Adentro
+  lleva Entradas de módulo (número, disparo o video) y Salidas de módulo
+  (número o video); afuera aparece como un nodo con esas entradas y
+  salidas, en la categoría «módulos».
+  Por referencia: lo que cambies adentro cambia todas sus copias al
+  momento. Cada copia conserva los valores de sus entradas y su propio
+  estado (contadores, Timeline, disparos). «Derivar» hace un módulo
+  nuevo e independiente para una copia.
+  Crear:
+    convertir en módulo  elige nodos (Mayús + clic para varios) y
+                         conviértelos: los cables que cruzan el borde se
+                         vuelven Entradas y Salidas solas.
+    + módulo nuevo       en el panel de nodos.
+  Editar: «editar módulo» o doble clic en el título de una copia; Esc
+  vuelve a la escena. La vista previa muestra la escena que lo usa.
+  Un Proyector con su mapa dentro de un módulo se reusa en todas las
+  escenas y se corrige en un solo lugar.
+  Pueden ir módulos dentro de módulos (hasta 4 niveles; un módulo no se
+  contiene a sí mismo).
+  Bibliotecas:
+    del show             viajan dentro del archivo .aurigaq.
+    mis módulos          «guardar en mis módulos» los deja en este
+                         navegador para cualquier show (con los módulos
+                         que usan adentro).
+    archivos             «exportar .aqmodulo» e «importar .aqmodulo…».
+    colección            la carpeta modulos/: estado por cue, parpadeo
+                         de vela, video con aspecto y fachada mapeada.
+
 MAPA DEL PROYECTOR (mapeo de proyección)
   Cada Proyector guarda su propio mapa: «editar mapa» en el nodo abre el
   editor a pantalla completa. Sin slices, el Proyector entrega la imagen
@@ -855,6 +885,10 @@ ARTEFACTOS Y SDK
   repositorio (sdk/README.md).
 
 HISTORIAL
+  v043  Módulos de usuario: Entradas y Salidas de módulo, copias por
+        referencia con valores y estado propios, convertir en módulo,
+        derivar, módulos dentro de módulos, mis módulos, .aqmodulo y
+        módulos de la colección. Selección de varios nodos con Mayús.
   v042  Mapa en cada Proyector: slices de rectángulo con perspectiva y de
         malla curva, borde suave, intensidad, fusión, espejo, carta de
         prueba, editor con vistas de entrada y salida, teclado, zoom,

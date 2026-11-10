@@ -1,0 +1,210 @@
+{
+ "aqmodulo": 1,
+ "raiz": "umEstado",
+ "nombre": "estado por cue",
+ "modulos": [
+  {
+   "id": "umEstado",
+   "tipo": "modulo",
+   "nombre": "estado por cue",
+   "nodos": [
+    {
+     "id": "n46",
+     "t": "modent",
+     "x": 20,
+     "y": 40,
+     "v": {
+      "nombre": "estado 1",
+      "tipo": "número",
+      "def": 0,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n47",
+     "t": "modent",
+     "x": 20,
+     "y": 240,
+     "v": {
+      "nombre": "estado 2",
+      "tipo": "número",
+      "def": 0.33,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n48",
+     "t": "modent",
+     "x": 20,
+     "y": 440,
+     "v": {
+      "nombre": "estado 3",
+      "tipo": "número",
+      "def": 0.66,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n49",
+     "t": "modent",
+     "x": 20,
+     "y": 640,
+     "v": {
+      "nombre": "estado 4",
+      "tipo": "número",
+      "def": 1,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n50",
+     "t": "modent",
+     "x": 20,
+     "y": 840,
+     "v": {
+      "nombre": "transición (s)",
+      "tipo": "número",
+      "def": 2,
+      "min": 0,
+      "max": 30
+     }
+    },
+    {
+     "id": "n51",
+     "t": "alcue",
+     "x": 280,
+     "y": 40,
+     "v": {
+      "cue": 0,
+      "dur": 0.1
+     }
+    },
+    {
+     "id": "n52",
+     "t": "contador",
+     "x": 280,
+     "y": 220,
+     "v": {
+      "sumar": 0,
+      "restar": 0,
+      "reiniciar": 0,
+      "min": 1,
+      "max": 4,
+      "paso": 1,
+      "limite": "vuelve"
+     }
+    },
+    {
+     "id": "n53",
+     "t": "selector",
+     "x": 560,
+     "y": 40,
+     "v": {
+      "elige": 1,
+      "in1": 0,
+      "in2": 0.33,
+      "in3": 0.66,
+      "in4": 1,
+      "suave": 0
+     }
+    },
+    {
+     "id": "n54",
+     "t": "modsal",
+     "x": 840,
+     "y": 40,
+     "v": {
+      "nombre": "valor",
+      "valor": 0
+     }
+    }
+   ],
+   "cables": [
+    {
+     "de": [
+      "n51",
+      "pulso"
+     ],
+     "a": [
+      "n52",
+      "sumar"
+     ]
+    },
+    {
+     "de": [
+      "n52",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "elige"
+     ]
+    },
+    {
+     "de": [
+      "n46",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "in1"
+     ]
+    },
+    {
+     "de": [
+      "n47",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "in2"
+     ]
+    },
+    {
+     "de": [
+      "n48",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "in3"
+     ]
+    },
+    {
+     "de": [
+      "n49",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "in4"
+     ]
+    },
+    {
+     "de": [
+      "n50",
+      "valor"
+     ],
+     "a": [
+      "n53",
+      "suave"
+     ]
+    },
+    {
+     "de": [
+      "n53",
+      "valor"
+     ],
+     "a": [
+      "n54",
+      "valor"
+     ]
+    }
+   ]
+  }
+ ]
+}

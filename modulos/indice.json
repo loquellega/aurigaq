@@ -1,0 +1,22 @@
+[
+ {
+  "archivo": "estado-por-cue.aqmodulo",
+  "nombre": "estado por cue",
+  "desc": "Cada GO de la cue list pasa al siguiente de cuatro valores, con transición."
+ },
+ {
+  "archivo": "parpadeo-de-vela.aqmodulo",
+  "nombre": "parpadeo de vela",
+  "desc": "Un número que tiembla como una llama, entre base − variación y base."
+ },
+ {
+  "archivo": "video-con-aspecto.aqmodulo",
+  "nombre": "video con aspecto",
+  "desc": "Película HP5 y máscara de elipse suave sobre el video que entre."
+ },
+ {
+  "archivo": "fachada-mapeada.aqmodulo",
+  "nombre": "fachada mapeada",
+  "desc": "Un Proyector con su mapa (muro, columna curva, muro): se reusa en cada escena."
+ }
+]

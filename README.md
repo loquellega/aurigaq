@@ -1,6 +1,6 @@
 # aurigaQ (aQ)
 
-**Versión 0.42 (v042)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
+**Versión 0.43 (v043)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
 
 ![La cue list en función: el cue en espera arriba, el Monitor y lo que está al aire a la derecha](docs/capturas/01-funcion.png)
 
@@ -40,6 +40,12 @@ La herramienta responde a esas preguntas con decisiones de diseño:
 ![El editor del mapa: a la izquierda, de dónde sale cada slice; a la derecha, dónde cae en el proyector](docs/capturas/11-mapa-proyector.png)
 
 ![La carta de prueba de cada slice, para alinear en la sala](docs/capturas/12-mapa-carta.png)
+
+**Módulos de usuario.** Un pedazo de patch con entradas y salidas propias que se reusa en muchas escenas. Lo que cambias adentro cambia todas sus copias, y cada copia conserva sus valores y su estado. Se crea seleccionando nodos y eligiendo «convertir en módulo». Se guarda en el show, en una biblioteca personal o en archivos `.aqmodulo`. La carpeta [modulos/](modulos/) trae los de la colección, entre ellos una fachada mapeada lista para reusar.
+
+![Una escena con dos módulos: video con aspecto y fachada mapeada](docs/capturas/13-modulo-en-escena.png)
+
+![Dentro de un módulo: sus entradas, un Proyector con su mapa y la escena que lo usa en la vista previa](docs/capturas/14-modulo-editor.png)
 
 **Escenas de audio.** Una línea de tiempo estéreo multipista con clips, recortes, curvas de volumen, fundidos cruzados, región de bucle y devamp, programada con el reloj de audio.
 
@@ -87,6 +93,7 @@ It is the outcome of more than fifteen years of research in multimedia and proje
 - **Video scenes.** Node patches with generators, effects, compositing, numeric control and logic: comparators, gates, timers, selectors and cue triggers.
 - **Video timeline node.** Layers, trims, fades, markers and trigger control.
 - **Audio scenes.** Multitrack timelines with loop and devamp.
+- **User modules.** Reusable sub-patches with their own inputs and outputs, linked by reference, with per-copy values and state; built-in collection in [modulos/](modulos/).
 - **Per-projector mapping.** Each Projector node has its own map: perspective quads and curved meshes, soft edges, test card, copy and paste.
 - **Output and venues.** A separate output window with corner pin, plus venue setups kept apart from the show.
 - **Touring.** Museum mode with a schedule, remote monitoring and a local agent.

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v042
+  aurigaQ v043
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -581,7 +581,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v042</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v043</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -595,7 +595,7 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v042</h2>
+    <h2 id="aboutTitle">aurigaQ v043</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
     <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
@@ -1135,7 +1135,7 @@ const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function artRes(){return {width:Math.round(S.out.w*S.artScale/2)*2,height:Math.round(S.out.h*S.artScale/2)*2};}
 function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest){sendArt(a,{type:'resize',...artRes()});sendArt(a,{type:'welcome',...hostInfo()});}}
 // SDK 0.2: lo que el artefacto sabe del host al conectarse (y cuando cambia la resolución)
-function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v042',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
+function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v043',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
 function sendArt(a,msg){try{const m=Object.assign({ns:NS},msg),w=a.iframe.contentWindow;if(EW!==window&&EW.__aqSend)EW.__aqSend(w,m);else w.postMessage(m,'*');}catch(e){}}
 function startArt(a){if(a&&a.kind==='art'&&!a.running){sendArt(a,{type:'start'});a.running=true;}}
 function stopArt(a){if(a&&a.kind==='art'&&a.running){sendArt(a,{type:'stop'});a.running=false;}}
@@ -1322,7 +1322,7 @@ function voicePos(v){if(v.paused)return v.pausePos;if(v.esc)return v.esc.pos();c
 const ESC_PISTAS=8,ESC_AHEAD=1.5,ESC_MICRO=.004;
 // estado del editor (se declara aquí porque la biblioteca y la carga del show lo consultan)
 const EE={e:null,el:null,cv:null,sel:null,vx:0,drag:null,raf:0,snap:true,heads:null,bot:null,clipSel:null,info:null};
-const escById=id=>S.escenas.find(e=>e.id===id);
+const escById=id=>S.escenas.find(e=>e.id===id)||(S.modulos||[]).find(m=>m.id===id);
 const nuevaPista=n=>({id:'p'+(uid++),nombre:'pista '+n,vol:1,pan:0,mute:false,solo:false});
 function nuevaEscenaAudio(nombre){return {id:'ea'+(uid++),tipo:'audio',nombre:nombre||'escena de audio',pistas:[nuevaPista(1),nuevaPista(2)],clips:[],loop:{on:false,a:0,b:8},cursor:0,zoom:40};}
 const clipLen=k=>Math.max(.05,k.b-k.a);
@@ -1550,6 +1550,11 @@ const NODOS={
     ins:[['ctl','','botones',[['iniciar','▶ iniciar'],['parar','❚❚ parar'],['cero','reiniciar']]],['iniciar','iniciar (al subir)','num',0,-1000,1000,.01],['parar','parar (al subir)','num',0,-1000,1000,.01],['reiniciar','reiniciar (al subir)','num',0,-1000,1000,.01],
       ['dur','duración (s, 0 = sin fin)','num',10,0,86400,.1],['alEntrar','al entrar la escena','sel','corre',[['corre','empieza a correr'],['espera','espera un disparo']]],['alFin','al llegar al final','sel','se detiene',[['se detiene','se detiene'],['vuelve','vuelve a empezar']]],['velocidad','velocidad','num',1,0,100,.01]]},
   alcue:{nom:'Cue Trigger · al disparar un cue',g:'lógica',num:['pulso','cue'],numNom:{cue:'último cue nº'},ins:[['cue','cue nº (0 = cualquiera)','num',0,0,9999,1],['dur','pulso (s)','num',.1,0,10,.01]]},
+  modent:{nom:'Entrada de módulo · número',g:'módulos',soloModulo:true,num:['valor'],ins:[['nombre','nombre','texto','entrada'],['tipo','tipo','sel','número',[['número','número'],['disparo','disparo (pulso)']]],
+    ['def','valor inicial','num',0,-10000,10000,.01],['min','mínimo','num',0,-10000,10000,.01],['max','máximo','num',1,-10000,10000,.01]]},
+  modentv:{nom:'Entrada de módulo · video',g:'módulos',soloModulo:true,sale:'video',ins:[['nombre','nombre','texto','video']]},
+  modsal:{nom:'Salida de módulo · número',g:'módulos',soloModulo:true,ins:[['nombre','nombre','texto','valor'],['valor','valor','num',0,-10000,10000,.01]]},
+  modsalv:{nom:'Salida de módulo · video',g:'módulos',soloModulo:true,vin:true,ins:[['nombre','nombre','texto','video']]},
   rampa:{nom:'Envelope · rampa',g:'control',num:['valor','fin'],ins:[['de','de','num',0,-1000,1000,.01],['a','a','num',1,-1000,1000,.01],['seg','duración (s)','num',5,0,600,.1],['curva','curva','sel','suave',['lineal','suave','entrada','salida']],['bucle','bucle','bool',false]]}
 };
 const FUSION_NOD={normal:'normal',suma:'add',pantalla:'screen',multiplicar:'multiply',diferencia:'difference',aclarar:'lighten'};
@@ -1559,7 +1564,7 @@ const LIENZO=new Set(['forma','texto','color','degradado']),LLENA=new Set(['form
 // categorías de los nodos, de la fuente a la salida
 const GRUPOS_NOD=[['entradas','entradas','videos, fotos, cámaras y capturas en vivo','▷'],['generadores','generadores','formas, texto, color, degradado, ruido y artefactos','◇'],
   ['transformar','transformar','escala, posición, giro y máscara','↔'],['efectos','efectos','color, desenfoque, claves y filtros','◆'],['componer','componer','mezclar varias cadenas','▤'],
-  ['control','control','números: ondas, azar, ratón, teclado, audio, disparos, contadores y cálculos','∿'],['lógica','lógica','puertas, comparaciones, rangos, selección, cronómetro y cues','⋀'],['salida','salida','el Proyector: una capa de la escena','▣']];
+  ['control','control','números: ondas, azar, ratón, teclado, audio, disparos, contadores y cálculos','∿'],['lógica','lógica','puertas, comparaciones, rangos, selección, cronómetro y cues','⋀'],['módulos','módulos','tus módulos: patches con entradas y salidas que se reusan en muchas escenas','▣'],['salida','salida','el Proyector: una capa de la escena','▣']];
 const hexRGB=h=>{const x=parseInt(String(h||'#000000').slice(1,7),16)||0;return [(x>>16&255)/255,(x>>8&255)/255,(x&255)/255];};
 const ESTILOS={neutro:{},'blanco y negro':{bn:1,con:1.1},saturado:{sat:1.45,con:1.05},oscuro:{lum:-.12,con:1.15},lavado:{sat:.6,lum:.07,con:.8},'cálido':{ti:.55,sat:1.05},'frío':{ti:-.55},'película HP5':{bn:1,gr:.35,con:1.15,vi:.3},'película color':{sat:.85,gr:.28,con:1.08,vi:.2}};
 const EXT_NOD={'vacío':'vacio',repetir:'repetir',espejo:'espejo'};
@@ -1626,14 +1631,151 @@ function ratonEscucha(w){
   try{w.addEventListener('pointermove',f,{passive:true});}catch(e){}
   if(w!==window&&!RATON.ui){RATON.ui=true;window.addEventListener('pointermove',f,{passive:true});}
 }
+/* ---------- módulos de usuario ----------
+   Un módulo es un pedazo de patch con Entradas y Salidas de módulo. En una escena aparece como un nodo
+   (tipo «mod:<id>») y se reusa por referencia: editarlo cambia todas sus copias; cada copia conserva los
+   valores puestos afuera y su propio estado. Antes de cada cuadro la escena se «despliega»: los nodos del
+   módulo entran con nombres propios (copia/nodo) y los cables cruzan sus entradas y salidas. */
+const esInst=n=>typeof n.t==='string'&&n.t.startsWith('mod:');
+const modById=id=>(S.modulos||[]).find(m=>m.id===id);
+const MOD_PROF=4,MOD_CLON=new Map();
+if(!S.modulos)S.modulos=[];
+// registra cada módulo como un tipo de nodo: entradas, salidas y botones salen de sus nodos de Entrada y Salida
+function modSync(){
+  if(!S.modulos)S.modulos=[];
+  for(const t of Object.keys(NODOS))if(t.startsWith('mod:')&&!modById(t.slice(4)))delete NODOS[t];
+  for(const M of S.modulos){
+    const ent=M.nodos.filter(n=>n.t==='modent'),entV=M.nodos.filter(n=>n.t==='modentv'),sal=M.nodos.filter(n=>n.t==='modsal'),salV=M.nodos.filter(n=>n.t==='modsalv');
+    const ord=(a,b)=>a.y-b.y||a.x-b.x;[ent,entV,sal,salV].forEach(L=>L.sort(ord));
+    NODOS['mod:'+M.id]={nom:M.nombre+' · módulo',g:'módulos',modulo:M.id,
+      vins:entV.map(n=>'e:'+n.id),vinsNom:Object.fromEntries(entV.map(n=>['e:'+n.id,n.v.nombre||'video'])),
+      vouts:salV.map(n=>['s:'+n.id,n.v.nombre||'video']),
+      num:sal.map(n=>'s:'+n.id),numNom:Object.fromEntries(sal.map(n=>['s:'+n.id,n.v.nombre||'valor'])),
+      ins:[['_ed','','botones',[['modulo','editar módulo'],['derivar','derivar']]],
+        ...ent.map(n=>{const dis=n.v.tipo==='disparo';return ['e:'+n.id,(n.v.nombre||'entrada')+(dis?' (disparo)':''),'num',+n.v.def||0,dis?0:+(n.v.min??-1000),dis?1:+(n.v.max??1000),dis?1:.01];})]};
+  }
+  // copias de módulos que ya no existen: quedan como nodo vacío, visible, para no perder la escena
+  const huerf=new Set();for(const e of [...(S.escenas||[]),...S.modulos])for(const n of e.nodos||[])if(esInst(n)&&!NODOS[n.t])huerf.add(n.t);
+  for(const t of huerf)NODOS[t]={nom:'módulo que falta',g:'módulos',oculto:true,ins:[]};
+  modLimpiar();
+}
+// cables a entradas o salidas que el módulo ya no tiene: se quitan, con aviso
+function modLimpiar(){let k=0;const ok=(n,p,lado)=>{const d=NODOS[n.t];if(!d)return true;
+    return lado==='a'?(d.ins.some(x=>x[0]===p)||(d.vins||[]).includes(p)):((d.num||[]).includes(p)||(d.vouts||[]).some(x=>x[0]===p));};
+  for(const e of [...(S.escenas||[]),...(S.modulos||[])]){if(!e.cables)continue;const N=new Map(e.nodos.map(n=>[n.id,n])),antes=e.cables.length;
+    e.cables=e.cables.filter(w=>{const a=N.get(w.a[0]),b=N.get(w.de[0]);return !(a&&esInst(a)&&!ok(a,w.a[1],'a'))&&!(b&&esInst(b)&&!ok(b,w.de[1],'de'));});k+=antes-e.cables.length;}
+  if(k)toast(k+' cable(s) quitado(s): el módulo ya no tiene esas entradas o salidas');}
+const modVisible=(t,d,e)=>!d.oculto&&!(d.soloModulo&&!(e&&e.tipo==='modulo'))&&!(e&&e.tipo==='modulo'&&t==='mod:'+e.id);
+function modAyuda(n){const M=modById(n.t.slice(4));if(!M)return 'Este módulo ya no existe en el show: la copia queda vacía. Bórrala o trae el módulo con «importar .aqmodulo…».';
+  const k=modCopias(M);return 'Módulo de usuario «'+M.nombre+'» ('+k+(k===1?' copia':' copias')+' en el show). «Editar módulo» (o doble clic en el título) lo abre: lo que cambies adentro cambia todas sus copias. Cada copia conserva los valores de sus entradas y su propio estado. «Derivar» hace un módulo nuevo e independiente para esta copia.';}
+// despliega una escena (o un módulo abierto en el editor) con las copias de sus módulos
+function escExp(e){
+  if(!e.nodos.some(esInst))return e;
+  const nodos=[],cables=[],sal=new Map();
+  modNivel(e.nodos,e.cables,'',null,0,[],nodos,cables,sal);
+  return {id:e.id,tipo:e.tipo,nombre:e.nombre,nodos,cables,_sal:sal};
+}
+function modClon(id,n,inst){let c=MOD_CLON.get(id);if(!c){c={id};MOD_CLON.set(id,c);}c.t=n.t;c.v=n.v;c.x=n.x;c.y=n.y;c._inst=inst;c._mid=n.id;return c;}
+// un nivel del patch: devuelve, para quien lo contiene, a dónde van sus entradas de video y de dónde salen sus salidas
+function modNivel(L,cabs,pre,inst,prof,pila,nodos,cables,sal){
+  const id=n=>pre?pre+n.id:n.id,obj=new Map(),info=new Map(),entV=new Map(),salida=new Map();
+  for(const n of L){const o=pre?modClon(id(n),n,inst):n;obj.set(n.id,o);nodos.push(o);
+    if(esInst(n)){const M=modById(n.t.slice(4));
+      if(M&&prof<MOD_PROF&&!pila.includes(M.id)){const I=modNivel(M.nodos,M.cables,id(n)+'/',o,prof+1,[...pila,M.id],nodos,cables,sal);info.set(n.id,I);for(const [Y,r] of I.salida)if(r)sal.set(id(n)+'|s:'+Y,r);}}}
+  const tipoDe=new Map(L.map(n=>[n.id,n.t]));
+  const fuente=(nid,p)=>{const I=info.get(nid);if(I&&typeof p==='string'&&p.startsWith('s:')){const r=I.salida.get(p.slice(2));if(r!==undefined)sal.set(id({id:nid})+'|'+p,r);return r||null;}return [id({id:nid}),p];};
+  const destinos=(nid,p)=>{const I=info.get(nid);if(I&&typeof p==='string'&&p.startsWith('e:')&&I.entV.has(p.slice(2)))return I.entV.get(p.slice(2));
+    if(I&&typeof p==='string'&&p.startsWith('e:')&&NODOS[tipoDe.get(nid)]&&(NODOS[tipoDe.get(nid)].vins||[]).includes(p))return [];
+    return [[id({id:nid}),p]];};
+  for(const w of cabs){const ts=tipoDe.get(w.de[0]),tt=tipoDe.get(w.a[0]);if(!ts||!tt)continue;
+    if(ts==='modentv'){if(!inst)continue;const D=entV.get(w.de[0])||[];D.push(...destinos(w.a[0],w.a[1]));entV.set(w.de[0],D);continue;}
+    if(tt==='modsal'||tt==='modsalv'){if(inst&&((tt==='modsal'&&w.a[1]==='valor')||(tt==='modsalv'&&w.a[1]==='in')))salida.set(w.a[0],fuente(w.de[0],w.de[1]));continue;}
+    const f=fuente(w.de[0],w.de[1]);if(!f)continue;
+    for(const a of destinos(w.a[0],w.a[1]))cables.push({de:f,a});}
+  // una Entrada de video conectada directo a una Salida de video: el video atraviesa el módulo
+  return {entV,salida};
+}
+// salidas de una copia leídas desde fuera (valores en vivo del editor)
+function modSalida(ctx,n,port,d){const r=ctx.ex&&ctx.ex._sal&&ctx.ex._sal.get(n.id+'|'+port);
+  if(r)return salidaNum(ctx,ctx.nodo.get(r[0])||{id:'',t:'',v:{}},r[1],d+1);
+  const M=modById(n.t.slice(4)),s=M&&M.nodos.find(x=>'s:'+x.id===port);return s?+s.v.valor||0:0;}
+// módulos de la colección: archivos .aqmodulo en la carpeta modulos/ (con su indice.json)
+let MOD_COL=[];fetch('modulos/indice.json').then(r=>r.ok?r.json():[]).then(L=>{MOD_COL=Array.isArray(L)?L:[];if(EV.e)evPanel();}).catch(()=>{});
+async function modDeColeccion(archivo){const r=await fetch('modulos/'+archivo);if(!r.ok)throw new Error('no se encontró '+archivo);return modImportar(await r.json());}
+// biblioteca personal: módulos para todos los shows, en este navegador
+const MIS_K='aurigaq.mismodulos';
+function misModulos(){try{const L=JSON.parse(localStorage.getItem(MIS_K)||'[]');return Array.isArray(L)?L:[];}catch(e){return [];}}
+function modDeps(M,acc=new Map()){acc.set(M.id,M);for(const n of M.nodos)if(esInst(n)){const D=modById(n.t.slice(4));if(D&&!acc.has(D.id))modDeps(D,acc);}return acc;}
+function modPaquete(M){return {aqmodulo:1,raiz:M.id,nombre:M.nombre,modulos:[...modDeps(M).values()].map(x=>JSON.parse(JSON.stringify(x)))};}
+function guardarEnMis(M){const L=misModulos().filter(p=>p.raiz!==M.id);L.unshift(modPaquete(M));try{localStorage.setItem(MIS_K,JSON.stringify(L.slice(0,200)));toast('«'+M.nombre+'» quedó en mis módulos: aparece en el panel de nodos de cualquier show');}catch(e){toast('no se pudo guardar en este navegador');}}
+// trae un paquete al show: los módulos que ya están (mismo id) se actualizan; devuelve el módulo raíz
+function modImportar(P){
+  if(!P||!Array.isArray(P.modulos))throw new Error('no es un archivo de módulo de aQ');
+  if(!S.modulos)S.modulos=[];
+  for(const m of P.modulos){const c=JSON.parse(JSON.stringify(m));c.tipo='modulo';const i=S.modulos.findIndex(x=>x.id===c.id);if(i>=0)S.modulos[i]=c;else S.modulos.push(c);
+    for(const n of c.nodos){const k=+String(n.id).replace(/\D/g,'');if(k>=uid)uid=k+1;}const k=+String(c.id).replace(/\D/g,'');if(k>=uid)uid=k+1;}
+  modSync();return modById(P.raiz);
+}
+function modExportar(M){const b=new Blob([JSON.stringify(modPaquete(M),null,1)],{type:'application/json'});const a=el('a',{href:URL.createObjectURL(b),download:(M.nombre||'modulo').replace(/[^\wáéíóúñü -]/gi,'').trim().replace(/\s+/g,'-')+'.aqmodulo'});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+function modImportarArchivo(){const inp=el('input',{type:'file',accept:'.aqmodulo,application/json',style:'display:none'});
+  inp.onchange=async()=>{const f=inp.files[0];inp.remove();if(!f)return;try{const M=modImportar(JSON.parse(await f.text()));toast('módulo «'+M.nombre+'» en el show');if(EV.e)evPanel();}catch(e){toast('no se pudo abrir: '+e.message,5200);}};
+  document.body.append(inp);inp.click();}
+function nuevoModulo(nombre){const M={id:'um'+(uid++),tipo:'modulo',nombre,nodos:[],cables:[]};
+  const a=nuevoNodo('modentv',40,40);a.v.nombre='video';const b=nuevoNodo('modsalv',520,40);b.v.nombre='video';M.nodos.push(a,b);M.cables.push({de:[a.id,'out'],a:[b.id,'in']});
+  S.modulos.push(M);modSync();return M;}
+function modCopias(M){let k=0;for(const e of [...(S.escenas||[]),...S.modulos])for(const n of e.nodos||[])if(n.t==='mod:'+M.id)k++;return k;}
+// derivar: una copia independiente del módulo para esta copia del nodo
+function modDerivar(n){const M=modById(n.t.slice(4));if(!M)return;const c=JSON.parse(JSON.stringify(M));c.id='um'+(uid++);c.nombre=M.nombre+' derivado';
+  const ids=new Map();c.nodos.forEach(x=>{const k='n'+(uid++);ids.set(x.id,k);x.id=k;});c.cables.forEach(w=>{w.de[0]=ids.get(w.de[0]);w.a[0]=ids.get(w.a[0]);});
+  S.modulos.push(c);const v={};for(const [k,x] of Object.entries(n.v)){const m=/^e:(.+)$/.exec(k);v[m&&ids.has(m[1])?'e:'+ids.get(m[1]):k]=x;}n.v=v;
+  if(EV.e)EV.e.cables.forEach(w=>{for(const q of [w.de,w.a])if(q[0]===n.id){const m=/^([es]):(.+)$/.exec(q[1]);if(m&&ids.has(m[2]))q[1]=m[1]+':'+ids.get(m[2]);}});
+  n.t='mod:'+c.id;modSync();if(EV.e){evPintar();evPanel();}toast('módulo nuevo «'+c.nombre+'»: esta copia ya no cambia con el original');}
+// editar el módulo de una copia: el editor de nodos lo abre y al cerrar vuelve a la escena
+function abrirModulo(M,desde){if(!M)return;if(desde){EV.pila=EV.pila||[];EV.pila.push(desde);}abrirEscenaVideo(M,true);}
+function pedirTexto(t,v,f){const ov=el('div',{class:'ov',style:'z-index:80'}),inp=el('input',{type:'text',value:v,'aria-label':t,style:'width:100%'});
+  const ok=()=>{const x=inp.value.trim();ov.remove();if(x)f(x);};inp.onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')ok();if(e.key==='Escape')ov.remove();};
+  ov.append(el('div',{class:'card'},el('h2',{},t),inp,el('div',{class:'fila'},btn('aceptar',ok),btn('cancelar',()=>ov.remove()))));document.body.append(ov);inp.focus();inp.select();}
+// convertir la selección en módulo: los cables que cruzan el borde se vuelven Entradas y Salidas
+function convertirEnModulo(){
+  const e=EV.e;if(!e)return;const sel=new Set(EV.multi&&EV.multi.size?EV.multi:EV.sel?[EV.sel.id]:[]);
+  if(!sel.size){toast('elige uno o más nodos (Mayús + clic para elegir varios)');return;}
+  if(e.tipo==='modulo'&&[...sel].some(id=>{const n=e.nodos.find(x=>x.id===id);return n&&/^mod(ent|sal)v?$/.test(n.t);})){toast('las Entradas y Salidas de módulo se quedan afuera de la selección');return;}
+  pedirTexto('Nombre del módulo','módulo '+((S.modulos||[]).length+1),nombre=>{
+    const N=e.nodos.filter(n=>sel.has(n.id)),x0=Math.min(...N.map(n=>n.x)),y0=Math.min(...N.map(n=>n.y));
+    const M={id:'um'+(uid++),tipo:'modulo',nombre,nodos:[],cables:[]};
+    N.forEach(n=>{n.x=n.x-x0+260;n.y=n.y-y0+40;M.nodos.push(n);mapaSoltar(n.id);for(const k of ['C','G','X','N','T'])escvCache.delete(k+n.id);escvCache.delete(n.id);});
+    const tipoIn=(n,p)=>{const q=evEntradas(n).find(x=>x[0]===p);return q&&q[2]==='video'?'video':'num';};
+    const tipoOut=(n,p)=>{const q=evSalidas(n).find(x=>x[0]===p);return q&&q[2]==='video'?'video':'num';};
+    const inst=nuevoNodo('modentv',0,0);inst.t='mod:'+M.id;inst.id='n'+(uid++);inst.v={};inst.x=x0;inst.y=y0;
+    const entradas=new Map(),salidas=new Map(),fuera=[],ex=[];let ye=40,ys=40;
+    for(const w of e.cables){const ai=sel.has(w.a[0]),di=sel.has(w.de[0]);
+      if(ai&&di){M.cables.push(w);continue;}
+      if(ai&&!di){const tn=e.nodos.find(n=>n.id===w.a[0]),tp=tipoIn(tn,w.a[1]),k=w.de.join('|');let E=entradas.get(k);
+        if(!E){E=nuevoNodo(tp==='video'?'modentv':'modent',20,ye);ye+=tp==='video'?110:200;const q=evEntradas(tn).find(x=>x[0]===w.a[1]);E.v.nombre=q?q[1]:w.a[1];
+          if(tp!=='video'){const v=tn.v[w.a[1]];E.v.def=typeof v==='number'?v:+(q&&q[3])||0;}M.nodos.push(E);entradas.set(k,E);ex.push({de:w.de,a:[inst.id,'e:'+E.id]});}
+        M.cables.push({de:[E.id,tp==='video'?'out':'valor'],a:w.a});continue;}
+      if(di&&!ai){const sn=e.nodos.find(n=>n.id===w.de[0]),tp=tipoOut(sn,w.de[1]),k=w.de.join('|');let X=salidas.get(k);
+        if(!X){X=nuevoNodo(tp==='video'?'modsalv':'modsal',Math.max(...N.map(n=>n.x))+300,ys);ys+=110;const q=evSalidas(sn).find(x=>x[0]===w.de[1]);X.v.nombre=q?(tp==='video'?'video':q[1]):w.de[1];
+          M.nodos.push(X);salidas.set(k,X);M.cables.push({de:w.de,a:[X.id,tp==='video'?'in':'valor']});}
+        ex.push({de:[inst.id,'s:'+X.id],a:w.a});continue;}
+      fuera.push(w);}
+    S.modulos.push(M);modSync();
+    for(const p of NODOS[inst.t].ins)inst.v[p[0]]=p[3];
+    e.nodos=e.nodos.filter(n=>!sel.has(n.id));e.nodos.push(inst);e.cables=[...fuera,...ex];
+    EV.multi=new Set();EV.sel=inst;evPintar();evPanel();evAyuda();sincEscenas();
+    toast('módulo «'+nombre+'»: '+entradas.size+' entrada(s), '+salidas.size+' salida(s). Doble clic o «editar módulo» para abrirlo');
+  });
+}
+
+modSync();
 // estado del editor de nodos (aquí, porque el motor lo consulta en cada cuadro)
 const EV={e:null,el:null,area:null,svg:null,pv:null,sel:null,drag:null,raf:0,pvT:0,tmp:null};
 const escvOut=new Map(),escvCache=new Map();let escvUsa=new Set();
 // contexto de un cuadro: cables por entrada y valores numéricos ya calculados
 function escvCtx(e,now){
-  const nodo=new Map(e.nodos.map(n=>[n.id,n])),a=new Map();
-  for(const w of e.cables)a.set(w.a[0]+'|'+w.a[1],w);
-  return {e,now,nodo,a,memo:new Map(),sonido:new Map()};
+  const ex=escExp(e),nodo=new Map(ex.nodos.map(n=>[n.id,n])),a=new Map();
+  for(const w of ex.cables)a.set(w.a[0]+'|'+w.a[1],w);
+  return {e,ex,nodos:ex.nodos,now,nodo,a,memo:new Map(),sonido:new Map()};
 }
 function evNum(ctx,n,pid,d=0){
   const w=ctx.a.get(n.id+'|'+pid);
@@ -1643,6 +1785,9 @@ function evNum(ctx,n,pid,d=0){
 function salidaNum(ctx,n,port,d){
   const k=n.id+'|'+port;if(ctx.memo.has(k))return ctx.memo.get(k);let v=0;
   const t=ctx.now/1000;
+  // módulos: una Entrada lee la entrada de su copia; una copia leída desde fuera, la Salida de adentro
+  if(n.t==='modent'){v=n._inst?evNum(ctx,n._inst,'e:'+n._mid,d+1):(+n.v.def||0);ctx.memo.set(k,v);return v;}
+  if(esInst(n)){v=modSalida(ctx,n,port,d);ctx.memo.set(k,v);return v;}
   // SDK 0.2: salidas del nodo Artefacto (d:id) = números o eventos que publica el artefacto
   if(n.t==='artefacto'&&typeof port==='string'&&port.startsWith('d:')){const a=S.lib.get(n.v.medio),id=port.slice(2),dd=a&&a.manifest&&(a.manifest.data||[]).find(x=>x.id===id);
     if(dd&&(dd.type==='event'||dd.type==='trigger')){const c=(a.ev&&a.ev[id])||0,E=n._ae||(n._ae={}),T=n._at||(n._at={});if(E[id]==null)E[id]=c;if(E[id]!==c){E[id]=c;T[id]=ctx.now;}v=T[id]!=null&&ctx.now-T[id]<=120?1:0;}
@@ -1996,7 +2141,7 @@ function capa(ctx,ch,pr,now){
 }
 function escvLista(e,now,ctx0){
   const ctx=ctx0||escvCtx(e,now),L=[];
-  for(const n of e.nodos){if(n.t!=='proyector')continue;const ch=cadena(ctx,n,'in');if(!ch)continue;const sl=capa(ctx,ch,n,now);if(sl)L.push(mapaAplicar(ctx,n,sl));}
+  for(const n of ctx.nodos){if(n.t!=='proyector')continue;const ch=cadena(ctx,n,'in');if(!ch)continue;const sl=capa(ctx,ch,n,now);if(sl)L.push(mapaAplicar(ctx,n,sl));}
   return L.sort((a,b)=>a.z-b.z);
 }
 /* ---------- mapa del Proyector: slices como en un mapeador ----------
@@ -2087,12 +2232,12 @@ function mapaDibujar(n,T,dest){
 }
 // la capa del Proyector pasa por su mapa; con el editor abierto, también se guarda su entrada para verla
 function mapaAplicar(ctx,n,sl){
-  const ver=MAP.n===n,act=mapaActivo(n);
+  const ver=!!MAP.n&&(MAP.n===n||(n._mid===MAP.n.id&&n.v===MAP.n.v)),act=mapaActivo(n);
   if(!act&&!ver)return sl;
   try{
     const A=parDe('MA'+n.id).P,cur=composeScene([sl],0,1,A.F,[0,0,0,0]),T=A.F[cur].t;n._mT=T;
-    if(!act){n._mW=T;return sl;}
-    const B=parDe('MW'+n.id).P;mapaDibujar(n,T,B.F[0].f);n._mW=B.F[0].t;
+    if(!act){n._mW=T;if(ver){MAP.n._mT=T;MAP.n._mW=T;}return sl;}
+    const B=parDe('MW'+n.id).P;mapaDibujar(n,T,B.F[0].f);n._mW=B.F[0].t;if(ver&&MAP.n!==n){MAP.n._mT=T;MAP.n._mW=n._mW;}
     return tlSlot({tex:B.F[0].t,w:S.out.w,h:S.out.h,has:true,pre:true},1,sl.blend,'stretch',sl.z);
   }catch(err){logError('mapa del proyector',err);return sl;}
 }
@@ -2188,11 +2333,11 @@ function escvFrame(now){
   const aire=new Set(),todasSalen=new Map();
   for(const sl of S.stage.values())if(sl.kind==='escv'){const it=S.lib.get(sl.key);if(!it)continue;act.add(it.escId);if(!sl.leaving)aire.add(it.escId);todasSalen.set(it.escId,(todasSalen.get(it.escId)??true)&&!!sl.leaving);
     const rv=sl.xf==='in'?(S.xf?S.xf.t:1):sl.xf==='out'?(S.xf?1-S.xf.t:0):sl.reveal;niveles.set(it.escId,Math.max(niveles.get(it.escId)||0,(sl.opacity??1)*(rv??1)));}
-  if(EV.e)act.add(EV.e.id);
+  if(EV.e){act.add(EV.e.id);if(EV.e.tipo==='modulo'&&EV.pila&&EV.pila.length)act.add(EV.pila[EV.pila.length-1].id);}
   const antes=escvUsa;escvUsa=new Set();
   // la escena que deja de estar activa devuelve su par de FBO al fondo común
   for(const [id,R] of [...escvOut])if(!act.has(id)){parSoltar(R);escvOut.delete(id);}
-  for(const id of act){const e=escById(id);if(!e||e.tipo!=='video')continue;
+  for(const id of act){const e=escById(id);if(!e||(e.tipo!=='video'&&!(e.tipo==='modulo'&&EV.e===e)))continue;
     let R=escvOut.get(id);
     if(!R||R.gen!==glGen||R.w!==S.out.w||R.h!==S.out.h){
       if(R)parSoltar(R);
@@ -2205,7 +2350,7 @@ function escvFrame(now){
     if(todasSalen.get(id)){if(R.tSal==null)R.tSal=now;}else R.tSal=null;
     try{const ctx=escvCtx(e,now),L=escvLista(e,now,ctx);
       // los nodos que actúan aunque nadie lea su salida (Timeline, GO / Ir a cue)
-      for(const n of e.nodos)if(NODOS[n.t]&&NODOS[n.t].siempre){if(n.t==='timeline')timelineNodo(ctx,n);else salidaNum(ctx,n,'_',0);}
+      for(const n of ctx.nodos)if(NODOS[n.t]&&NODOS[n.t].siempre){if(n.t==='timeline')timelineNodo(ctx,n);else salidaNum(ctx,n,'_',0);}
       const cur=composeScene(L,0,1,R.F,[0,0,0,0]);R.out.tex=R.F[cur].t;escvSonido(e,ctx,niveles.get(id)||0);}catch(err){logError('escena de video '+e.nombre,err);}
   }
   // líneas de tiempo cuya escena ya no trabaja: pausa y silencio (y sueltan sus videos poco después)
@@ -2222,7 +2367,7 @@ function duplicarEscenaVideo(e){const c=JSON.parse(JSON.stringify(e));c.id='ev'+
 // vista previa en el editor: la textura de la escena reducida y leída a un lienzo de la interfaz (10 veces por segundo)
 let pvF=null;const PV_W=320,PV_H=180,pvBuf=new Uint8Array(PV_W*PV_H*4);
 function escvPreview(){
-  if(!EV.e||!EV.pv)return;const R=escvOut.get(EV.e.id);if(!R||!R.out.tex)return;
+  if(!EV.e||!EV.pv)return;const R=escvOut.get(EV.e.tipo==='modulo'&&EV.pila&&EV.pila.length?EV.pila[EV.pila.length-1].id:EV.e.id);if(!R||!R.out.tex)return;
   if(!pvF||pvF.gen!==glGen){const t=texNew();gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,PV_W,PV_H,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
     const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);pvF={gen:glGen,t,f};}
   gl.bindFramebuffer(gl.FRAMEBUFFER,pvF.f);gl.viewport(0,0,PV_W,PV_H);gl.useProgram(PM.p);
@@ -3201,6 +3346,7 @@ const escKey=e=>(e.tipo==='video'?'escv:':'esc:')+e.id;
 const escenaDeCue=c=>{if(!c||c.items.length!==1)return null;const it=S.lib.get(c.items[0].src);return it&&(it.kind==='escv'||it.escena)?escById(it.escId):null;};
 // dónde está la escena: «Secuencia › cue 3 · Nombre › escena de video · niebla» (o «Escenas › …» si no está en ningún cue)
 function rutaEscena(e){
+  if(e.tipo==='modulo'){const p=EV.pila&&EV.pila.length?EV.pila[EV.pila.length-1]:null;return (p?rutaEscena(p)+' › ':'Módulos › ')+'módulo · '+e.nombre;}
   const k=escKey(e),sel=S.cues[S.sel],c=sel&&sel.items.some(i=>i.src===k)?sel:S.cues.find(x=>x.items.some(i=>i.src===k));
   return (c?'Secuencia › cue '+(c.num||'·')+(c.name?' · '+c.name:'')+' › ':'Escenas › ')+'escena de '+e.tipo+' · '+e.nombre+(e.tipo==='video'?' (nodos)':' (línea de tiempo)');
 }
@@ -3804,7 +3950,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v042',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v043',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -4701,15 +4847,18 @@ addEventListener('keydown',ev=>{
    Arrastra un nodo por su barra. Arrastra de una salida (cuadrito a la derecha) a una entrada (a la
    izquierda) para unirlas; un clic en un cable lo quita. Las entradas con cable muestran su valor en vivo. */
 function abrirEscenaVideo(e){
-  if(EE.e)cerrarEscena();if(EV.e)cerrarEscenaVideo();
+  if(EE.e)cerrarEscena();if(EV.e)cerrarEscenaVideo(true);EV.multi=new Set();
   EV.e=e;EV.sel=null;EV.vista=null;EV.vistaInfo=el('span',{class:'ndVistaInfo'});
   const ov=el('div',{id:'nodEd',role:'dialog','aria-label':'escena de video '+e.nombre});
-  const nombre=el('input',{type:'text',value:e.nombre,'aria-label':'nombre de la escena',style:'width:180px',onchange:ev=>{e.nombre=ev.target.value.trim()||e.nombre;sincEscenas();renderLib();renderCues();}});
+  const esMod=e.tipo==='modulo';
+  const nombre=el('input',{type:'text',value:e.nombre,'aria-label':esMod?'nombre del módulo':'nombre de la escena',style:'width:180px',onchange:ev=>{e.nombre=ev.target.value.trim()||e.nombre;if(esMod)modSync();sincEscenas();renderLib();renderCues();}});
   const add=el('select',{'aria-label':'agregar nodo',style:'width:210px;flex:none',onchange:ev=>{const t=ev.target.value;ev.target.value='';if(t)evAgregar(t);}},
     el('option',{value:''},'+ agregar nodo…'),
-    ...GRUPOS_NOD.map(([g,l])=>el('optgroup',{label:l},...Object.entries(NODOS).filter(([,d])=>d.g===g).map(([t,d])=>el('option',{value:t},d.nom)))));
+    ...GRUPOS_NOD.map(([g,l])=>el('optgroup',{label:l},...Object.entries(NODOS).filter(([t,d])=>d.g===g&&modVisible(t,d,e)).map(([t,d])=>el('option',{value:t},d.nom)))));
   const tb=el('div',{class:'tb'},el('span',{class:'wt'},rutaEscena(e)),el('span',{class:'ctl'},el('button',{type:'button',onclick:cerrarEscenaVideo,title:'cerrar (Esc)'},'cerrar ×')));
-  const bar=el('div',{class:'eeBar'},nombre,add,
+  const bar=el('div',{class:'eeBar'},nombre,add,...(esMod?[btn('guardar en mis módulos',()=>guardarEnMis(e),'b s',{title:'lo deja disponible en cualquier show de este navegador'}),btn('exportar .aqmodulo',()=>modExportar(e),'b s',{title:'un archivo para compartir o guardar'}),
+      btn('borrar módulo',ev=>{const k=modCopias(e);if(!ev.currentTarget.dataset.ok){ev.currentTarget.dataset.ok=1;ev.currentTarget.textContent=k?'¿borrar? tiene '+k+' copia(s)':'¿borrar? confirmar';return;}S.modulos.splice(S.modulos.indexOf(e),1);cerrarEscenaVideo();modSync();toast('módulo borrado');},'b s')]:[]),
+    btn('convertir en módulo',convertirEnModulo,'b s',{title:'los nodos elegidos (Mayús + clic para elegir varios) pasan a un módulo; los cables que cruzan el borde se vuelven entradas y salidas'}),
     btn('duplicar',()=>duplicarEscenaVideo(e),'b s'),
     btn('borrar escena',ev=>{const k='escv:'+e.id,n=S.cues.filter(c=>c.items.some(i=>i.src===k)).length;if(!ev.currentTarget.dataset.ok){ev.currentTarget.dataset.ok=1;ev.currentTarget.textContent=n?'¿borrar? está en '+n+' cue(s)':'¿borrar? confirmar';return;}cerrarEscenaVideo();removeLibItem(k);renderLib();renderCues();},'b s'),
     btn('cue con esta escena',()=>{const key='escv:'+e.id;if(S.stage.has(key))toast('ya está al aire');else addCue({items:[nuevoItem(key)],name:e.nombre});renderCues();toast('cue nuevo con la escena: dispáralo para verla en la salida');},'b s',{title:'crea un cue con esta escena'}),
@@ -4721,11 +4870,12 @@ function abrirEscenaVideo(e){
   const izq=el('div',{class:'ndLeft'},EV.bg,EV.velo,scroll);EV.izq=izq;
   EV.pv=el('canvas',{width:PV_W,height:PV_H,class:'ndPv','aria-label':'vista previa de la escena'});
   EV.help=el('div',{class:'ndHelp'});EV.panel=el('div',{class:'ndPanel'});
-  ov.append(tb,bar,el('div',{class:'ndMain'},izq,el('div',{class:'ndSide'},el('div',{class:'lbl'},'vista previa'),EV.pv,EV.panel,EV.help,
+  ov.append(tb,bar,el('div',{class:'ndMain'},izq,el('div',{class:'ndSide'},el('div',{class:'lbl'},esMod?(EV.pila&&EV.pila.length?'vista previa · la escena que usa el módulo':'vista previa · el módulo solo (sus entradas de video están vacías)'):'vista previa'),EV.pv,EV.panel,EV.help,
     el('p',{class:'note'},'Arrastra de una salida (derecha) a una entrada (izquierda) para unirlas; clic en un cable para quitarlo. Cada Proyector es una capa; «capa» ordena de abajo hacia arriba. Doble clic en el fondo (o Tab): buscador de nodos y fuentes. Arrastra fuentes y nodos desde el panel. El punto ● de un nodo pone su salida de fondo (en un Proyector, la escena completa); V hace lo mismo con el nodo seleccionado. Supr borra el nodo · Esc cierra.'))));
+  if(esMod)[...bar.querySelectorAll('button')].filter(b=>['duplicar','borrar escena','cue con esta escena'].includes(b.textContent)).forEach(b=>b.remove());
   document.body.append(ov);EV.el=ov;
   EV.area.addEventListener('pointermove',evMove);EV.area.addEventListener('pointerup',evUp);
-  EV.area.addEventListener('pointerdown',ev=>{if(ev.target===EV.area||ev.target===EV.svg){EV.sel=null;evMarcar();evAyuda();}});
+  EV.area.addEventListener('pointerdown',ev=>{if(ev.target===EV.area||ev.target===EV.svg){EV.sel=null;EV.multi=new Set();evMarcar();evAyuda();}});
   const enArea=ev=>{const a=EV.area.getBoundingClientRect();return [Math.max(0,ev.clientX-a.left-20),Math.max(0,ev.clientY-a.top-10)];};
   EV.area.addEventListener('pointermove',ev=>{EV.ultPos=enArea(ev);});
   EV.area.addEventListener('dblclick',ev=>{if(ev.target===EV.area||ev.target===EV.svg){const [x,y]=enArea(ev);evBuscador(x,y);}});
@@ -4735,19 +4885,25 @@ function abrirEscenaVideo(e){
   const tick=()=>{if(!EV.e)return;EV.raf=requestAnimationFrame(tick);const now=performance.now();if(now-EV.pvT>100){EV.pvT=now;evValores();}};tick();
   setTimeout(()=>nombre.blur(),0);
 }
-function cerrarEscenaVideo(){if(!EV.e)return;if(MAP.n)cerrarMapa();evBuscadorCerrar();EV.panel=null;EV.vista=null;if(VF){parSoltar(VF);VF=null;}cancelAnimationFrame(EV.raf);EV.el.remove();EV.e=null;EV.pv=null;renderLib();renderInspector();}
+function cerrarEscenaVideo(sinVolver){if(!EV.e)return;if(MAP.n)cerrarMapa();const eraMod=EV.e.tipo==='modulo';evBuscadorCerrar();EV.panel=null;EV.vista=null;if(VF){parSoltar(VF);VF=null;}cancelAnimationFrame(EV.raf);EV.el.remove();EV.e=null;EV.pv=null;if(eraMod)modSync();renderLib();renderInspector();
+  if(!sinVolver&&EV.pila&&EV.pila.length){const p=EV.pila.pop();setTimeout(()=>abrirEscenaVideo(p),0);}else if(!sinVolver)EV.pila=[];}
 function evAgregar(t,x,y,medio){
+  if(t.startsWith('col:')){modDeColeccion(t.slice(4)).then(M=>{toast('«'+M.nombre+'» entró al show desde la colección');evAgregar('mod:'+M.id,x,y);evPanel();}).catch(e=>toast(e.message));return;}
+  if(t.startsWith('mis:')){const P=misModulos().find(p=>p.raiz===t.slice(4));if(!P)return;const M=modImportar(P);t='mod:'+M.id;toast('«'+M.nombre+'» entró al show desde mis módulos');}
   const sc=EV.area.parentNode,n=nuevoNodo(t,x??sc.scrollLeft+40+Math.random()*60,y??sc.scrollTop+40+Math.random()*60);
   if(medio)n.v.medio=medio;
   else if(NODOS[t].medio){const it=[...S.lib.values()].find(x=>x.kind===NODOS[t].medio);if(it)n.v.medio=it.key;}
-  EV.e.nodos.push(n);EV.sel=n;evPintar();evAyuda();sincEscenas();return n;
+  EV.e.nodos.push(n);EV.sel=n;if(EV.e.tipo==='modulo')modSync();evPintar();evAyuda();sincEscenas();return n;
 }
 // una fuente de las Fuentes se vuelve el nodo que la reproduce
 const NODO_DE={video:'movie',image:'imagen',cam:'camara',art:'artefacto'};
 // opciones para el buscador y el panel: nodos y fuentes
 function evOpciones(){
   const orden=Object.fromEntries(GRUPOS_NOD.map(([g],i)=>[g,i]));
-  const L=Object.entries(NODOS).map(([t,d])=>({t,nom:d.nom,g:d.g})).sort((a,b)=>orden[a.g]-orden[b.g]);
+  const L=Object.entries(NODOS).filter(([t,d])=>modVisible(t,d,EV.e)).map(([t,d])=>({t,nom:d.nom,g:d.g})).sort((a,b)=>orden[a.g]-orden[b.g]);
+  for(const P of misModulos())if(!modById(P.raiz))L.push({t:'mis:'+P.raiz,nom:P.nombre+' · mis módulos',g:'módulos'});
+  for(const c of MOD_COL)if(!(S.modulos||[]).some(m=>m.nombre===c.nombre))L.push({t:'col:'+c.archivo,nom:c.nombre+' · colección',g:'módulos'});
+  L.sort((a,b)=>orden[a.g]-orden[b.g]);
   for(const it of S.lib.values())if(NODO_DE[it.kind])L.push({t:NODO_DE[it.kind],medio:it.key,nom:itemName(it.key),g:'fuente · '+(KIND_NOM[it.kind]||it.kind),thumb:it.thumb});
   return L;
 }
@@ -4796,7 +4952,7 @@ function evPanel(){
       el('span',{class:'nm'},o.nom),tab==='fuentes'?el('small',{},o.g.replace('fuente · ','')):null));
   }
   if(!L.length)rows.append(el('p',{class:'note'},cat||q?'nada con ese filtro':'Las fuentes que agregues aparecen aquí.'));
-  P.append(tabs,chips,busca,rows);
+  P.append(tabs,chips,busca,...(tab==='nodos'?[el('div',{class:'ndBots',style:'margin:4px 0'},btn('+ módulo nuevo',()=>pedirTexto('Nombre del módulo','módulo '+((S.modulos||[]).length+1),nm=>{const M=nuevoModulo(nm);abrirModulo(M,EV.e);}),'b s'),btn('importar .aqmodulo…',modImportarArchivo,'b s'))]:[]),rows);
 }
 function evQuitar(n){const e=EV.e;if(MAP.n===n)cerrarMapa();mapaSoltar(n.id);{const st=TLR.get(n.id);if(st){for(const o of st.els.values())tlSuelta(o);TLR.delete(n.id);}}for(const k of ['C'+n.id,'G'+n.id,'X'+n.id,'N'+n.id,'T'+n.id]){const c=escvCache.get(k);if(c&&c.P)parBorrar(c.P);escvCache.delete(k);}e.nodos.splice(e.nodos.indexOf(n),1);e.cables=e.cables.filter(w=>w.de[0]!==n.id&&w.a[0]!==n.id);escvCache.delete(n.id);if(EV.sel===n)EV.sel=null;evPintar();evAyuda();sincEscenas();}
 // un número que se jala: arrastrar arriba/abajo (o a los lados), la rueda con el puntero encima,
@@ -4824,7 +4980,7 @@ function numJala(v,p,lab,set){
 function evEntradas(n){
   const d=NODOS[n.t],L=[];
   if(d.vin)L.push(['in','entrada','video']);
-  if(d.vins)for(const k of d.vins)L.push([k,'entrada '+k.slice(2),'video']);
+  if(d.vins)for(const k of d.vins)L.push([k,(d.vinsNom&&d.vinsNom[k])||'entrada '+k.slice(2),'video']);
   if(d.vmapa)L.push(['mapa','mapa','video']);
   if(d.mask)L.push(['mask','máscara','video']);
   for(const p of d.ins)L.push(n.t==='nivelaudio'&&p[0]==='fuente'?[...p.slice(0,4),[...p[4],...S.escenas.filter(e=>e.tipo==='audio').map(e=>[e.id,'escena E'+e.num+' · '+e.nombre])]]:p);
@@ -4836,7 +4992,7 @@ function evEntradas(n){
     else if(p.type==='trigger')L.push([id,nm,'trigger']);}}
   return L;
 }
-function evSalidas(n){const d=NODOS[n.t],L=[];if(d.sale)L.push(['out','salida','video']);for(const p of d.num||[])L.push([p,(d.numNom&&d.numNom[p])||p,'num']);
+function evSalidas(n){const d=NODOS[n.t],L=[];if(d.sale)L.push(['out','salida','video']);for(const [p,l] of d.vouts||[])L.push([p,l,'video']);for(const p of d.num||[])L.push([p,(d.numNom&&d.numNom[p])||p,'num']);
   if(n.t==='artefacto'){const a=S.lib.get(n.v.medio);for(const x of (a&&a.manifest&&a.manifest.data)||[])L.push(['d:'+x.id,(x.label||x.name||x.id)+(x.type==='event'||x.type==='trigger'?' (pulso)':''),'num']);}
   return L;}
 function evPintar(){
@@ -4848,7 +5004,13 @@ function evNodoEl(n){
   const d=NODOS[n.t],box=el('div',{class:'nd','data-id':n.id,style:'left:'+n.x+'px;top:'+n.y+'px'});
   const vw=d.sale==='video'||n.t==='proyector'?el('button',{type:'button',class:'vw'+(EV.vista===n.id?' on':''),'aria-pressed':String(EV.vista===n.id),title:n.t==='proyector'?'punto de vista: la escena completa de fondo (V)':'punto de vista: la salida de este nodo de fondo (V)','aria-label':'punto de vista',onclick:()=>evVista(n)},'●'):null;
   const h=el('div',{class:'ndH'},el('span',{class:'ndT'},vw,d.nom),el('button',{type:'button','aria-label':'quitar nodo',onclick:()=>evQuitar(n)},'×'));
-  h.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))return;ev.preventDefault();EV.sel=n;evMarcar();evAyuda();EV.drag={n,box,x0:ev.clientX,y0:ev.clientY,ox:n.x,oy:n.y};EV.area.setPointerCapture(ev.pointerId);});
+  h.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))return;ev.preventDefault();
+    EV.multi=EV.multi||new Set();
+    if(ev.shiftKey){if(EV.multi.has(n.id))EV.multi.delete(n.id);else{EV.multi.add(n.id);if(EV.sel&&EV.sel!==n)EV.multi.add(EV.sel.id);}}else if(!EV.multi.has(n.id))EV.multi=new Set();
+    EV.sel=n;evMarcar();evAyuda();
+    const grupo=EV.multi.has(n.id)?EV.e.nodos.filter(x=>EV.multi.has(x.id)&&x!==n).map(x=>({n:x,box:EV.area.querySelector('.nd[data-id="'+x.id+'"]'),ox:x.x,oy:x.y})):[];
+    EV.drag={n,box,x0:ev.clientX,y0:ev.clientY,ox:n.x,oy:n.y,grupo};EV.area.setPointerCapture(ev.pointerId);});
+  if(esInst(n))h.addEventListener('dblclick',ev=>{if(ev.target.closest('button'))return;abrirModulo(modById(n.t.slice(4)),EV.e);});
   box.append(h);
   const conectada=pid=>EV.e.cables.some(w=>w.a[0]===n.id&&w.a[1]===pid);
   for(const p of evEntradas(n)){
@@ -4862,7 +5024,7 @@ function evNodoEl(n){
     }else if(tipo==='bool')ctl=tgBtn((n.v[pid]??p[3])?'sí':'no',()=>!!(n.v[pid]??p[3]),v=>{n.v[pid]=v;evPintar();},{class:'b s ndB'});
     else if(tipo==='trigger')ctl=btn(n.t==='artefacto'?'disparar':lab,()=>{if(n.t==='artefacto'){const a=S.lib.get(n.v.medio);if(a)sendArt(a,{type:'trigger',id:pid.slice(2)});return;}
       n._btn=n._btn||{};n._btn[pid]=(n._btn[pid]||0)+1;},'b s ndB');
-    else if(tipo==='botones')ctl=el('div',{class:'ndBots'},...p[3].map(([bid,bl])=>btn(bl,()=>{if(bid==='editar'){abrirTimeline(n);return;}if(bid==='mapa'){abrirMapa(n);return;}n._btn=n._btn||{};n._btn[bid]=(n._btn[bid]||0)+1;},'b s ndB')));
+    else if(tipo==='botones')ctl=el('div',{class:'ndBots'},...p[3].map(([bid,bl])=>btn(bl,()=>{if(bid==='editar'){abrirTimeline(n);return;}if(bid==='mapa'){abrirMapa(n);return;}if(bid==='modulo'){abrirModulo(modById(n.t.slice(4)),EV.e);return;}if(bid==='derivar'){modDerivar(n);return;}n._btn=n._btn||{};n._btn[bid]=(n._btn[bid]||0)+1;},'b s ndB')));
     else if(tipo==='tecla'){ctl=el('input',{type:'text',readOnly:true,value:n.v[pid]||'','aria-label':lab,placeholder:'cualquiera',class:'ndSel ndTecla',title:'clic y presiona la tecla que quieras vigilar · Supr: cualquiera'});
       ctl.addEventListener('keydown',ev=>{ev.preventDefault();ev.stopPropagation();if(ev.key==='Tab'||ev.key==='Escape'){ctl.blur();return;}
         n.v[pid]=ev.key==='Delete'||ev.key==='Backspace'?'':nomTecla(ev.key);ctl.value=n.v[pid];ctl.blur();});}
@@ -4889,7 +5051,7 @@ function evVistaUI(){
   EV.vistaInfo.replaceChildren(...(n?['punto de vista: ',el('strong',{},NODOS[n.t].nom),' ',btn('×',()=>{EV.vista=null;evVistaUI();},'b s',{'aria-label':'quitar el punto de vista',style:'min-height:18px;padding:0 6px'})]:[]));
   if(!n&&EV.bg)EV.bg.getContext('2d').clearRect(0,0,VB_W,VB_H);
 }
-function evMarcar(){for(const b of EV.area.querySelectorAll('.nd'))b.classList.toggle('elegido',!!EV.sel&&b.dataset.id===EV.sel.id);}
+function evMarcar(){for(const b of EV.area.querySelectorAll('.nd'))b.classList.toggle('elegido',(!!EV.sel&&b.dataset.id===EV.sel.id)||!!(EV.multi&&EV.multi.has(b.dataset.id)));}
 function evAyuda(){
   if(!EV.help)return;const n=EV.sel;
   const T={movie:'Reproduce un video de las fuentes a la velocidad que digas (0 lo pausa). Sus salidas «fin» y «vuelta» disparan al terminar o al completar una vuelta del bucle. Su sonido va pegado a la imagen: sigue el bucle y el final del video y se funde con su capa; «volumen» lo ajusta. Para más control, pon el audio en una escena de audio.',
@@ -4939,6 +5101,10 @@ function evAyuda(){
     logica:'Combina dos condiciones (un valor de 0.5 o más cuenta como sí): Y, O, O exclusivo, NO y sus negaciones. Da 1 o 0, y un pulso cuando el resultado pasa a sí.',
     crono:'Cuenta segundos desde que entra la escena o desde un disparo. Se para, sigue y reinicia con botones o cables. Con duración da el avance de 0 a 1 y dispara «fin»; puede volver a empezar.',
     alcue:'Dispara cuando la cue list da GO a un cue. Con «cue nº» en 0 responde a cualquier cue; «último cue nº» dice cuál fue. Sirve para que una escena que ya está al aire cambie con los cues siguientes.',
+    modent:'Una entrada del módulo: aparece afuera, en cada copia, como un número que se escribe o se conecta con un cable. «disparo» la vuelve un pulso. Conéctala a lo que quieras mover adentro.',
+    modentv:'Una entrada de video del módulo: lo que llegue a esta entrada en cada copia empieza aquí. Conéctala a efectos, a un Compositor o a un Proyector.',
+    modsal:'Una salida numérica del módulo: lo que conectes a «valor» sale de cada copia.',
+    modsalv:'Una salida de video del módulo: la cadena que llegue aquí sale de cada copia para seguir en la escena.',
     ircue:'GO / Ir a cue: con un disparo hace GO, dispara un cue por su número o lo pone en espera. Los disparos por cable solo actúan con la escena al aire; el botón actúa siempre. «protección» evita dos disparos seguidos.',
     rampa:'Envelope: va de un valor a otro en el tiempo que digas, desde que la escena entra al aire (o se abre en el editor). Con bucle, vuelve a empezar.',
     gauss:'Desenfoque gaussiano de verdad, en dos pasadas (horizontal y vertical). Más suave que el Blur rápido; cuesta dos pasadas de GPU.',
@@ -4946,7 +5112,7 @@ function evAyuda(){
     transform:'Escala, ancho, alto, posición, giro, espejo y qué pasa fuera del cuadro, en un solo nodo.',
     mascara:'Recorta la capa con un rectángulo o una elipse, con suavidad, redondeo e inversión. «fija al cuadro» la deja quieta aunque la imagen se mueva.',
     compositor:'Mezcla hasta cuatro cadenas, cada una con su fusión, opacidad y ajuste. Su salida se puede seguir transformando.'};
-  EV.help.replaceChildren(n?el('p',{class:'note'},el('strong',{style:'color:#fff'},NODOS[n.t].nom),el('br'),T[n.t]||''):el('p',{class:'note'},'Selecciona un nodo para ver qué hace.'));
+  EV.help.replaceChildren(n?el('p',{class:'note'},el('strong',{style:'color:#fff'},NODOS[n.t].nom),el('br'),(esInst(n)?modAyuda(n):T[n.t])||''):el('p',{class:'note'},'Selecciona un nodo para ver qué hace.'));
 }
 function evPuerto(nid,pid,dir){const q=EV.area.querySelector('.pt.'+dir+'[data-n="'+nid+'"][data-p="'+CSS.escape(pid)+'"]');if(!q)return null;
   const a=EV.area.getBoundingClientRect(),r=q.getBoundingClientRect();return [r.left+r.width/2-a.left,r.top+r.height/2-a.top];}
@@ -4960,7 +5126,8 @@ function evCables(){
   EV.svg.querySelectorAll('.wh').forEach(p=>p.addEventListener('click',()=>{EV.e.cables.splice(+p.dataset.i,1);evPintar();}));
 }
 function evMove(ev){
-  if(EV.drag){const D=EV.drag;D.n.x=Math.max(0,D.ox+ev.clientX-D.x0);D.n.y=Math.max(0,D.oy+ev.clientY-D.y0);D.box.style.left=D.n.x+'px';D.box.style.top=D.n.y+'px';evCables();return;}
+  if(EV.drag){const D=EV.drag,dx=ev.clientX-D.x0,dy=ev.clientY-D.y0;D.n.x=Math.max(0,D.ox+dx);D.n.y=Math.max(0,D.oy+dy);D.box.style.left=D.n.x+'px';D.box.style.top=D.n.y+'px';
+    for(const g of D.grupo||[]){g.n.x=Math.max(0,g.ox+dx);g.n.y=Math.max(0,g.oy+dy);if(g.box){g.box.style.left=g.n.x+'px';g.box.style.top=g.n.y+'px';}}evCables();return;}
   if(EV.tmp){const a=EV.area.getBoundingClientRect();EV.tmp.px=[ev.clientX-a.left,ev.clientY-a.top];evCables();}
 }
 function evUp(ev){
@@ -4976,7 +5143,7 @@ function evValores(){
   const e=EV.e;if(!e)return;const ctx=escvCtx(e,performance.now());
   for(const o of EV.area.querySelectorAll('output[data-live]')){const [nid,pp]=o.dataset.live.split('|');const n=ctx.nodo.get(nid);if(!n)continue;
     const v=pp.startsWith('out:')?salidaNum(ctx,n,pp.slice(4),0):evNum(ctx,n,pp);o.textContent=Math.abs(v)>=100?v.toFixed(0):v.toFixed(2);}
-  const np=e.nodos.filter(n=>n.t==='proyector').length,info=document.getElementById('evInfo');
+  const np=ctx.nodos.filter(n=>n.t==='proyector').length,info=document.getElementById('evInfo');
   if(info)info.textContent=e.nodos.length+' nodos · '+np+' proyector'+(np===1?'':'es')+(S.stage.has('escv:'+e.id)?' · al aire':'');
 }
 addEventListener('keydown',ev=>{
@@ -5541,7 +5708,7 @@ function showData(){
       cams:[...S.lib.values()].filter(m=>m.kind==='cam'&&!m.screen).map(m=>({key:m.key,label:m.name,deviceId:m.deviceId,res:m.res})),
       screens:[...S.lib.values()].filter(m=>m.kind==='cam'&&m.screen).map(m=>({key:m.key,label:m.name})),
       carpetas:S.carpetas,carpetaDe:Object.fromEntries(S.carpetaDe)},
-    escenas:S.escenas};
+    escenas:S.escenas,modulos:S.modulos||[]};
 }
 function showJSON(){return JSON.stringify(showData(),null,2);}
 // abre los shows v3 (v018–v027): el corner pin, el recorte y los bordes pasan a un escenario «principal»
@@ -5721,7 +5888,7 @@ function loadShow(d0){
   S.escActivo=Math.min(Math.max(0,E.activo|0),S.escenarios.length-1);
   aplicarEscenario(S.escenarios[S.escActivo]);
   if(EE.e)cerrarEscena();if(EV.e)cerrarEscenaVideo();
-  S.escenas=Array.isArray(d.escenas)?d.escenas:[];sincEscenas();
+  S.escenas=Array.isArray(d.escenas)?d.escenas:[];S.modulos=Array.isArray(d.modulos)?d.modulos.map(m=>(m.tipo='modulo',m)):[];MOD_CLON.clear();modSync();sincEscenas();
   S.carpetas=Array.isArray(B.carpetas)?B.carpetas:[];S.carpetaDe=new Map(Object.entries(B.carpetaDe||{}));
   for(const a of B.arts||[]){const ex=S.lib.get(a.key)||loadArt(a.url,a.key);if(ex){Object.assign(ex.values,a.values||{});sendArt(ex,{type:'applyState',values:ex.values});}}
   for(const m of B.media||[])if(!S.lib.has(m.key))S.missing.set(m.key,m.name);
@@ -5735,6 +5902,7 @@ function loadShow(d0){
   // conserva los id del show y continúa la numeración interna después de ellos
   const ids=[];S.cues.forEach(c=>{ids.push(c.id);c.items.forEach(i=>ids.push(i.id));});
   S.escenas.forEach(e=>{ids.push(e.id);(e.pistas||[]).forEach(p=>ids.push(p.id));(e.clips||[]).forEach(k=>ids.push(k.id));(e.nodos||[]).forEach(n=>ids.push(n.id));});
+  (S.modulos||[]).forEach(m=>{ids.push(m.id);m.nodos.forEach(n=>ids.push(n.id));});
   ids.forEach(x=>{const n=+String(x).replace(/\D/g,'');if(n>=uid)uid=n+1;});
   sincEscenas();
   const cv35=convertirCues(lookOn?look:null);
@@ -5916,7 +6084,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v042'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v043'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)

@@ -1,0 +1,116 @@
+{
+ "aqmodulo": 1,
+ "raiz": "umAspecto",
+ "nombre": "video con aspecto",
+ "modulos": [
+  {
+   "id": "umAspecto",
+   "tipo": "modulo",
+   "nombre": "video con aspecto",
+   "nodos": [
+    {
+     "id": "n63",
+     "t": "modentv",
+     "x": 20,
+     "y": 40,
+     "v": {
+      "nombre": "video"
+     }
+    },
+    {
+     "id": "n64",
+     "t": "modent",
+     "x": 20,
+     "y": 150,
+     "v": {
+      "nombre": "cantidad",
+      "tipo": "número",
+      "def": 0.7,
+      "min": 0,
+      "max": 1
+     }
+    },
+    {
+     "id": "n65",
+     "t": "aspecto",
+     "x": 280,
+     "y": 40,
+     "v": {
+      "estilo": "película HP5",
+      "cantidad": 0.7,
+      "grano": 0,
+      "vineta": 0
+     }
+    },
+    {
+     "id": "n66",
+     "t": "mascara",
+     "x": 540,
+     "y": 40,
+     "v": {
+      "forma": "elipse",
+      "izq": 0,
+      "der": 0,
+      "sup": 0,
+      "inf": 0,
+      "suave": 0.25,
+      "redondeo": 0,
+      "invertir": false,
+      "fija": false
+     }
+    },
+    {
+     "id": "n67",
+     "t": "modsalv",
+     "x": 800,
+     "y": 40,
+     "v": {
+      "nombre": "video"
+     }
+    }
+   ],
+   "cables": [
+    {
+     "de": [
+      "n63",
+      "out"
+     ],
+     "a": [
+      "n65",
+      "in"
+     ]
+    },
+    {
+     "de": [
+      "n64",
+      "valor"
+     ],
+     "a": [
+      "n65",
+      "cantidad"
+     ]
+    },
+    {
+     "de": [
+      "n65",
+      "out"
+     ],
+     "a": [
+      "n66",
+      "in"
+     ]
+    },
+    {
+     "de": [
+      "n66",
+      "out"
+     ],
+     "a": [
+      "n67",
+      "in"
+     ]
+    }
+   ]
+  }
+ ]
+}
