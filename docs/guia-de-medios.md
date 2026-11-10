@@ -1,4 +1,4 @@
-# Guía de medios · aurigaQ v041
+# Guía de medios · aurigaQ v042
 
 Buenas prácticas para que videos, audios, imágenes, artefactos y cámaras corran bien en aurigaQ.
 Es la misma guía que aparece en la app (Ajustes › Guía de medios). Allí, la pestaña «esta computadora» pregunta al navegador qué formatos abre, si los reproduce con fluidez y si usa la tarjeta gráfica.

@@ -1,4 +1,4 @@
-aurigaQ v041
+aurigaQ v042
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -491,6 +491,32 @@ ESCENA DE VIDEO
   cuando cambian. La escena trabaja solo mientras está al aire o en
   el editor; la vista previa del editor se lee 10 veces por segundo.
 
+MAPA DEL PROYECTOR (mapeo de proyección)
+  Cada Proyector guarda su propio mapa: «editar mapa» en el nodo abre el
+  editor a pantalla completa. Sin slices, el Proyector entrega la imagen
+  completa, como siempre.
+  Slices: cada una toma un rectángulo de la imagen del Proyector (la
+  entrada, ya con sus efectos) y lo deforma sobre la superficie real (la
+  salida).
+    rectángulo  4 puntos con perspectiva correcta.
+    malla       rejilla de 2 × 2 a 16 × 16 puntos, recta o curva, para
+                columnas, telones y superficies que no son planas.
+  Por slice: nombre, intensidad, fusión (normal o suma, para traslapes),
+  borde suave, espejo horizontal y vertical, ver u ocultar y orden (la
+  de abajo de la lista queda encima). «Convertir en malla» conserva la
+  forma; cambiar columnas o filas también.
+  Vistas: entrada, salida o las dos. Arrastra un punto o el interior de
+  una slice; flechas 1 px (Mayús 10 px); Tab, siguiente punto; rueda,
+  zoom; Alt + arrastrar, mover la vista; E, encuadrar; Supr, quitar la
+  slice; Ctrl o ⌘ + Z, deshacer; Esc, cerrar.
+  Carta de prueba: cada slice muestra una cuadrícula con su color, también
+  en la salida, para alinear en la sala.
+  Copiar mapa y pegar mapa pasan las slices de un Proyector a otro.
+  Costo: dos pasadas de GPU más por Proyector con mapa (su entrada y sus
+  slices). Los fundidos de cue, la fusión y la capa del Proyector siguen
+  igual. El corner pin y los bordes del Escenario se aplican después, a
+  toda la salida.
+
 TIMELINE · LÍNEA DE TIEMPO (nodo de entradas)
   Una línea de tiempo de videos y fotos dentro de una escena de video.
   Su salida es una imagen: puede seguir a Aspecto, Máscara o Displace y
@@ -829,6 +855,10 @@ ARTEFACTOS Y SDK
   repositorio (sdk/README.md).
 
 HISTORIAL
+  v042  Mapa en cada Proyector: slices de rectángulo con perspectiva y de
+        malla curva, borde suave, intensidad, fusión, espejo, carta de
+        prueba, editor con vistas de entrada y salida, teclado, zoom,
+        deshacer, copiar y pegar mapa.
   v041  Interfaz con el estilo de la colección Alchemy of Meaning (UI v1)
         en el contraste «suave»: paneles casi negros, barras de título
         grises, líneas finas, radios de 3 px, deslizadores con recorrido

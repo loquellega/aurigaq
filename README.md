@@ -1,6 +1,6 @@
 # aurigaQ (aQ)
 
-**Versión 0.41 (v041)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
+**Versión 0.42 (v042)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
 
 ![La cue list en función: el cue en espera arriba, el Monitor y lo que está al aire a la derecha](docs/capturas/01-funcion.png)
 
@@ -34,6 +34,12 @@ La herramienta responde a esas preguntas con decisiones de diseño:
 ![El nodo Timeline dentro de una escena, con sus disparos](docs/capturas/04-nodos-timeline.png)
 
 ![El editor del Timeline: capas, clips con miniaturas, fundidos y marcas](docs/capturas/05-editor-timeline.png)
+
+**Mapa en cada Proyector.** Cada nodo Proyector guarda su propio mapa de proyección. Las slices toman una parte de la imagen y la deforman sobre la superficie real: rectángulos con perspectiva o mallas curvas para columnas, telones y superficies que no son planas. Cada slice tiene borde suave, intensidad, fusión para traslapes y espejo. Una carta de prueba ayuda a alinear en la sala, y un mapa se copia de un Proyector a otro.
+
+![El editor del mapa: a la izquierda, de dónde sale cada slice; a la derecha, dónde cae en el proyector](docs/capturas/11-mapa-proyector.png)
+
+![La carta de prueba de cada slice, para alinear en la sala](docs/capturas/12-mapa-carta.png)
 
 **Escenas de audio.** Una línea de tiempo estéreo multipista con clips, recortes, curvas de volumen, fundidos cruzados, región de bucle y devamp, programada con el reloj de audio.
 
@@ -81,6 +87,7 @@ It is the outcome of more than fifteen years of research in multimedia and proje
 - **Video scenes.** Node patches with generators, effects, compositing, numeric control and logic: comparators, gates, timers, selectors and cue triggers.
 - **Video timeline node.** Layers, trims, fades, markers and trigger control.
 - **Audio scenes.** Multitrack timelines with loop and devamp.
+- **Per-projector mapping.** Each Projector node has its own map: perspective quads and curved meshes, soft edges, test card, copy and paste.
 - **Output and venues.** A separate output window with corner pin, plus venue setups kept apart from the show.
 - **Touring.** Museum mode with a schedule, remote monitoring and a local agent.
 - **Media guide.** In-app best practices for video, audio, stills, artefacts and hardware, with a codec test for the current machine ([docs/guia-de-medios.md](docs/guia-de-medios.md)).

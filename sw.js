@@ -6,7 +6,7 @@
   El resto sale de lo guardado y se actualiza por detrás.
   © 2026 Héctor Cruz Juárez · GPL-3.0-or-later
 */
-const VERSION = 'aurigaq-v041';
+const VERSION = 'aurigaq-v042';
 const BASE = ['./', 'index.html', 'salida.html', 'sdk/artefacto-sdk.js', 'manifest.webmanifest', 'icono-192.png', 'icono-512.png',
   'artefactos/orbitas.html', 'artefactos/senal.html', 'artefactos/plantilla.html',
   'sdk/ejemplos/datos.html', 'sdk/ejemplos/webgl.html'];

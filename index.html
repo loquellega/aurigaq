@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v041
+  aurigaQ v042
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -320,6 +320,31 @@ input[type=file]{display:none}
 }
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 
+
+/* editor del mapa del Proyector */
+#mapEd{position:fixed;inset:0;z-index:56;background:var(--bg);display:flex;flex-direction:column;border:1px solid var(--tb)}
+#mapEd .eeBar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--ln)}
+#mapEd .eeInfo{margin-left:auto;color:var(--g1);font-variant-numeric:tabular-nums}
+#mapEd .mapMain{flex:1;display:flex;min-height:0}
+#mapEd .mapViews{flex:1;display:flex;gap:1px;min-width:0;background:var(--ln)}
+#mapEd .mapV{flex:1;display:flex;flex-direction:column;min-width:0;background:#050505}
+#mapEd .mapVt{padding:4px 8px;color:var(--g1);font-size:11px;border-bottom:1px solid var(--ln)}
+#mapEd .mapCv{flex:1;min-height:0;width:100%;display:block;touch-action:none;outline:none;cursor:crosshair}
+#mapEd .mapCv:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+#mapEd .mapSide{width:280px;flex:none;border-left:1px solid var(--ln);padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+#mapEd .mapH{color:var(--g1);font-size:11px;margin-top:4px}
+#mapEd .mapLista{display:flex;flex-direction:column;gap:2px}
+#mapEd .mapFila{display:flex;align-items:center;gap:4px;padding:2px 0 2px 4px;border:1px solid transparent}
+#mapEd .mapFila.cur{border-color:var(--ac);background:var(--sel)}
+#mapEd .mapSw{width:8px;height:8px;flex:none}
+#mapEd .mapNom{flex:1;min-width:0;text-align:left;background:none;border:0;color:inherit;font:inherit;padding:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mapEd .mapFila .b.s{min-height:20px;padding:0 6px}
+#mapEd .dr .lb{width:74px}
+#mapEd .eeBar .seg{display:inline-flex;flex-direction:row;flex-wrap:nowrap;gap:0;width:auto}
+#mapEd .eeBar .seg .b{flex:none}
+#mapEd .mapFila .b[aria-pressed="true"]{background:none;border-color:var(--ln2);color:var(--fg)}
+#mapEd .mapFila .b[aria-pressed="false"]{color:var(--g1);text-decoration:line-through}
+#mapEd .mapPie{padding:5px 8px;border-top:1px solid var(--ln);color:var(--g1);font-size:11px}
 /* editor de la escena de audio */
 #escEd{position:fixed;inset:0;z-index:55;background:var(--bg);display:flex;flex-direction:column;border:1px solid var(--tb)}
 #escEd .eeBar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--ln)}
@@ -556,7 +581,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v041</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v042</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -570,7 +595,7 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v041</h2>
+    <h2 id="aboutTitle">aurigaQ v042</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
     <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
@@ -1110,7 +1135,7 @@ const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function artRes(){return {width:Math.round(S.out.w*S.artScale/2)*2,height:Math.round(S.out.h*S.artScale/2)*2};}
 function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest){sendArt(a,{type:'resize',...artRes()});sendArt(a,{type:'welcome',...hostInfo()});}}
 // SDK 0.2: lo que el artefacto sabe del host al conectarse (y cuando cambia la resolución)
-function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v041',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
+function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v042',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
 function sendArt(a,msg){try{const m=Object.assign({ns:NS},msg),w=a.iframe.contentWindow;if(EW!==window&&EW.__aqSend)EW.__aqSend(w,m);else w.postMessage(m,'*');}catch(e){}}
 function startArt(a){if(a&&a.kind==='art'&&!a.running){sendArt(a,{type:'start'});a.running=true;}}
 function stopArt(a){if(a&&a.kind==='art'&&a.running){sendArt(a,{type:'stop'});a.running=false;}}
@@ -1488,7 +1513,7 @@ const NODOS={
   mosaico:{nom:'Tile · mosaico',g:'transformar',sale:'video',vin:true,fx:9,ins:[['nx','columnas','num',2,1,32,1],['ny','filas','num',2,1,32,1],['espejo','espejo','bool',false],['escalonar','escalonar','num',0,0,1,.01]]},
   desplazar:{nom:'Displace · desplazar',g:'efectos',sale:'video',vin:true,vmapa:true,fx:10,ins:[['modo','el mapa mueve con','sel','luz',['luz','rojo y verde']],['fx','fuerza x','num',.05,-1,1,.005],['fy','fuerza y','num',.05,-1,1,.005]]},
   cruce:{nom:'Video Mixer · cruce',g:'componer',sale:'video',vins:['in1','in2'],ins:[['mezcla','mezcla (1 → 2)','num',0,0,1,.01],['ajuste','ajuste','sel','contener',['contener','cubrir','estirar']]]},
-  proyector:{nom:'Projector · proyector',g:'salida',vin:true,mask:true,ins:[['int','intensidad','num',1,0,1,.01],['fusion','fusión','sel','normal',['normal','suma','pantalla','multiplicar','diferencia','aclarar']],
+  proyector:{nom:'Projector · proyector',g:'salida',vin:true,mask:true,ins:[['mapa','','botones',[['mapa','editar mapa']]],['int','intensidad','num',1,0,1,.01],['fusion','fusión','sel','normal',['normal','suma','pantalla','multiplicar','diferencia','aclarar']],
     ['capa','capa','num',1,1,20,1],['ajuste','ajuste','sel','contener',['contener','cubrir','estirar']]]},
   onda:{nom:'Wave Generator · onda',g:'control',num:['valor'],ins:[['forma','forma','sel','seno',['seno','triángulo','sierra','cuadrada','azar']],['frec','frecuencia (Hz)','num',.25,0,10,.01],
     ['min','mínimo','num',0,-1000,1000,.01],['max','máximo','num',1,-1000,1000,.01],['fase','fase','num',0,0,1,.01]]},
@@ -1971,9 +1996,131 @@ function capa(ctx,ch,pr,now){
 }
 function escvLista(e,now,ctx0){
   const ctx=ctx0||escvCtx(e,now),L=[];
-  for(const n of e.nodos){if(n.t!=='proyector')continue;const ch=cadena(ctx,n,'in');if(!ch)continue;const sl=capa(ctx,ch,n,now);if(sl)L.push(sl);}
+  for(const n of e.nodos){if(n.t!=='proyector')continue;const ch=cadena(ctx,n,'in');if(!ch)continue;const sl=capa(ctx,ch,n,now);if(sl)L.push(mapaAplicar(ctx,n,sl));}
   return L.sort((a,b)=>a.z-b.z);
 }
+/* ---------- mapa del Proyector: slices como en un mapeador ----------
+   Cada Proyector puede llevar su mapa (n.v.mapa). La capa del Proyector se dibuja completa en su búfer de
+   entrada (MA); cada slice toma un rectángulo de esa entrada y lo deforma hacia la salida (MW) con una malla
+   de triángulos: un rectángulo con perspectiva (4 puntos) o una malla de puntos, recta o curva. El resultado
+   vuelve a la escena con la fusión y la capa del Proyector, así que los fundidos de cue siguen igual.
+   Coordenadas normalizadas de 0 a 1, con y hacia abajo, en la entrada y en la salida. */
+const VS_MAPA=`#version 300 es
+layout(location=0) in vec2 p; layout(location=1) in vec2 aUV; layout(location=2) in vec2 aL;
+out vec2 vUV; out vec2 vL;
+void main(){ vUV=aUV; vL=aL; gl_Position=vec4(p,0.,1.); }`;
+const FS_MAPA=`#version 300 es
+precision highp float;
+in vec2 vUV; in vec2 vL; out vec4 o;
+uniform sampler2D uT; uniform float uInt,uBorde,uPrueba; uniform vec3 uCol;
+void main(){
+  float e=min(min(vL.x,1.-vL.x),min(vL.y,1.-vL.y));
+  float a=uBorde>0.0005?smoothstep(0.,uBorde,e):1.;
+  vec4 c;
+  if(uPrueba>.5){
+    // carta de prueba: cuadrícula de 8 × 8, diagonales y orilla, en el color de la slice
+    vec2 q=vL*8.; vec2 g=abs(fract(q+.5)-.5)/max(fwidth(q),vec2(1e-5)); float ln=1.-clamp(min(g.x,g.y),0.,1.);
+    float d1=abs(vL.x-vL.y)/max(fwidth(vL.x-vL.y),1e-5),d2=abs(vL.x+vL.y-1.)/max(fwidth(vL.x+vL.y),1e-5); float dg=1.-clamp(min(d1,d2)*.6,0.,1.);
+    float bd=1.-clamp(e/max(fwidth(e)*2.,1e-5),0.,1.);
+    float chk=mod(floor(q.x)+floor(q.y),2.);
+    vec3 col=mix(uCol*.22,uCol*.38,chk); col=mix(col,vec3(1.),max(max(ln*.75,dg*.55),bd));
+    c=vec4(col,1.);
+  }else c=texture(uT,vUV);
+  o=c*a*uInt;
+}`;
+let PMA=null;const MAPGL={gen:-1,vao:null,buf:null,ult:''};
+function mapaGL(){
+  if(MAPGL.gen===glGen)return;
+  const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh));return sh;};
+  const p=gl.createProgram();gl.attachShader(p,mk(gl.VERTEX_SHADER,VS_MAPA));gl.attachShader(p,mk(gl.FRAGMENT_SHADER,FS_MAPA));gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));
+  PMA={p,u:{uT:gl.getUniformLocation(p,'uT'),uInt:gl.getUniformLocation(p,'uInt'),uBorde:gl.getUniformLocation(p,'uBorde'),uPrueba:gl.getUniformLocation(p,'uPrueba'),uCol:gl.getUniformLocation(p,'uCol')}};
+  MAPGL.vao=gl.createVertexArray();gl.bindVertexArray(MAPGL.vao);MAPGL.buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,MAPGL.buf);
+  for(let i=0;i<3;i++){gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,2,gl.FLOAT,false,24,i*8);}
+  gl.bindVertexArray(null);MAPGL.gen=glGen;MAPGL.ult='';
+}
+const MAPA_COL=[[.46,.77,.07],[.25,.6,1],[1,.62,.15],[.92,.32,.62],[.3,.88,.86],[1,.92,.3],[.7,.5,1],[1,.4,.35]];
+function mapaDe(n){const m=n.v.mapa||(n.v.mapa={on:true,prueba:false,slices:[]});if(!m.slices)m.slices=[];if(m.on==null)m.on=true;return m;}
+function mapaActivo(n){const m=n.v.mapa;return !!(m&&m.on!==false&&m.slices&&m.slices.some(s=>!s.oculta));}
+function aplicaH(m,u,v){const w=m[6]*u+m[7]*v+1;return [(m[0]*u+m[1]*v+m[2])/w,(m[3]*u+m[4]*v+m[5])/w];}
+function crP(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t,f=(a,b,c,d)=>.5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3);return [f(p0[0],p1[0],p2[0],p3[0]),f(p0[1],p1[1],p2[1],p3[1])];}
+// punto de una malla; fuera de la rejilla se extrapola, así las orillas de la curva no se aplanan
+function mallaG(s,i,j){const C=s.cols,R=s.rows,P=s.sal;
+  if(i<0)return mallaG(s,0,j).map((a,k)=>2*a-mallaG(s,1,j)[k]);if(i>C-1)return mallaG(s,C-1,j).map((a,k)=>2*a-mallaG(s,C-2,j)[k]);
+  if(j<0)return mallaG(s,i,0).map((a,k)=>2*a-mallaG(s,i,1)[k]);if(j>R-1)return mallaG(s,i,R-1).map((a,k)=>2*a-mallaG(s,i,R-2)[k]);
+  return P[j*C+i];}
+function slicePunto(s,u,v){
+  if(s.tipo!=='malla'){const H=squareToQuad(s.sal);return aplicaH(H,u,v);}
+  const C=s.cols,R=s.rows,fu=u*(C-1),fv=v*(R-1),i=Math.min(C-2,Math.floor(fu)),j=Math.min(R-2,Math.floor(fv)),tu=fu-i,tv=fv-j;
+  if(!s.curva){const a=mallaG(s,i,j),b=mallaG(s,i+1,j),c=mallaG(s,i+1,j+1),d=mallaG(s,i,j+1);
+    return [(a[0]*(1-tu)+b[0]*tu)*(1-tv)+(d[0]*(1-tu)+c[0]*tu)*tv,(a[1]*(1-tu)+b[1]*tu)*(1-tv)+(d[1]*(1-tu)+c[1]*tu)*tv];}
+  const fila=jj=>crP(mallaG(s,i-1,jj),mallaG(s,i,jj),mallaG(s,i+1,jj),mallaG(s,i+2,jj),tu);
+  return crP(fila(j-1),fila(j),fila(j+1),fila(j+2),tv);
+}
+function mapaClave(m){return JSON.stringify(m.slices.map(s=>[s.id,s.tipo,s.ent,s.sal,s.cols,s.rows,s.curva,s.eh,s.ev,s.oculta]));}
+function mapaMalla(m){
+  const D=[],partes=[];
+  for(const [k,s] of m.slices.entries()){if(s.oculta)continue;
+    const Nu=s.tipo==='malla'?Math.min(64,(s.cols-1)*6):16,Nv=s.tipo==='malla'?Math.min(64,(s.rows-1)*6):16,i0=D.length/6,V=[];
+    const H=s.tipo!=='malla'?squareToQuad(s.sal):null;
+    for(let j=0;j<=Nv;j++)for(let i=0;i<=Nu;i++){const u=i/Nu,v=j/Nv,[x,y]=H?aplicaH(H,u,v):slicePunto(s,u,v),uu=s.eh?1-u:u,vv=s.ev?1-v:v;
+      V.push([2*x-1,1-2*y,s.ent[0]+(s.ent[2]-s.ent[0])*uu,1-(s.ent[1]+(s.ent[3]-s.ent[1])*vv),u,v]);}
+    const at=(i,j)=>V[j*(Nu+1)+i];
+    for(let j=0;j<Nv;j++)for(let i=0;i<Nu;i++){const a=at(i,j),b=at(i+1,j),c=at(i+1,j+1),d=at(i,j+1);D.push(...a,...b,...c,...a,...c,...d);}
+    partes.push({s,k,i0,n:D.length/6-i0});}
+  return {datos:new Float32Array(D),partes};
+}
+function mapaDibujar(n,T,dest){
+  mapaGL();const m=n.v.mapa,clave=mapaClave(m);
+  if(!n._mm||n._mm.clave!==clave)n._mm=Object.assign(mapaMalla(m),{clave});
+  gl.bindFramebuffer(gl.FRAMEBUFFER,dest);gl.viewport(0,0,S.out.w,S.out.h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.useProgram(PMA.p);gl.bindVertexArray(MAPGL.vao);gl.bindBuffer(gl.ARRAY_BUFFER,MAPGL.buf);
+  if(MAPGL.ult!==n.id+'|'+clave){gl.bufferData(gl.ARRAY_BUFFER,n._mm.datos,gl.DYNAMIC_DRAW);MAPGL.ult=n.id+'|'+clave;}
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,T);gl.uniform1i(PMA.u.uT,0);
+  gl.enable(gl.BLEND);
+  for(const pt of n._mm.partes){const s=pt.s;
+    gl.blendFunc(gl.ONE,s.fusion==='suma'?gl.ONE:gl.ONE_MINUS_SRC_ALPHA);
+    gl.uniform1f(PMA.u.uInt,clamp(s.int??1));gl.uniform1f(PMA.u.uBorde,Math.max(0,s.borde||0));gl.uniform1f(PMA.u.uPrueba,m.prueba?1:0);
+    gl.uniform3fv(PMA.u.uCol,MAPA_COL[pt.k%MAPA_COL.length]);
+    gl.drawArrays(gl.TRIANGLES,pt.i0,pt.n);pasadas++;}
+  gl.disable(gl.BLEND);gl.bindVertexArray(null);
+}
+// la capa del Proyector pasa por su mapa; con el editor abierto, también se guarda su entrada para verla
+function mapaAplicar(ctx,n,sl){
+  const ver=MAP.n===n,act=mapaActivo(n);
+  if(!act&&!ver)return sl;
+  try{
+    const A=parDe('MA'+n.id).P,cur=composeScene([sl],0,1,A.F,[0,0,0,0]),T=A.F[cur].t;n._mT=T;
+    if(!act){n._mW=T;return sl;}
+    const B=parDe('MW'+n.id).P;mapaDibujar(n,T,B.F[0].f);n._mW=B.F[0].t;
+    return tlSlot({tex:B.F[0].t,w:S.out.w,h:S.out.h,has:true,pre:true},1,sl.blend,'stretch',sl.z);
+  }catch(err){logError('mapa del proyector',err);return sl;}
+}
+function mapaSoltar(id){for(const k of ['MA'+id,'MW'+id]){const c=escvCache.get(k);if(c&&c.P)parBorrar(c.P);escvCache.delete(k);}}
+// lectura para el editor: entrada y salida del Proyector reducidas, sin detener al motor
+const MV_W=640,MV_H=360;
+function lectorNuevo(){return {gen:-1,t:null,f:null,pbo:null,sync:null,pide:0,buf:new Uint8Array(MV_W*MV_H*4),cv:null,img:null,listo:false};}
+function leerTex(L,tex,now){
+  if(L.gen!==glGen){const t=texNew();gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,MV_W,MV_H,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+    const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);
+    const pbo=gl.createBuffer();gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pbo);gl.bufferData(gl.PIXEL_PACK_BUFFER,MV_W*MV_H*4,gl.STREAM_READ);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);Object.assign(L,{gen:glGen,t,f,pbo,sync:null});}
+  if(L.sync){const st=gl.clientWaitSync(L.sync,0,0);if(st===gl.TIMEOUT_EXPIRED||st===gl.WAIT_FAILED)return;
+    gl.deleteSync(L.sync);L.sync=null;gl.bindBuffer(gl.PIXEL_PACK_BUFFER,L.pbo);gl.getBufferSubData(gl.PIXEL_PACK_BUFFER,0,L.buf);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);
+    if(!L.cv){L.cv=document.createElement('canvas');L.cv.width=MV_W;L.cv.height=MV_H;}
+    const g=L.cv.getContext('2d');if(!L.img)L.img=g.createImageData(MV_W,MV_H);L.img.data.set(L.buf);g.putImageData(L.img,0,0);L.listo=true;}
+  if(!tex||now-L.pide<66)return;L.pide=now;
+  gl.bindFramebuffer(gl.FRAMEBUFFER,L.f);gl.viewport(0,0,MV_W,MV_H);gl.useProgram(PM.p);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.uniform1i(PM.u.uA,0);gl.uniform1i(PM.u.uB,1);gl.uniform1f(PM.u.uT,0);gl.uniform1f(PM.u.uSoft,.15);gl.uniform1i(PM.u.uTrans,0);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+  gl.bindBuffer(gl.PIXEL_PACK_BUFFER,L.pbo);gl.readPixels(0,0,MV_W,MV_H,gl.RGBA,gl.UNSIGNED_BYTE,0);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);
+  L.sync=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);gl.flush();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,S.out.w,S.out.h);
+}
+const MAP={n:null,e:null,el:null,vista:'dividida',sel:null,pt:-1,foco:'salida',hist:[],lE:lectorNuevo(),lS:lectorNuevo(),V:{entrada:{z:1,ox:0,oy:0},salida:{z:1,ox:0,oy:0}},cvs:{},raf:0,arr:null,panel:null,info:null};
+function mapaLeer(now){const n=MAP.n;if(!n)return;leerTex(MAP.lE,n._mT,now);leerTex(MAP.lS,n._mW,now);}
+
 // punto de vista: la salida de un nodo para el fondo del editor.
 // En un Proyector es la escena completa; en otro nodo, la cadena hasta ese punto (una pasada de GPU más)
 let VF=null;
@@ -3657,7 +3804,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v041',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v042',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -4052,6 +4199,174 @@ function previewFull(){const v=EW===window?cv:pvVideo;(v&&v.requestFullscreen?v.
    son los fundidos. Barra espaciadora: escuchar o detener. Supr: borrar el clip. Esc: cerrar. */
 const EE_R=28,EE_TH=62;
 // la línea de tiempo de un nodo Timeline se edita en el mismo editor que las escenas de audio
+/* ---------- editor del mapa del Proyector ----------
+   Vista de entrada (de dónde sale cada slice), de salida (dónde cae en el proyector) o las dos.
+   Puntos que se jalan, teclado para el ajuste fino, zoom con la rueda, deshacer, carta de prueba. */
+let mapaPortapapeles=null;
+function sliceNueva(m,tipo){
+  const k=m.slices.length+1,r=k===1?[0,0,1,1]:[.25,.25,.75,.75];
+  const s={id:'s'+(uid++),nombre:(tipo==='malla'?'malla ':'slice ')+k,tipo,ent:r.slice(),int:1,fusion:'normal',borde:0,eh:false,ev:false,oculta:false};
+  const caja=[[r[0],r[1]],[r[2],r[1]],[r[2],r[3]],[r[0],r[3]]];
+  if(tipo==='malla'){s.cols=4;s.rows=3;s.curva=true;s.sal=[];for(let j=0;j<s.rows;j++)for(let i=0;i<s.cols;i++)s.sal.push([r[0]+(r[2]-r[0])*i/(s.cols-1),r[1]+(r[3]-r[1])*j/(s.rows-1)]);}
+  else s.sal=caja;
+  return s;
+}
+// cambiar la rejilla (o pasar un rectángulo a malla) conserva la forma: los puntos nuevos se toman de la superficie actual
+function sliceRejilla(s,C,R){const nueva=[];for(let j=0;j<R;j++)for(let i=0;i<C;i++)nueva.push(slicePunto(s,i/(C-1),j/(R-1)));
+  if(s.tipo!=='malla'){s.tipo='malla';s.curva=false;}s.cols=C;s.rows=R;s.sal=nueva;}
+function sliceContorno(s,n=24){const P=[];for(let i=0;i<n;i++)P.push(slicePunto(s,i/n,0));for(let i=0;i<n;i++)P.push(slicePunto(s,1,i/n));for(let i=0;i<n;i++)P.push(slicePunto(s,1-i/n,1));for(let i=0;i<n;i++)P.push(slicePunto(s,0,1-i/n));return P;}
+function dentroPoli(P,x,y){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const [xi,yi]=P[i],[xj,yj]=P[j];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c;}return c;}
+function mapaGuardaHist(){const m=mapaDe(MAP.n);MAP.hist.push(JSON.stringify(m));if(MAP.hist.length>80)MAP.hist.shift();}
+function mapaDeshacer(){const h=MAP.hist.pop();if(!h){toast('nada que deshacer');return;}MAP.n.v.mapa=JSON.parse(h);const m=mapaDe(MAP.n);if(!m.slices.find(s=>s.id===MAP.sel))MAP.sel=m.slices.length?m.slices[0].id:null;MAP.pt=-1;mapaPanel();}
+function sliceSel(){const m=mapaDe(MAP.n);return m.slices.find(s=>s.id===MAP.sel)||null;}
+function abrirMapa(n){
+  if(MAP.n)cerrarMapa();
+  const m=mapaDe(n);MAP.n=n;MAP.e=EV.e;MAP.sel=m.slices.length?m.slices[0].id:null;MAP.pt=-1;MAP.hist=[];
+  const ov=el('div',{id:'mapEd',role:'dialog','aria-label':'mapa del proyector'});
+  const titulo=(EV.e?rutaEscena(EV.e)+' › ':'')+'Proyector · mapa';
+  const tb=el('div',{class:'tb'},el('span',{class:'wt'},titulo),el('span',{class:'ctl'},el('button',{type:'button',onclick:cerrarMapa,title:'cerrar (Esc)'},'cerrar ×')));
+  const vistas=el('div',{class:'seg',role:'group','aria-label':'vista'},...[['entrada','entrada'],['salida','salida'],['dividida','las dos']].map(([k,t])=>btn(t,()=>{MAP.vista=k;mapaVistas();vistasBar();},'b s',{'data-v':k})));
+  const vistasBar=()=>vistas.querySelectorAll('.b').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===MAP.vista)));
+  MAP.info=el('span',{class:'eeInfo'});
+  const bar=el('div',{class:'eeBar'},vistas,
+    tgBtn('mapa activo',()=>mapaDe(MAP.n).on!==false,v=>{mapaGuardaHist();mapaDe(MAP.n).on=v;},{title:'apagado, el Proyector entrega la imagen completa, sin mapa'}),
+    tgBtn('carta de prueba',()=>!!mapaDe(MAP.n).prueba,v=>{mapaDe(MAP.n).prueba=v;},{title:'cada slice muestra una cuadrícula con su color, también en la salida, para alinear en la sala'}),
+    btn('+ rectángulo',()=>mapaAgregar('rect'),'b s',{title:'4 puntos con perspectiva'}),
+    btn('+ malla',()=>mapaAgregar('malla'),'b s',{title:'rejilla de puntos, recta o curva, para superficies que no son planas'}),
+    btn('copiar mapa',()=>{mapaPortapapeles=JSON.stringify(mapaDe(MAP.n));toast('mapa copiado: pégalo en otro Proyector');},'b s'),
+    btn('pegar mapa',()=>{if(!mapaPortapapeles){toast('primero copia el mapa de otro Proyector');return;}mapaGuardaHist();const c=JSON.parse(mapaPortapapeles);c.slices.forEach(s=>s.id='s'+(uid++));MAP.n.v.mapa=c;MAP.sel=c.slices.length?c.slices[0].id:null;MAP.pt=-1;mapaPanel();},'b s'),
+    btn('deshacer',mapaDeshacer,'b s',{title:'Ctrl o ⌘ + Z'}),
+    MAP.info);
+  MAP.arr=el('div',{class:'mapViews'});
+  MAP.panel=el('div',{class:'mapSide'});
+  const pie=el('div',{class:'mapPie'},'Arrastra un punto o el interior de una slice · flechas: 1 px (Mayús: 10) · Tab: siguiente punto · rueda: zoom · Alt + arrastrar: mover la vista · E: encuadrar · Supr: quitar la slice · Esc: cerrar');
+  ov.append(tb,bar,el('div',{class:'mapMain'},MAP.arr,MAP.panel),pie);
+  document.body.append(ov);MAP.el=ov;vistasBar();mapaVistas();mapaPanel();
+  const ciclo=()=>{MAP.raf=requestAnimationFrame(ciclo);mapaPintar();};ciclo();
+}
+function cerrarMapa(){if(!MAP.n)return;cancelAnimationFrame(MAP.raf);MAP.el.remove();const n=MAP.n;MAP.n=null;MAP.e=null;MAP.el=null;
+  if(!mapaActivo(n))mapaSoltar(n.id);if(EV.e)evPintar();}
+function mapaAgregar(tipo){const m=mapaDe(MAP.n);if(m.slices.length>=16){toast('hasta 16 slices por Proyector');return;}mapaGuardaHist();const s=sliceNueva(m,tipo);m.slices.push(s);MAP.sel=s.id;MAP.pt=-1;mapaPanel();}
+function mapaVistas(){
+  MAP.cvs={};const vs=MAP.vista==='dividida'?['entrada','salida']:[MAP.vista];
+  MAP.arr.replaceChildren(...vs.map(k=>{const cv=el('canvas',{class:'mapCv',tabindex:'0','aria-label':'vista de '+k+' del mapa'});MAP.cvs[k]=cv;mapaEventos(cv,k);
+    return el('div',{class:'mapV'},el('div',{class:'mapVt'},k==='entrada'?'entrada · de dónde sale cada slice':'salida · dónde cae en el proyector'),cv);}));
+}
+// rectángulo donde se dibuja el cuadro en una vista (con zoom y desplazamiento)
+function mapaRect(k,cv){const W=cv.clientWidth,H=cv.clientHeight,ar=S.out.w/S.out.h,m=24;let w=W-2*m,h=w/ar;if(h>H-2*m){h=H-2*m;w=h*ar;}
+  const V=MAP.V[k];w*=V.z;h*=V.z;return {x:(W-w)/2+V.ox,y:(H-h)/2+V.oy,w,h};}
+function mapaPintar(){
+  const n=MAP.n;if(!n)return;const m=mapaDe(n),dpr=devicePixelRatio||1;
+  for(const [k,cv] of Object.entries(MAP.cvs)){
+    const W=cv.clientWidth,H=cv.clientHeight;if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+    const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#050505';g.fillRect(0,0,W,H);
+    const r=mapaRect(k,cv),L=k==='entrada'?MAP.lE:MAP.lS;
+    g.fillStyle='#000';g.fillRect(r.x,r.y,r.w,r.h);
+    if(L.listo&&L.cv){g.save();g.translate(r.x,r.y+r.h);g.scale(1,-1);g.drawImage(L.cv,0,0,r.w,r.h);g.restore();}
+    g.strokeStyle='#3a3a3a';g.lineWidth=1;g.strokeRect(r.x+.5,r.y+.5,r.w-1,r.h-1);
+    const P=(x,y)=>[r.x+x*r.w,r.y+y*r.h];
+    m.slices.forEach((s,i)=>{const sel=s.id===MAP.sel,col=MAPA_COL[i%MAPA_COL.length],css='rgb('+col.map(c=>Math.round(c*255)).join(',')+')';
+      g.globalAlpha=s.oculta?.35:1;g.strokeStyle=sel?'#fff':css;g.lineWidth=sel?1.5:1;
+      if(k==='entrada'){const [x0,y0]=P(s.ent[0],s.ent[1]),[x1,y1]=P(s.ent[2],s.ent[3]);g.strokeRect(x0,y0,x1-x0,y1-y0);
+        g.fillStyle=css;g.font='11px Arial';g.fillText(s.nombre,x0+4,y0+13);
+        if(sel)[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].forEach(([x,y],q)=>{g.fillStyle=q===MAP.pt&&MAP.foco==='entrada'?'#a5e04a':'#fff';g.fillRect(x-4,y-4,8,8);});}
+      else{const C=sliceContorno(s);g.beginPath();C.forEach(([x,y],q)=>{const [px,py]=P(x,y);q?g.lineTo(px,py):g.moveTo(px,py);});g.closePath();g.stroke();
+        if(s.tipo==='malla'&&sel){g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1;
+          for(let j=1;j<s.rows-1;j++){g.beginPath();for(let q=0;q<=32;q++){const [px,py]=P(...slicePunto(s,q/32,j/(s.rows-1)));q?g.lineTo(px,py):g.moveTo(px,py);}g.stroke();}
+          for(let i=1;i<s.cols-1;i++){g.beginPath();for(let q=0;q<=32;q++){const [px,py]=P(...slicePunto(s,i/(s.cols-1),q/32));q?g.lineTo(px,py):g.moveTo(px,py);}g.stroke();}}
+        const [lx,ly]=P(...s.sal[0]);g.fillStyle=css;g.font='11px Arial';g.fillText(s.nombre,lx+6,ly+14);
+        if(sel)s.sal.forEach(([x,y],q)=>{const [px,py]=P(x,y);g.fillStyle=q===MAP.pt&&MAP.foco==='salida'?'#a5e04a':'#fff';g.beginPath();g.arc(px,py,4.5,0,7);g.fill();g.strokeStyle='#000';g.stroke();});}
+      g.globalAlpha=1;});
+  }
+  const s=sliceSel();
+  MAP.info.textContent=m.slices.length+(m.slices.length===1?' slice':' slices')+(s&&MAP.pt>=0?' · punto '+(MAP.pt+1)+': '+(MAP.foco==='entrada'?mapaEntPunto(s,MAP.pt):s.sal[MAP.pt]).map((v,i)=>Math.round(v*(i?S.out.h:S.out.w))).join(', ')+' px':'')+' · '+S.out.w+'×'+S.out.h;
+}
+function mapaEntPunto(s,q){return [[s.ent[0],s.ent[1]],[s.ent[2],s.ent[1]],[s.ent[2],s.ent[3]],[s.ent[0],s.ent[3]]][q];}
+function mapaEntPon(s,q,x,y){x=clamp(x);y=clamp(y);if(q===0){s.ent[0]=x;s.ent[1]=y;}else if(q===1){s.ent[2]=x;s.ent[1]=y;}else if(q===2){s.ent[2]=x;s.ent[3]=y;}else{s.ent[0]=x;s.ent[3]=y;}}
+function mapaEventos(cv,k){
+  let arr=null;
+  cv.addEventListener('wheel',ev=>{ev.preventDefault();const V=MAP.V[k],b=cv.getBoundingClientRect(),mx=ev.clientX-b.left-cv.clientWidth/2,my=ev.clientY-b.top-cv.clientHeight/2,f=ev.deltaY<0?1.15:1/1.15,z=Math.max(.25,Math.min(12,V.z*f));
+    const q=z/V.z;V.ox=mx-(mx-V.ox)*q;V.oy=my-(my-V.oy)*q;V.z=z;},{passive:false});
+  cv.addEventListener('pointerdown',ev=>{
+    cv.focus();MAP.foco=k;const b=cv.getBoundingClientRect(),mx=ev.clientX-b.left,my=ev.clientY-b.top,r=mapaRect(k,cv),m=mapaDe(MAP.n);
+    if(ev.altKey||ev.button===1){arr={pan:true,x:mx,y:my,ox:MAP.V[k].ox,oy:MAP.V[k].oy};cv.setPointerCapture(ev.pointerId);return;}
+    const nx=(mx-r.x)/r.w,ny=(my-r.y)/r.h,cerca=(x,y)=>Math.hypot(r.x+x*r.w-mx,r.y+y*r.h-my)<9;
+    let hit=null;
+    // primero los puntos de la slice elegida, luego cualquier slice (la de arriba primero)
+    const orden=[...m.slices].reverse().sort((a,b2)=>(b2.id===MAP.sel)-(a.id===MAP.sel));
+    for(const s of orden){if(s.oculta)continue;
+      const pts=k==='entrada'?[0,1,2,3].map(q=>mapaEntPunto(s,q)):s.sal;
+      const q=pts.findIndex(([x,y])=>cerca(x,y));if(q>=0&&(s.id===MAP.sel||!hit)){hit={s,q};if(s.id===MAP.sel)break;}}
+    if(!hit)for(const s of orden){if(s.oculta)continue;const dentro=k==='entrada'?(nx>=Math.min(s.ent[0],s.ent[2])&&nx<=Math.max(s.ent[0],s.ent[2])&&ny>=Math.min(s.ent[1],s.ent[3])&&ny<=Math.max(s.ent[1],s.ent[3])):dentroPoli(sliceContorno(s,12),nx,ny);if(dentro){hit={s,q:-1};break;}}
+    if(!hit){MAP.pt=-1;return;}
+    if(MAP.sel!==hit.s.id){MAP.sel=hit.s.id;mapaPanel();}MAP.pt=hit.q;
+    mapaGuardaHist();arr={s:hit.s,q:hit.q,x0:nx,y0:ny,ent:hit.s.ent.slice(),sal:hit.s.sal.map(p=>p.slice())};cv.setPointerCapture(ev.pointerId);
+  });
+  cv.addEventListener('pointermove',ev=>{if(!arr)return;const b=cv.getBoundingClientRect(),mx=ev.clientX-b.left,my=ev.clientY-b.top;
+    if(arr.pan){MAP.V[k].ox=arr.ox+mx-arr.x;MAP.V[k].oy=arr.oy+my-arr.y;return;}
+    const r=mapaRect(k,cv);let dx=(mx-r.x)/r.w-arr.x0,dy=(my-r.y)/r.h-arr.y0;const s=arr.s;
+    if(ev.shiftKey){if(Math.abs(dx)>Math.abs(dy))dy=0;else dx=0;}
+    if(k==='entrada'){if(arr.q<0){const w=arr.ent[2]-arr.ent[0],h=arr.ent[3]-arr.ent[1],x=clamp(arr.ent[0]+dx,0,1-w),y=clamp(arr.ent[1]+dy,0,1-h);s.ent=[x,y,x+w,y+h];}
+      else{const p=mapaEntPunto({ent:arr.ent},arr.q);s.ent=arr.ent.slice();mapaEntPon(s,arr.q,p[0]+dx,p[1]+dy);}}
+    else{if(arr.q<0)s.sal=arr.sal.map(([x,y])=>[x+dx,y+dy]);else s.sal[arr.q]=[arr.sal[arr.q][0]+dx,arr.sal[arr.q][1]+dy];}
+  });
+  const fin=()=>{if(arr&&!arr.pan){const e=arr.s.ent;arr.s.ent=[Math.min(e[0],e[2]),Math.min(e[1],e[3]),Math.max(e[0],e[2]),Math.max(e[1],e[3])];mapaPanel(true);}arr=null;};
+  cv.addEventListener('pointerup',fin);cv.addEventListener('pointercancel',fin);
+}
+// teclado del editor: en captura, para que no lleguen al GO ni al editor de nodos
+addEventListener('keydown',ev=>{
+  if(!MAP.n)return;
+  if(ev.target.closest&&ev.target.closest('#mapEd input[type=text],#mapEd input[type=number],#mapEd select,#mapEd textarea'))return;
+  const k=ev.key,s=sliceSel(),parar=()=>{ev.preventDefault();ev.stopImmediatePropagation();};
+  if((ev.ctrlKey||ev.metaKey)&&(k==='z'||k==='Z')){parar();mapaDeshacer();return;}
+  if(ev.ctrlKey||ev.metaKey)return;
+  if(k==='Escape'){parar();cerrarMapa();return;}
+  if(k==='e'||k==='E'){parar();MAP.V.entrada={z:1,ox:0,oy:0};MAP.V.salida={z:1,ox:0,oy:0};return;}
+  if(k===' '||ev.code==='Space'){parar();return;}
+  if(!s)return;
+  if(k==='Tab'){parar();const nP=MAP.foco==='entrada'?4:s.sal.length;MAP.pt=((MAP.pt<0?-1:MAP.pt)+(ev.shiftKey?-1:1)+nP)%nP;return;}
+  if(k==='Delete'||k==='Backspace'){parar();mapaGuardaHist();const m=mapaDe(MAP.n);m.slices.splice(m.slices.indexOf(s),1);MAP.sel=m.slices.length?m.slices[m.slices.length-1].id:null;MAP.pt=-1;mapaPanel();return;}
+  const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[k];
+  if(d){parar();if(!ev.repeat)mapaGuardaHist();const f=ev.shiftKey?10:1,dx=d[0]*f/S.out.w,dy=d[1]*f/S.out.h;
+    if(MAP.foco==='entrada'){if(MAP.pt<0){const w=s.ent[2]-s.ent[0],h=s.ent[3]-s.ent[1];const x=clamp(s.ent[0]+dx,0,1-w),y=clamp(s.ent[1]+dy,0,1-h);s.ent=[x,y,x+w,y+h];}
+      else{const p=mapaEntPunto(s,MAP.pt);mapaEntPon(s,MAP.pt,p[0]+dx,p[1]+dy);}}
+    else{if(MAP.pt<0)s.sal=s.sal.map(([x,y])=>[x+dx,y+dy]);else s.sal[MAP.pt]=[s.sal[MAP.pt][0]+dx,s.sal[MAP.pt][1]+dy];}
+    mapaPanel(true);}
+},true);
+// panel lateral: la lista de slices y las propiedades de la elegida
+function mapaPanel(soloValores){
+  if(!MAP.n||!MAP.panel)return;const m=mapaDe(MAP.n),s=sliceSel();
+  if(soloValores)return;
+  const lista=el('div',{class:'mapLista',role:'listbox','aria-label':'slices'},...m.slices.map((x,i)=>{const col=MAPA_COL[i%MAPA_COL.length];
+    return el('div',{class:'mapFila'+(x.id===MAP.sel?' cur':''),role:'option','aria-selected':String(x.id===MAP.sel)},
+      el('span',{class:'mapSw',style:'background:rgb('+col.map(c=>Math.round(c*255)).join(',')+')'}),
+      el('button',{type:'button',class:'mapNom',onclick:()=>{MAP.sel=x.id;MAP.pt=-1;mapaPanel();}},x.nombre+(x.tipo==='malla'?' · malla '+x.cols+'×'+x.rows:'')),
+      tgBtn('ver',()=>!x.oculta,v=>{mapaGuardaHist();x.oculta=!v;},{title:'mostrar u ocultar esta slice'}),
+      btn('↑',()=>{if(i===0)return;mapaGuardaHist();m.slices.splice(i,1);m.slices.splice(i-1,0,x);mapaPanel();},'b s',{'aria-label':'subir (se dibuja antes)'}),
+      btn('↓',()=>{if(i===m.slices.length-1)return;mapaGuardaHist();m.slices.splice(i,1);m.slices.splice(i+1,0,x);mapaPanel();},'b s',{'aria-label':'bajar (se dibuja después, encima)'}),
+      btn('×',()=>{mapaGuardaHist();m.slices.splice(i,1);if(MAP.sel===x.id)MAP.sel=m.slices.length?m.slices[0].id:null;mapaPanel();},'b s',{'aria-label':'quitar '+x.nombre}));}));
+  const props=[];
+  if(s){
+    const cambia=f=>v=>{mapaGuardaHist();f(v);};
+    props.push(el('div',{class:'dr'},el('span',{class:'lb'},'nombre'),el('input',{type:'text',value:s.nombre,style:'flex:1;width:0',onchange:ev=>{s.nombre=ev.target.value.trim()||s.nombre;mapaPanel();}})),
+      slider('intensidad',()=>s.int??1,v=>{s.int=v;},0,1,.01,v=>Math.round(v*100)+'%'),
+      el('div',{class:'dr'},el('span',{class:'lb'},'fusión'),el('select',{style:'flex:1;width:0',onchange:ev=>cambia(v=>s.fusion=v)(ev.target.value)},
+        [['normal','normal (tapa lo de abajo)'],['suma','suma (para traslapes)']].map(([v,t])=>el('option',{value:v,selected:(s.fusion||'normal')===v},t)))),
+      slider('borde suave',()=>s.borde||0,v=>{s.borde=v;},0,.3,.005,v=>Math.round(v*100)+'%'),
+      el('div',{class:'dr'},el('span',{class:'lb'},'espejo'),tgBtn('horizontal',()=>!!s.eh,cambia(v=>s.eh=v)),tgBtn('vertical',()=>!!s.ev,cambia(v=>s.ev=v))));
+    if(s.tipo==='malla'){const num=(lab,get,set)=>el('label',{class:'dr'},el('span',{class:'lb'},lab),el('input',{type:'number',min:2,max:16,step:1,value:get(),style:'width:56px',onchange:ev=>{const v=Math.round(clamp(+ev.target.value||2,2,16));mapaGuardaHist();set(v);mapaPanel();}}));
+      props.push(num('columnas',()=>s.cols,v=>sliceRejilla(s,v,s.rows)),num('filas',()=>s.rows,v=>sliceRejilla(s,s.cols,v)),
+        el('div',{class:'dr'},el('span',{class:'lb'},'líneas'),tgBtn('curvas',()=>!!s.curva,cambia(v=>s.curva=v),{title:'la malla pasa suave por los puntos; apagado, en rectas'})));}
+    else props.push(btn('convertir en malla 3 × 3',()=>{mapaGuardaHist();sliceRejilla(s,3,3);s.curva=true;mapaPanel();},'b s',{title:'conserva la forma actual y agrega puntos para curvar'}));
+    props.push(el('div',{class:'dr',style:'flex-wrap:wrap;gap:4px'},
+      btn('salida = entrada',()=>{mapaGuardaHist();const e=s.ent,c=[[e[0],e[1]],[e[2],e[1]],[e[2],e[3]],[e[0],e[3]]];if(s.tipo==='malla'){s.tipo='rect';s.sal=c;sliceRejilla(s,s.cols,s.rows);s.curva=true;}else s.sal=c;mapaPanel();},'b s',{title:'la slice cae en el mismo lugar del que sale, sin deformar'}),
+      btn('entrada completa',()=>{mapaGuardaHist();s.ent=[0,0,1,1];mapaPanel();},'b s',{title:'la slice toma toda la imagen del Proyector'})));
+  }
+  MAP.panel.replaceChildren(el('div',{class:'mapH'},'slices'),m.slices.length?lista:el('p',{class:'note'},'Sin slices el Proyector entrega la imagen completa. Agrega un rectángulo o una malla.'),
+    s?el('div',{class:'mapH'},'slice elegida'):'',...props,
+    el('p',{class:'note'},'La entrada es la imagen completa del Proyector, después de sus efectos. Las slices se dibujan en orden: la de abajo de la lista queda encima.'));
+}
+
 function abrirTimeline(n){const tl=tlDe(n);EE.vistaAntes=EV.vista;EV.vista=n.id;evVistaUI();abrirEscena(tl,{n,e:EV.e});}
 const tlNodoAbierto=()=>EE.vid&&EE.vid.n;
 function abrirEscena(e,vid){
@@ -4420,7 +4735,7 @@ function abrirEscenaVideo(e){
   const tick=()=>{if(!EV.e)return;EV.raf=requestAnimationFrame(tick);const now=performance.now();if(now-EV.pvT>100){EV.pvT=now;evValores();}};tick();
   setTimeout(()=>nombre.blur(),0);
 }
-function cerrarEscenaVideo(){if(!EV.e)return;evBuscadorCerrar();EV.panel=null;EV.vista=null;if(VF){parSoltar(VF);VF=null;}cancelAnimationFrame(EV.raf);EV.el.remove();EV.e=null;EV.pv=null;renderLib();renderInspector();}
+function cerrarEscenaVideo(){if(!EV.e)return;if(MAP.n)cerrarMapa();evBuscadorCerrar();EV.panel=null;EV.vista=null;if(VF){parSoltar(VF);VF=null;}cancelAnimationFrame(EV.raf);EV.el.remove();EV.e=null;EV.pv=null;renderLib();renderInspector();}
 function evAgregar(t,x,y,medio){
   const sc=EV.area.parentNode,n=nuevoNodo(t,x??sc.scrollLeft+40+Math.random()*60,y??sc.scrollTop+40+Math.random()*60);
   if(medio)n.v.medio=medio;
@@ -4483,7 +4798,7 @@ function evPanel(){
   if(!L.length)rows.append(el('p',{class:'note'},cat||q?'nada con ese filtro':'Las fuentes que agregues aparecen aquí.'));
   P.append(tabs,chips,busca,rows);
 }
-function evQuitar(n){const e=EV.e;{const st=TLR.get(n.id);if(st){for(const o of st.els.values())tlSuelta(o);TLR.delete(n.id);}}for(const k of ['C'+n.id,'G'+n.id,'X'+n.id,'N'+n.id,'T'+n.id]){const c=escvCache.get(k);if(c&&c.P)parBorrar(c.P);escvCache.delete(k);}e.nodos.splice(e.nodos.indexOf(n),1);e.cables=e.cables.filter(w=>w.de[0]!==n.id&&w.a[0]!==n.id);escvCache.delete(n.id);if(EV.sel===n)EV.sel=null;evPintar();evAyuda();sincEscenas();}
+function evQuitar(n){const e=EV.e;if(MAP.n===n)cerrarMapa();mapaSoltar(n.id);{const st=TLR.get(n.id);if(st){for(const o of st.els.values())tlSuelta(o);TLR.delete(n.id);}}for(const k of ['C'+n.id,'G'+n.id,'X'+n.id,'N'+n.id,'T'+n.id]){const c=escvCache.get(k);if(c&&c.P)parBorrar(c.P);escvCache.delete(k);}e.nodos.splice(e.nodos.indexOf(n),1);e.cables=e.cables.filter(w=>w.de[0]!==n.id&&w.a[0]!==n.id);escvCache.delete(n.id);if(EV.sel===n)EV.sel=null;evPintar();evAyuda();sincEscenas();}
 // un número que se jala: arrastrar arriba/abajo (o a los lados), la rueda con el puntero encima,
 // ↑ ↓ con el campo activo; Mayús = fino, Alt = ×10; un clic sin mover deja escribir
 function numJala(v,p,lab,set){
@@ -4547,7 +4862,7 @@ function evNodoEl(n){
     }else if(tipo==='bool')ctl=tgBtn((n.v[pid]??p[3])?'sí':'no',()=>!!(n.v[pid]??p[3]),v=>{n.v[pid]=v;evPintar();},{class:'b s ndB'});
     else if(tipo==='trigger')ctl=btn(n.t==='artefacto'?'disparar':lab,()=>{if(n.t==='artefacto'){const a=S.lib.get(n.v.medio);if(a)sendArt(a,{type:'trigger',id:pid.slice(2)});return;}
       n._btn=n._btn||{};n._btn[pid]=(n._btn[pid]||0)+1;},'b s ndB');
-    else if(tipo==='botones')ctl=el('div',{class:'ndBots'},...p[3].map(([bid,bl])=>btn(bl,()=>{if(bid==='editar'){abrirTimeline(n);return;}n._btn=n._btn||{};n._btn[bid]=(n._btn[bid]||0)+1;},'b s ndB')));
+    else if(tipo==='botones')ctl=el('div',{class:'ndBots'},...p[3].map(([bid,bl])=>btn(bl,()=>{if(bid==='editar'){abrirTimeline(n);return;}if(bid==='mapa'){abrirMapa(n);return;}n._btn=n._btn||{};n._btn[bid]=(n._btn[bid]||0)+1;},'b s ndB')));
     else if(tipo==='tecla'){ctl=el('input',{type:'text',readOnly:true,value:n.v[pid]||'','aria-label':lab,placeholder:'cualquiera',class:'ndSel ndTecla',title:'clic y presiona la tecla que quieras vigilar · Supr: cualquiera'});
       ctl.addEventListener('keydown',ev=>{ev.preventDefault();ev.stopPropagation();if(ev.key==='Tab'||ev.key==='Escape'){ctl.blur();return;}
         n.v[pid]=ev.key==='Delete'||ev.key==='Backspace'?'':nomTecla(ev.key);ctl.value=n.v[pid];ctl.blur();});}
@@ -4583,7 +4898,7 @@ function evAyuda(){
     forma:'Rectángulo, elipse, polígono o estrella. Sirve como imagen o como máscara de un Proyector.',texto:'Títulos, créditos o subtítulos sencillos. Enter hace otra línea.',
     zoomer:'Escala la imagen (zoom, ancho, alto) y la refleja.',panner:'Mueve la imagen: x e y en fracciones del cuadro.',spinner:'Gira la imagen; con velocidad, gira sola.',
     hsl:'Tono, saturación y luminancia.',contraste:'Contraste.',desenfoque:'Desenfoque de la capa, en pixeles.',
-    proyector:'Pone la cadena en la escena como una capa: intensidad, fusión, capa (orden) y ajuste. La máscara toma la luz de lo que le llegue (una Forma o un Texto) tal cual en el cuadro.',
+    proyector:'Pone la cadena en la escena como una capa: intensidad, fusión, capa (orden) y ajuste. La máscara toma la luz de lo que le llegue (una Forma o un Texto) tal cual en el cuadro. «Editar mapa» abre su mapa: slices que toman una parte de la imagen y la deforman sobre la superficie real (rectángulo con perspectiva o malla curva), con borde suave y carta de prueba. Cada Proyector guarda su propio mapa.',
     onda:'Da un número que sube y baja con el tiempo, entre mínimo y máximo.',raton:'La posición del ratón sobre la salida o sobre el monitor, entre mínimo y máximo.',
     control:'Un valor fijo para varias entradas a la vez.',
     color:'Un color sólido a todo el cuadro, con su opacidad. Úsalo de fondo o para teñir con una fusión.',
@@ -5544,6 +5859,7 @@ function loop(now){
   stepRunning(now);stepTweens(now);stepVoices();stepVideos();render();engFrames++;
   if(EV.e&&now-EV.pvT2>100||EV.e&&!EV.pvT2){EV.pvT2=now;try{escvPreview();}catch(e){}}
   if(EV.e&&EV.vista){try{escvVistaLeer(now);}catch(e){logError('punto de vista',e);EV.vista=null;}}
+  if(MAP.n){try{mapaLeer(now);}catch(e){logError('vista del mapa',e);}}
   if(RATON.w!==EW)ratonEscucha(EW);
   teclasEscucha(EW);
   if(pedirMini)tomarMini();
@@ -5600,7 +5916,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v041'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v042'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)
