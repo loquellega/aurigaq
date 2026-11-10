@@ -16,6 +16,7 @@
      "v": {
       "nombre": "estado 1",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0,
       "min": 0,
       "max": 1
@@ -29,6 +30,7 @@
      "v": {
       "nombre": "estado 2",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.33,
       "min": 0,
       "max": 1
@@ -42,6 +44,7 @@
      "v": {
       "nombre": "estado 3",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.66,
       "min": 0,
       "max": 1
@@ -55,6 +58,7 @@
      "v": {
       "nombre": "estado 4",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 1,
       "min": 0,
       "max": 1
@@ -68,6 +72,7 @@
      "v": {
       "nombre": "transición (s)",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 2,
       "min": 0,
       "max": 30

@@ -1,6 +1,6 @@
 # aurigaQ (aQ)
 
-**Versión 0.43 (v043)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
+**Versión 0.44 (v044)** · Alchemy of Meaning (Alquimia del Significado) · Héctor Cruz Juárez
 
 ![La cue list en función: el cue en espera arriba, el Monitor y lo que está al aire a la derecha](docs/capturas/01-funcion.png)
 

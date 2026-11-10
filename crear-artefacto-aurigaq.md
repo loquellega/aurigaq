@@ -2,7 +2,7 @@
 
 Documento para iniciar un chat nuevo que construya un artefacto (una pieza visual o sonora en HTML) que se cargue en aurigaQ, o para adaptar una app que ya existe. Pégalo o adjúntalo al principio y luego describe la pieza.
 
-Versión de este documento: **SDK 0.2 · protocolo artefacto/v0 · aurigaQ v043**. Se regenera con `herramientas/armar-docs.py` en cada versión de aQ; la plantilla y el SDK de abajo son copia exacta de los archivos del repositorio.
+Versión de este documento: **SDK 0.2 · protocolo artefacto/v0 · aurigaQ v044**. Se regenera con `herramientas/armar-docs.py` en cada versión de aQ; la plantilla y el SDK de abajo son copia exacta de los archivos del repositorio.
 
 ## Qué es un artefacto
 

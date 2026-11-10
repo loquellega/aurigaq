@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--
-  aurigaQ v043
+  aurigaQ v044
   Media server y gestor de cues para presentar en vivo los artefactos de la colección.
   Parte de la colección Alchemy of Meaning (Alquimia del Significado).
   © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -581,7 +581,7 @@ body:not(.carriles) .ql .ln{display:none}
   <section id="B" aria-label="Inspector"></section>
   <footer id="F">
     <button id="aTag" type="button" aria-label="acerca de aurigaQ">i · aurigaq</button>
-    <div id="brandBox"><span id="brand">aurigaQ v043</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
+    <div id="brandBox"><span id="brand">aurigaQ v044</span><span id="clock">00:00</span><button id="salud" type="button" class="saludb"></button></div>
     <span class="gap"></span>
     <div id="modes" role="tablist" aria-label="modo"></div>
     <div id="fondo" class="tonos" role="group" aria-label="tono de fondo"></div>
@@ -595,7 +595,7 @@ body:not(.carriles) .ql .ln{display:none}
 
 <div class="ov" id="aboutView" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="card">
-    <h2 id="aboutTitle">aurigaQ v043</h2>
+    <h2 id="aboutTitle">aurigaQ v044</h2>
     <p>Media server para la escena. Carga los artefactos de la colección (instrumentos web como Fonoestratonika, Belkagraph o Cáustika), fotografías y videos, y los ordena en una lista de cues que se dispara en vivo con GO, con fundidos por capa, presets interpolados y mapeo de la salida.</p>
     <h3>Por qué existe</h3>
     <p>Los artefactos nacen como piezas sueltas. aurigaQ les da salida performática: un protocolo común para que cada uno exponga sus controles, y una forma de función donde el paso de un cue a otro es la esencia de la ejecución. Es el resultado de más de una década y media de investigación en el diseño multimedia y la videoproyección para la escena: de lo que una función en vivo necesita, de cómo se ensaya y de lo que no puede fallar.</p>
@@ -1135,7 +1135,7 @@ const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function artRes(){return {width:Math.round(S.out.w*S.artScale/2)*2,height:Math.round(S.out.h*S.artScale/2)*2};}
 function resizeArts(){for(const a of S.lib.values())if(a.kind==='art'&&a.manifest){sendArt(a,{type:'resize',...artRes()});sendArt(a,{type:'welcome',...hostInfo()});}}
 // SDK 0.2: lo que el artefacto sabe del host al conectarse (y cuando cambia la resolución)
-function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v043',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
+function hostInfo(){const r=artRes();return {host:'aurigaQ',version:'v044',sdk:'0.2',width:r.width,height:r.height,calidad:(S.out.w<=1280||S.artScale<1)?'ligera':'completa'};}
 function sendArt(a,msg){try{const m=Object.assign({ns:NS},msg),w=a.iframe.contentWindow;if(EW!==window&&EW.__aqSend)EW.__aqSend(w,m);else w.postMessage(m,'*');}catch(e){}}
 function startArt(a){if(a&&a.kind==='art'&&!a.running){sendArt(a,{type:'start'});a.running=true;}}
 function stopArt(a){if(a&&a.kind==='art'&&a.running){sendArt(a,{type:'stop'});a.running=false;}}
@@ -1550,7 +1550,8 @@ const NODOS={
     ins:[['ctl','','botones',[['iniciar','▶ iniciar'],['parar','❚❚ parar'],['cero','reiniciar']]],['iniciar','iniciar (al subir)','num',0,-1000,1000,.01],['parar','parar (al subir)','num',0,-1000,1000,.01],['reiniciar','reiniciar (al subir)','num',0,-1000,1000,.01],
       ['dur','duración (s, 0 = sin fin)','num',10,0,86400,.1],['alEntrar','al entrar la escena','sel','corre',[['corre','empieza a correr'],['espera','espera un disparo']]],['alFin','al llegar al final','sel','se detiene',[['se detiene','se detiene'],['vuelve','vuelve a empezar']]],['velocidad','velocidad','num',1,0,100,.01]]},
   alcue:{nom:'Cue Trigger · al disparar un cue',g:'lógica',num:['pulso','cue'],numNom:{cue:'último cue nº'},ins:[['cue','cue nº (0 = cualquiera)','num',0,0,9999,1],['dur','pulso (s)','num',.1,0,10,.01]]},
-  modent:{nom:'Entrada de módulo · número',g:'módulos',soloModulo:true,num:['valor'],ins:[['nombre','nombre','texto','entrada'],['tipo','tipo','sel','número',[['número','número'],['disparo','disparo (pulso)']]],
+  modent:{nom:'Entrada de módulo · número',g:'módulos',soloModulo:true,num:['valor'],ins:[['nombre','nombre','texto','entrada'],['tipo','tipo','sel','número',[['número','número'],['disparo','disparo (pulso)'],['lista','lista (da 1, 2, 3…)']]],
+    ['opciones','opciones de la lista (separadas por comas)','texto','uno, dos, tres'],
     ['def','valor inicial','num',0,-10000,10000,.01],['min','mínimo','num',0,-10000,10000,.01],['max','máximo','num',1,-10000,10000,.01]]},
   modentv:{nom:'Entrada de módulo · video',g:'módulos',soloModulo:true,sale:'video',ins:[['nombre','nombre','texto','video']]},
   modsal:{nom:'Salida de módulo · número',g:'módulos',soloModulo:true,ins:[['nombre','nombre','texto','valor'],['valor','valor','num',0,-10000,10000,.01]]},
@@ -1639,6 +1640,7 @@ function ratonEscucha(w){
 const esInst=n=>typeof n.t==='string'&&n.t.startsWith('mod:');
 const modById=id=>(S.modulos||[]).find(m=>m.id===id);
 const MOD_PROF=4,MOD_CLON=new Map();
+const listaOps=n=>{const o=String(n.v.opciones||'').split(',').map(x=>x.trim()).filter(Boolean);return o.length?o:['uno'];};
 if(!S.modulos)S.modulos=[];
 // registra cada módulo como un tipo de nodo: entradas, salidas y botones salen de sus nodos de Entrada y Salida
 function modSync(){
@@ -1652,7 +1654,8 @@ function modSync(){
       vouts:salV.map(n=>['s:'+n.id,n.v.nombre||'video']),
       num:sal.map(n=>'s:'+n.id),numNom:Object.fromEntries(sal.map(n=>['s:'+n.id,n.v.nombre||'valor'])),
       ins:[['_ed','','botones',[['modulo','editar módulo'],['derivar','derivar']]],
-        ...ent.map(n=>{const dis=n.v.tipo==='disparo';return ['e:'+n.id,(n.v.nombre||'entrada')+(dis?' (disparo)':''),'num',+n.v.def||0,dis?0:+(n.v.min??-1000),dis?1:+(n.v.max??1000),dis?1:.01];})]};
+        ...ent.map(n=>{if(n.v.tipo==='lista'){const o=listaOps(n);return ['e:'+n.id,n.v.nombre||'entrada','sel',o[Math.max(0,Math.min(o.length-1,Math.round(+n.v.def||1)-1))],o];}
+          const dis=n.v.tipo==='disparo';return ['e:'+n.id,(n.v.nombre||'entrada')+(dis?' (disparo)':''),'num',+n.v.def||0,dis?0:+(n.v.min??-1000),dis?1:+(n.v.max??1000),dis?1:.01];})]};
   }
   // copias de módulos que ya no existen: quedan como nodo vacío, visible, para no perder la escena
   const huerf=new Set();for(const e of [...(S.escenas||[]),...S.modulos])for(const n of e.nodos||[])if(esInst(n)&&!NODOS[n.t])huerf.add(n.t);
@@ -1681,16 +1684,23 @@ function modNivel(L,cabs,pre,inst,prof,pila,nodos,cables,sal){
   const id=n=>pre?pre+n.id:n.id,obj=new Map(),info=new Map(),entV=new Map(),salida=new Map();
   for(const n of L){const o=pre?modClon(id(n),n,inst):n;obj.set(n.id,o);nodos.push(o);
     if(esInst(n)){const M=modById(n.t.slice(4));
-      if(M&&prof<MOD_PROF&&!pila.includes(M.id)){const I=modNivel(M.nodos,M.cables,id(n)+'/',o,prof+1,[...pila,M.id],nodos,cables,sal);info.set(n.id,I);for(const [Y,r] of I.salida)if(r)sal.set(id(n)+'|s:'+Y,r);}}}
-  const tipoDe=new Map(L.map(n=>[n.id,n.t]));
-  const fuente=(nid,p)=>{const I=info.get(nid);if(I&&typeof p==='string'&&p.startsWith('s:')){const r=I.salida.get(p.slice(2));if(r!==undefined)sal.set(id({id:nid})+'|'+p,r);return r||null;}return [id({id:nid}),p];};
+      if(M&&prof<MOD_PROF&&!pila.includes(M.id)){const I=modNivel(M.nodos,M.cables,id(n)+'/',o,prof+1,[...pila,M.id],nodos,cables,sal);info.set(n.id,I);for(const [Y,r] of I.salida)if(r&&r.via===undefined&&!r.ent)sal.set(id(n)+'|s:'+Y,r);}}}
+  const tipoDe=new Map(L.map(n=>[n.id,n.t])),aIn=new Map(cabs.map(w=>[w.a[0]+'|'+w.a[1],w]));
+  // de dónde sale una señal en este nivel: un nodo, una salida de un módulo de adentro o una Entrada de video
+  // de este módulo ({ent}); una Salida que solo pasa una Entrada ({via}) se sigue hacia el cable de afuera
+  const fuente=(nid,p,k=0)=>{if(k>16)return null;const t=tipoDe.get(nid);if(t==='modentv')return {ent:nid};
+    const I=info.get(nid);
+    if(I&&typeof p==='string'&&p.startsWith('s:')){let r=I.salida.get(p.slice(2));
+      if(r&&r.via!==undefined){const w=aIn.get(nid+'|e:'+r.via);r=w?fuente(w.de[0],w.de[1],k+1):null;}
+      if(r&&!r.ent)sal.set(id({id:nid})+'|'+p,r);return r||null;}
+    return [id({id:nid}),p];};
   const destinos=(nid,p)=>{const I=info.get(nid);if(I&&typeof p==='string'&&p.startsWith('e:')&&I.entV.has(p.slice(2)))return I.entV.get(p.slice(2));
     if(I&&typeof p==='string'&&p.startsWith('e:')&&NODOS[tipoDe.get(nid)]&&(NODOS[tipoDe.get(nid)].vins||[]).includes(p))return [];
     return [[id({id:nid}),p]];};
   for(const w of cabs){const ts=tipoDe.get(w.de[0]),tt=tipoDe.get(w.a[0]);if(!ts||!tt)continue;
-    if(ts==='modentv'){if(!inst)continue;const D=entV.get(w.de[0])||[];D.push(...destinos(w.a[0],w.a[1]));entV.set(w.de[0],D);continue;}
-    if(tt==='modsal'||tt==='modsalv'){if(inst&&((tt==='modsal'&&w.a[1]==='valor')||(tt==='modsalv'&&w.a[1]==='in')))salida.set(w.a[0],fuente(w.de[0],w.de[1]));continue;}
+    if(tt==='modsal'||tt==='modsalv'){if(inst&&((tt==='modsal'&&w.a[1]==='valor')||(tt==='modsalv'&&w.a[1]==='in'))){const f=fuente(w.de[0],w.de[1]);salida.set(w.a[0],f&&f.ent?{via:f.ent}:f);}continue;}
     const f=fuente(w.de[0],w.de[1]);if(!f)continue;
+    if(f.ent){if(!inst)continue;const D=entV.get(f.ent)||[];D.push(...destinos(w.a[0],w.a[1]));entV.set(f.ent,D);continue;}
     for(const a of destinos(w.a[0],w.a[1]))cables.push({de:f,a});}
   // una Entrada de video conectada directo a una Salida de video: el video atraviesa el módulo
   return {entV,salida};
@@ -1786,7 +1796,8 @@ function salidaNum(ctx,n,port,d){
   const k=n.id+'|'+port;if(ctx.memo.has(k))return ctx.memo.get(k);let v=0;
   const t=ctx.now/1000;
   // módulos: una Entrada lee la entrada de su copia; una copia leída desde fuera, la Salida de adentro
-  if(n.t==='modent'){v=n._inst?evNum(ctx,n._inst,'e:'+n._mid,d+1):(+n.v.def||0);ctx.memo.set(k,v);return v;}
+  if(n.t==='modent'){if(n.v.tipo==='lista'){const o=listaOps(n),x=n._inst?n._inst.v['e:'+n._mid]:null,i=o.indexOf(x);v=i>=0?i+1:Math.max(1,Math.min(o.length,Math.round(+n.v.def||1)));}
+    else v=n._inst?evNum(ctx,n._inst,'e:'+n._mid,d+1):(+n.v.def||0);ctx.memo.set(k,v);return v;}
   if(esInst(n)){v=modSalida(ctx,n,port,d);ctx.memo.set(k,v);return v;}
   // SDK 0.2: salidas del nodo Artefacto (d:id) = números o eventos que publica el artefacto
   if(n.t==='artefacto'&&typeof port==='string'&&port.startsWith('d:')){const a=S.lib.get(n.v.medio),id=port.slice(2),dd=a&&a.manifest&&(a.manifest.data||[]).find(x=>x.id===id);
@@ -3950,7 +3961,7 @@ function estadoPieza(){
   const r=recursos(),live=S.cues.find(c=>c.id===S.liveId),sb=S.cues[S.sel],tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
   const d=new Date(),off=-d.getTimezoneOffset(),iso=new Date(d.getTime()+off*60000).toISOString().slice(0,19)+(off>=0?'+':'-')+String(Math.floor(Math.abs(off)/60)).padStart(2,'0')+':'+String(Math.abs(off)%60).padStart(2,'0');
   let gpu='';try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)gpu=String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)).replace(/^ANGLE \(|\)$/g,'').slice(0,60);}catch(e){}
-  return {version:'v043',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
+  return {version:'v044',show:S.showName||'',escenario:(S.escenarios[S.escActivo]||{}).nombre||'',cue:live?(live.num?live.num+' · ':'')+(live.name||cueLabel(live)):'',espera:sb?(sb.num?sb.num+' · ':'')+(sb.name||cueLabel(sb)):'',
     corriendo:S.running.length,museo:museoOn,horario:museoOn?enHorario():null,fps:r.fps,ms:+frameMs.toFixed(1),js:r.js?Math.round(r.js):0,audio:Math.round(r.audio),
     encendida:Math.round((performance.now()-T_ARRANQUE)/1000),arranques:ARRANQUES,inesperado:INESPERADO,errores:logErr,recuperaciones,
     lanzador:LANZADOR,motor:r.motor,volumen:S.audioMaster,hora:iso,tz,gpu,pantalla:screen.width+'×'+screen.height};
@@ -5101,7 +5112,7 @@ function evAyuda(){
     logica:'Combina dos condiciones (un valor de 0.5 o más cuenta como sí): Y, O, O exclusivo, NO y sus negaciones. Da 1 o 0, y un pulso cuando el resultado pasa a sí.',
     crono:'Cuenta segundos desde que entra la escena o desde un disparo. Se para, sigue y reinicia con botones o cables. Con duración da el avance de 0 a 1 y dispara «fin»; puede volver a empezar.',
     alcue:'Dispara cuando la cue list da GO a un cue. Con «cue nº» en 0 responde a cualquier cue; «último cue nº» dice cuál fue. Sirve para que una escena que ya está al aire cambie con los cues siguientes.',
-    modent:'Una entrada del módulo: aparece afuera, en cada copia, como un número que se escribe o se conecta con un cable. «disparo» la vuelve un pulso. Conéctala a lo que quieras mover adentro.',
+    modent:'Una entrada del módulo: aparece afuera, en cada copia, como un número que se escribe o se conecta con un cable. «disparo» la vuelve un pulso. «lista» la vuelve un menú con las opciones que escribas (separadas por comas); adentro da 1, 2, 3… según la opción, listo para un Selector. Conéctala a lo que quieras mover adentro.',
     modentv:'Una entrada de video del módulo: lo que llegue a esta entrada en cada copia empieza aquí. Conéctala a efectos, a un Compositor o a un Proyector.',
     modsal:'Una salida numérica del módulo: lo que conectes a «valor» sale de cada copia.',
     modsalv:'Una salida de video del módulo: la cadena que llegue aquí sale de cada copia para seguir en la escena.',
@@ -6084,7 +6095,7 @@ loadArt('artefactos/senal.html','art:senal');
 renumber();S.sel=0;
 renderLib();renderCues();renderInspector();updateH();
 offerRecover();
-log('arranque · aurigaQ v043'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
+log('arranque · aurigaQ v044'+(LANZADOR?' · con lanzador':'')+' · '+(navigator.userAgentData&&navigator.userAgentData.brands?navigator.userAgentData.brands.map(b=>b.brand+' '+b.version).filter(x=>!/Not/.test(x)).join(', '):navigator.userAgent.slice(0,80)));
 try{const x=gl&&gl.getExtension('WEBGL_debug_renderer_info');if(x)log('tarjeta gráfica · '+gl.getParameter(x.UNMASKED_RENDERER_WEBGL));}catch(e){}
 addEventListener('pagehide',()=>{log('cierre');saveLog();});
 // app instalable que funciona sin internet (requiere HTTPS o localhost)

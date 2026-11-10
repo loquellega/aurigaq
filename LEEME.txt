@@ -1,4 +1,4 @@
-aurigaQ v043
+aurigaQ v044
 Media server y gestor de cues para presentar en vivo los artefactos de la colección.
 Parte de la colección Alchemy of Meaning (Alquimia del Significado).
 © 2026 Héctor Cruz Juárez · https://hectorcruz.com.mx
@@ -494,9 +494,13 @@ ESCENA DE VIDEO
 
 MÓDULOS DE USUARIO
   Un módulo es un pedazo de patch que se reusa en muchas escenas. Adentro
-  lleva Entradas de módulo (número, disparo o video) y Salidas de módulo
-  (número o video); afuera aparece como un nodo con esas entradas y
-  salidas, en la categoría «módulos».
+  lleva Entradas de módulo (número, disparo, lista o video) y Salidas de
+  módulo (número o video); afuera aparece como un nodo con esas entradas
+  y salidas, en la categoría «módulos».
+  Una entrada «lista» se ve afuera como un menú con las opciones que
+  escribas (separadas por comas); adentro da 1, 2, 3… según la opción,
+  listo para un Selector. Una Entrada de video puede ir directo a una
+  Salida de video: la imagen atraviesa el módulo.
   Por referencia: lo que cambies adentro cambia todas sus copias al
   momento. Cada copia conserva los valores de sus entradas y su propio
   estado (contadores, Timeline, disparos). «Derivar» hace un módulo
@@ -885,6 +889,9 @@ ARTEFACTOS Y SDK
   repositorio (sdk/README.md).
 
 HISTORIAL
+  v044  Módulos: entradas de tipo lista (menú afuera, 1, 2, 3… adentro) y
+        video que atraviesa un módulo de la entrada a la salida, también
+        en módulos anidados.
   v043  Módulos de usuario: Entradas y Salidas de módulo, copias por
         referencia con valores y estado propios, convertir en módulo,
         derivar, módulos dentro de módulos, mis módulos, .aqmodulo y

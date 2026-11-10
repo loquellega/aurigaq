@@ -16,6 +16,7 @@
      "v": {
       "nombre": "base",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.7,
       "min": 0,
       "max": 1
@@ -29,6 +30,7 @@
      "v": {
       "nombre": "variación",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.3,
       "min": 0,
       "max": 1
@@ -42,6 +44,7 @@
      "v": {
       "nombre": "calma (s)",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.15,
       "min": 0,
       "max": 3

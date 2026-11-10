@@ -25,6 +25,7 @@
      "v": {
       "nombre": "cantidad",
       "tipo": "número",
+      "opciones": "uno, dos, tres",
       "def": 0.7,
       "min": 0,
       "max": 1
